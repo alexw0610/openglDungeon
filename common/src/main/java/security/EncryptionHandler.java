@@ -25,13 +25,29 @@ public class EncryptionHandler {
 
     public byte[] encryptSerializableWithHeader(Serializable object) {
         byte[] request = toByteArray(object);
-        System.out.println(request.length);
         return encryptByteArray(addHeader(request.length, request));
     }
 
     public byte[] encryptSerializable(Serializable object) {
         byte[] request = toByteArray(object);
         return encryptByteArray(request);
+    }
+
+    public Serializable decryptByteArrayToObject(byte[] byteArray) {
+        return fromByteArray(decryptByteArray(byteArray));
+    }
+
+    public byte[] decryptByteArray(byte[] byteArray) {
+        byte[] encryptedRequest = null;
+        try {
+            Cipher cipher = Cipher.getInstance(ALGORITHM);
+            cipher.init(Cipher.DECRYPT_MODE, key);
+            encryptedRequest = cipher.doFinal(byteArray);
+
+        } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | BadPaddingException | IllegalBlockSizeException e) {
+            e.printStackTrace();
+        }
+        return encryptedRequest;
     }
 
     private byte[] encryptByteArray(byte[] request) {
@@ -60,23 +76,6 @@ public class EncryptionHandler {
     private static byte[] padArrayToMultipleOf(byte[] request, int multiple) {
         int bytesToAdd = request.length % multiple;
         return Arrays.copyOf(request, request.length + (multiple - bytesToAdd));
-    }
-
-    public Serializable decryptByteArrayToObject(byte[] byteArray) {
-        return fromByteArray(decryptByteArray(byteArray));
-    }
-
-    public byte[] decryptByteArray(byte[] byteArray) {
-        byte[] encryptedRequest = null;
-        try {
-            Cipher cipher = Cipher.getInstance(ALGORITHM);
-            cipher.init(Cipher.DECRYPT_MODE, key);
-            encryptedRequest = cipher.doFinal(byteArray);
-
-        } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | BadPaddingException | IllegalBlockSizeException e) {
-            e.printStackTrace();
-        }
-        return encryptedRequest;
     }
 
 }

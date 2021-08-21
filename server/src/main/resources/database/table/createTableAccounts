@@ -1,0 +1,28 @@
+CREATE TABLE IF NOT EXISTS ACCOUNTS (
+user_account_id SERIAL PRIMARY KEY,
+username VARCHAR(32) NOT NULL UNIQUE,
+password VARCHAR(32) NOT NULL,
+created timestamp,
+last_changed timestamp);
+
+DO $$ DECLARE
+    tr_exists integer := (SELECT 1 FROM information_schema.triggers WHERE trigger_name = lower('TR_ACCOUNTS_CREATED'));
+BEGIN
+    IF tr_exists = 1 THEN
+       		RAISE NOTICE 'TRIGGER ALREADY EXISTS';
+		ELSE
+			CREATE TRIGGER TR_ACCOUNTS_CREATED BEFORE INSERT
+			ON ACCOUNTS FOR EACH ROW EXECUTE PROCEDURE row_created();
+    END IF;
+END $$;
+
+DO $$ DECLARE
+    tr_exists integer := (SELECT 1 FROM information_schema.triggers WHERE trigger_name = lower('TR_ACCOUNTS_LAST_CHANGED'));
+BEGIN
+    IF tr_exists = 1 THEN
+       		RAISE NOTICE 'TRIGGER ALREADY EXISTS';
+		ELSE
+			CREATE TRIGGER TR_ACCOUNTS_LAST_CHANGED BEFORE INSERT
+			ON ACCOUNTS FOR EACH ROW EXECUTE PROCEDURE row_changed();
+    END IF;
+END $$;

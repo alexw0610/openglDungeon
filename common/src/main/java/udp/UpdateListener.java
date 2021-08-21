@@ -1,10 +1,11 @@
 package udp;
 
-import protocol.dto.GenericResponse;
+import protocol.dto.udp.UpdateEncryptionWrapper;
 import util.ApplicationProperties;
 import util.SerializableUtil;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
@@ -12,17 +13,17 @@ import java.util.Arrays;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-public class UDPListener implements Runnable {
+public class UpdateListener implements Runnable {
 
     private static final ApplicationProperties applicationProperties = new ApplicationProperties();
     public static final String DEFAULT_UDP_LISTENING_PORT = "defaultUDPListeningPort";
 
-    public BlockingQueue<byte[]> receivedPacketQueue = new LinkedBlockingQueue<>();
+    public BlockingQueue<UpdateEncryptionWrapper> receivedUpdates = new LinkedBlockingQueue<>();
 
     private final String port;
     private final DatagramSocket socket;
 
-    public UDPListener() {
+    public UpdateListener() {
         this.socket = createSocket();
         this.port = String.valueOf(this.socket.getLocalPort());
     }
@@ -35,7 +36,7 @@ public class UDPListener implements Runnable {
             try {
                 this.socket.receive(packet);
                 if (packet.getLength() > 0) {
-                    addPacketToQueue(packet);
+                    validateUpdateEncryptionWrapper(packet);
                 }
                 buffer = new byte[65536];
             } catch (IOException e) {
@@ -44,13 +45,12 @@ public class UDPListener implements Runnable {
         }
     }
 
-    private void addPacketToQueue(DatagramPacket packet) {
+    private void validateUpdateEncryptionWrapper(DatagramPacket packet) {
         byte[] payload = Arrays.copyOfRange(packet.getData(), 0, packet.getLength());
-        this.receivedPacketQueue.add(payload);
-    }
-
-    private int readHeaderToInt(byte[] buffer) {
-        return ((buffer[1] & 0xff) << 8) | (buffer[0] & 0xff);
+        Serializable wrapper = SerializableUtil.fromByteArray(payload);
+        if (wrapper instanceof UpdateEncryptionWrapper) {
+            this.receivedUpdates.add((UpdateEncryptionWrapper) wrapper);
+        }
     }
 
     public String getPort() {

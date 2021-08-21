@@ -1,0 +1,29 @@
+CREATE TABLE IF NOT EXISTS CHARACTERS (
+character_id SERIAL PRIMARY KEY,
+user_account_id SERIAL,
+character_name VARCHAR(32) NOT NULL UNIQUE,
+character_level smallint NOT NULL DEFAULT 0,
+created timestamp,
+last_changed timestamp);
+
+DO $$ DECLARE
+    tr_exists integer := (SELECT 1 FROM information_schema.triggers WHERE trigger_name = lower('TR_CHARACTERS_CREATED'));
+BEGIN
+    IF tr_exists = 1 THEN
+       		RAISE NOTICE 'TRIGGER ALREADY EXISTS';
+		ELSE
+			CREATE TRIGGER TR_CHARACTERS_CREATED BEFORE INSERT
+			ON ACCOUNTS FOR EACH ROW EXECUTE PROCEDURE row_created();
+    END IF;
+END $$;
+
+DO $$ DECLARE
+    tr_exists integer := (SELECT 1 FROM information_schema.triggers WHERE trigger_name = lower('TR_CHARACTERS_LAST_CHANGED'));
+BEGIN
+    IF tr_exists = 1 THEN
+       		RAISE NOTICE 'TRIGGER ALREADY EXISTS';
+		ELSE
+			CREATE TRIGGER TR_CHARACTERS_LAST_CHANGED BEFORE INSERT
+			ON ACCOUNTS FOR EACH ROW EXECUTE PROCEDURE row_changed();
+    END IF;
+END $$;

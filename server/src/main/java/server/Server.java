@@ -1,7 +1,8 @@
 package server;
 
-import server.worker.AuthenticationServer;
-import server.worker.UpdateServer;
+import server.worker.ClientUpdateProcessor;
+import server.worker.SSLClientConnectionServer;
+import udp.UpdateListener;
 import util.ApplicationProperties;
 
 import java.io.File;
@@ -18,12 +19,25 @@ public class Server {
         setSystemProperties();
         setupDatabase();
 
-        AuthenticationServer authenticationServer = new AuthenticationServer();
-        new Thread(authenticationServer).start();
+        UpdateListener clientUpdateListener = new UpdateListener();
+        new Thread(clientUpdateListener).start();
 
-        UpdateServer updateServer = new UpdateServer();
-        new Thread(updateServer).start();
+        ClientUpdateProcessor clientUpdateProcessor = new ClientUpdateProcessor(clientUpdateListener.receivedUpdates);
+        new Thread(clientUpdateProcessor).start();
 
+        //TODO
+        //ClientUpdateSender clientUpdateSender = new ClientUpdateSender();
+        //new Thread(clientUpdateSender).start();
+
+        SSLClientConnectionServer sslClientConnectionServer = new SSLClientConnectionServer(clientUpdateListener.getPort());
+        new Thread(sslClientConnectionServer).start();
+
+
+    }
+
+    private static void setSystemProperties() {
+        System.setProperty("javax.net.ssl.keyStore", applicationProperties.getResourceRootPath() + applicationProperties.getProperty("keyStore"));
+        System.setProperty("javax.net.ssl.keyStorePassword", applicationProperties.getProperty("keyStorePassword"));
     }
 
     private static void setupDatabase() {
@@ -31,15 +45,9 @@ public class Server {
         String user = applicationProperties.getProperty("dbUser");
         String password = applicationProperties.getProperty("dbPassword");
         DatabaseConnection databaseConnection = new DatabaseConnection(url, user, password);
-        File databaseResourceDir = new File(applicationProperties.getResourceRootPath() + "/database");
-        for (File file : databaseResourceDir.listFiles()) {
-            try {
-                String content = new String(Files.readAllBytes(Paths.get(file.getPath())));
-                databaseConnection.executeUpdate(content);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+        processFilesInDirectory("function", databaseConnection);
+        processFilesInDirectory("table", databaseConnection);
+        processFilesInDirectory("foreignKey", databaseConnection);
         try {
             databaseConnection.close();
         } catch (SQLException e) {
@@ -48,8 +56,16 @@ public class Server {
         }
     }
 
-    private static void setSystemProperties() {
-        System.setProperty("javax.net.ssl.keyStore", applicationProperties.getResourceRootPath() + applicationProperties.getProperty("keyStore"));
-        System.setProperty("javax.net.ssl.keyStorePassword", applicationProperties.getProperty("keyStorePassword"));
+    private static void processFilesInDirectory(String folderName, DatabaseConnection databaseConnection) {
+        File resourceDir = new File(applicationProperties.getResourceRootPath() + "/database/" + folderName);
+        for (File file : resourceDir.listFiles()) {
+            try {
+                String content = new String(Files.readAllBytes(Paths.get(file.getPath())));
+                databaseConnection.executeUpdate(content);
+            } catch (IOException e) {
+                System.err.println(String.format("Error while creating DB Schema with files from /%s Error: %s", folderName, e.getMessage()));
+            }
+        }
     }
+
 }

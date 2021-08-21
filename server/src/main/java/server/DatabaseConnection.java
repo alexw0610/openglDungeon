@@ -28,7 +28,7 @@ public class DatabaseConnection {
         try {
             PreparedStatement statement = this.connection.prepareStatement(query);
             for (int i = 0; i < arg.length; i++) {
-                statement.setString(i+1, arg[i]);
+                statement.setString(i + 1, arg[i]);
             }
             return statement.executeQuery();
         } catch (SQLException throwables) {
@@ -38,12 +38,16 @@ public class DatabaseConnection {
         }
     }
 
-    public void executeUpdate(String sql){
+    public void executeUpdate(String sql) {
         try {
             this.connection.createStatement().executeUpdate(sql);
         } catch (SQLException throwables) {
             System.err.println("Error while executing Query!");
             throwables.printStackTrace();
         }
+    }
+
+    public Connection getConnection() {
+        return connection;
     }
 }

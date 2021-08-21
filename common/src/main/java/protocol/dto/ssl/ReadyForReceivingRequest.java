@@ -1,6 +1,7 @@
-package protocol.dto;
+package protocol.dto.ssl;
 
 import lombok.*;
+import protocol.dto.Request;
 
 import java.io.Serializable;
 

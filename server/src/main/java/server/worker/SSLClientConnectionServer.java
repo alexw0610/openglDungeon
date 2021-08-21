@@ -7,13 +7,15 @@ import javax.net.ssl.SSLServerSocketFactory;
 import javax.net.ssl.SSLSocket;
 import java.io.IOException;
 
-public class AuthenticationServer implements Runnable{
+public class SSLClientConnectionServer implements Runnable {
 
     private static final ApplicationProperties applicationProperties = new ApplicationProperties();
     private final SSLServerSocket sslServerSocket;
+    private final String udpRecPort;
 
-    public AuthenticationServer(){
+    public SSLClientConnectionServer(String udpRecPort) {
         this.sslServerSocket = getSslServerSocket();
+        this.udpRecPort = udpRecPort;
     }
 
     @Override
@@ -26,7 +28,7 @@ public class AuthenticationServer implements Runnable{
                 System.err.println("Error while waiting for a new connection.");
                 System.exit(1);
             }
-            SSLClientConnectionWorker sslClientConnectionWorker = new SSLClientConnectionWorker(sslsocket);
+            SSLClientConnectionWorker sslClientConnectionWorker = new SSLClientConnectionWorker(sslsocket, udpRecPort);
             new Thread(sslClientConnectionWorker).start();
         }
     }
