@@ -48,6 +48,7 @@ public class UpdateSender {
         byte[] payload = SerializableUtil.toByteArray(wrapper);
         DatagramPacket packet = new DatagramPacket(payload, payload.length, address, this.port);
         socket.send(packet);
+        socket.close();
     }
 
 }

@@ -20,9 +20,12 @@ public class SubscribedClient {
     private String clientPort;
     private byte[] encryptionKey;
 
-
     @Override
     public int hashCode() {
         return Objects.hash(clientAddress, encryptionKey);
+    }
+
+    public int getConnectionId() {
+        return hashCode();
     }
 }

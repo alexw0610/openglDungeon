@@ -60,8 +60,8 @@ public class Client {
             System.err.println("Failed to get InetAddress from name: " + applicationProperties.getProperty("serverHost"));
             System.exit(1);
         }
-        UpdateSender updateSender = new UpdateSender(serverAddress, Integer.parseInt(serverUdpUpdatePort), key);
 
+        UpdateSender updateSender = new UpdateSender(serverAddress, Integer.parseInt(serverUdpUpdatePort), key);
         CharacterUpdateWorker updateWorker = new CharacterUpdateWorker(SceneHandler.SCENE_HANDLER.getPlayer(), connectionId, updateSender);
         new Thread(updateWorker).start();
 

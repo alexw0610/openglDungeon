@@ -4,12 +4,12 @@ import protocol.dto.update.PlayerUpdateDto;
 import server.DatabaseConnection;
 import server.repository.CharacterRepository;
 
-public class CharacterUpdateWorker implements Runnable {
+public class CharacterUpdateProcessorWorker implements Runnable {
 
     private final DatabaseConnection connection;
     private final PlayerUpdateDto playerUpdateDto;
 
-    public CharacterUpdateWorker(DatabaseConnection connection, PlayerUpdateDto playerUpdateDto) {
+    public CharacterUpdateProcessorWorker(DatabaseConnection connection, PlayerUpdateDto playerUpdateDto) {
         this.connection = connection;
         this.playerUpdateDto = playerUpdateDto;
     }

@@ -6,7 +6,7 @@ import security.EncryptionHandler;
 import server.DatabaseConnection;
 import server.connection.SubscribedClient;
 import server.connection.SubscriptionHandler;
-import server.protocol.runnable.CharacterUpdateWorker;
+import server.protocol.runnable.CharacterUpdateProcessorWorker;
 import util.ApplicationProperties;
 import util.SerializableUtil;
 
@@ -49,7 +49,7 @@ public class ClientUpdateProcessor implements Runnable {
                     PlayerUpdateDto playerUpdateDto = (PlayerUpdateDto) SerializableUtil.fromByteArray(unpaddedPayload);
                     playerUpdateDto.setUserId(subscribedClient.getUserId());
                     playerUpdateDto.setCharacterId(subscribedClient.getCharacterId());
-                    CharacterUpdateWorker serverPlayerUpdateWorker = new CharacterUpdateWorker(this.databaseConnection, playerUpdateDto);
+                    CharacterUpdateProcessorWorker serverPlayerUpdateWorker = new CharacterUpdateProcessorWorker(this.databaseConnection, playerUpdateDto);
                     characterUpdatesToProcess.add(serverPlayerUpdateWorker);
                     System.out.println("Processing client Update for UserId: " + subscribedClient.getUserId());
                 } else {

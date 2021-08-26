@@ -50,6 +50,7 @@ public class UpdateListener implements Runnable {
         Serializable wrapper = SerializableUtil.fromByteArray(payload);
         if (wrapper instanceof UpdateEncryptionWrapper) {
             this.receivedUpdates.add((UpdateEncryptionWrapper) wrapper);
+            System.out.println("Update received from " + packet.getSocketAddress().toString() + " " + ((UpdateEncryptionWrapper) wrapper).getConnectionId());
         }
     }
 

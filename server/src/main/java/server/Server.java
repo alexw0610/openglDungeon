@@ -1,6 +1,7 @@
 package server;
 
 import server.worker.ClientUpdateProcessor;
+import server.worker.ClientUpdateSender;
 import server.worker.SSLClientConnectionServer;
 import udp.UpdateListener;
 import util.ApplicationProperties;
@@ -26,8 +27,8 @@ public class Server {
         new Thread(clientUpdateProcessor).start();
 
         //TODO
-        //ClientUpdateSender clientUpdateSender = new ClientUpdateSender();
-        //new Thread(clientUpdateSender).start();
+        ClientUpdateSender clientUpdateSender = new ClientUpdateSender();
+        new Thread(clientUpdateSender).start();
 
         SSLClientConnectionServer sslClientConnectionServer = new SSLClientConnectionServer(clientUpdateListener.getPort());
         new Thread(sslClientConnectionServer).start();
