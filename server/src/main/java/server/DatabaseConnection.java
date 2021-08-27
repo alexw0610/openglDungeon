@@ -38,6 +38,18 @@ public class DatabaseConnection {
         }
     }
 
+    public ResultSet executeQuery(String query, int arg) {
+        try {
+            PreparedStatement statement = this.connection.prepareStatement(query);
+            statement.setInt(1, arg);
+            return statement.executeQuery();
+        } catch (SQLException throwables) {
+            System.err.println("Error while executing Query!");
+            throwables.printStackTrace();
+            return null;
+        }
+    }
+
     public void executeUpdate(String sql) {
         try {
             this.connection.createStatement().executeUpdate(sql);

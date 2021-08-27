@@ -1,7 +1,6 @@
 import engine.Engine;
 import engine.enumeration.PrimitiveMeshShape;
 import engine.enumeration.ShaderType;
-import engine.handler.RenderHandler;
 import engine.handler.SceneHandler;
 import engine.object.Camera;
 import engine.object.GameObject;
@@ -29,14 +28,13 @@ public class Client {
 
         Engine engine = new Engine();
         engine.start();
-        Player player = new Player("player", PrimitiveMeshShape.QUAD, ShaderType.DEFAULT, 0.5, 0.3);
+        Player player = new Player(PrimitiveMeshShape.QUAD, ShaderType.DEFAULT);
+        SceneHandler.SCENE_HANDLER.setPlayer(player);
         GameObject floor = new GameObject(PrimitiveMeshShape.QUAD, ShaderType.DEFAULT, 0.5, 0.3);
         floor.setScale(10);
         floor.setTextureKey("stone_rough_yellow");
-        SceneHandler.SCENE_HANDLER.setPlayer(player);
+        SceneHandler.SCENE_HANDLER.addObject("floor", floor);
         Camera.CAMERA.setLookAtTarget(player);
-        RenderHandler.RENDER_HANDLER.addToRenderQueue(floor);
-        RenderHandler.RENDER_HANDLER.addToRenderQueue(player);
 
         establishServerConnection();
 
@@ -48,8 +46,8 @@ public class Client {
 
         UpdateListener updateListener = new UpdateListener();
         new Thread(updateListener).start();
-
         GenericResponse response = registerUdpListener(updateListener, sslServerConnection);
+
         String serverUdpUpdatePort = ParameterUtil.getParameterIfExists(response.getResponseParameters(), UDP_LISTENING_PORT);
         int connectionId = Integer.parseInt(ParameterUtil.getParameterIfExists(response.getResponseParameters(), CONNECTION_ID));
 
@@ -62,8 +60,11 @@ public class Client {
         }
 
         UpdateSender updateSender = new UpdateSender(serverAddress, Integer.parseInt(serverUdpUpdatePort), key);
-        CharacterUpdateWorker updateWorker = new CharacterUpdateWorker(SceneHandler.SCENE_HANDLER.getPlayer(), connectionId, updateSender);
+        CharacterUpdateSender updateWorker = new CharacterUpdateSender(SceneHandler.SCENE_HANDLER.getPlayer(), connectionId, updateSender);
         new Thread(updateWorker).start();
+
+        ServerUpdateProcessor serverUpdateProcessor = new ServerUpdateProcessor(updateListener.receivedUpdates, key);
+        new Thread(serverUpdateProcessor).start();
 
         sslServerConnection.close();
     }

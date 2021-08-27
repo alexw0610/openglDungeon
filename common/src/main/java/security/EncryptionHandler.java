@@ -78,4 +78,8 @@ public class EncryptionHandler {
         return Arrays.copyOf(request, request.length + (multiple - bytesToAdd));
     }
 
+    public static int readHeaderToInt(byte[] buffer) {
+        return ((buffer[1] & 0xff) << 8) | (buffer[0] & 0xff);
+    }
+
 }

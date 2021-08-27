@@ -40,6 +40,7 @@ public class RequestProcessor {
     public GenericResponse processAuthenticationRequest(AuthenticationRequest authenticationRequest) {
         try {
             ResultSet resultSet = UserRepository.getByUsernameAndPassword(connection, authenticationRequest.getUsername(), authenticationRequest.getPassword());
+            //TODO: get character for user
             GenericResponse genericResponse;
             if (resultSet.next()) {
                 this.userAccountId = resultSet.getString("user_account_id");
@@ -74,8 +75,8 @@ public class RequestProcessor {
                         .clientAddress(clientAddress)
                         .clientPort(readyForReceivingRequest.getReceivingPort())
                         .encryptionKey(this.encryptionKey)
-                        .characterId(1)
-                        .userId(1)
+                        .characterId(Integer.parseInt(this.userAccountId))
+                        .userId(Integer.parseInt(this.userAccountId))
                         .build();
                 SubscriptionHandler.instance.subscribedClients.put(client.hashCode(), client);
                 Map<String, String> parameters = new HashMap<>();

@@ -26,14 +26,11 @@ public class Server {
         ClientUpdateProcessor clientUpdateProcessor = new ClientUpdateProcessor(clientUpdateListener.receivedUpdates);
         new Thread(clientUpdateProcessor).start();
 
-        //TODO
         ClientUpdateSender clientUpdateSender = new ClientUpdateSender();
         new Thread(clientUpdateSender).start();
 
         SSLClientConnectionServer sslClientConnectionServer = new SSLClientConnectionServer(clientUpdateListener.getPort());
         new Thread(sslClientConnectionServer).start();
-
-
     }
 
     private static void setSystemProperties() {

@@ -1,15 +1,15 @@
 package engine.handler;
 
 import engine.object.Renderable;
+import org.apache.commons.lang3.RandomStringUtils;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.HashMap;
 
 public class RenderHandler {
     public static final RenderHandler RENDER_HANDLER = new RenderHandler();
     private long frameDelta = 0;
 
-    private final List<Renderable> renderables = new LinkedList<>();
+    private final HashMap<String, Renderable> renderables = new HashMap<>();
 
     private RenderHandler() {
     }
@@ -18,28 +18,38 @@ public class RenderHandler {
         Renderable[] renderablesArray;
         synchronized (renderables) {
             renderablesArray = new Renderable[renderables.size()];
-            renderables.toArray(renderablesArray);
+            renderables.values().toArray(renderablesArray);
         }
         return renderablesArray;
     }
 
-    public void addToRenderQueue(Renderable renderable) {
+    public String addToRenderQueue(Renderable renderable) {
+        String key = generateUnusedRenderableKey();
         synchronized (renderables) {
-            this.renderables.add(renderable);
+            this.renderables.put(key, renderable);
+        }
+        return key;
+    }
+
+    private String generateUnusedRenderableKey() {
+        String key = RandomStringUtils.randomAlphanumeric(16);
+        while (this.renderables.containsKey(key)) {
+            key = RandomStringUtils.randomAlphanumeric(16);
+        }
+        return key;
+    }
+
+    public void removeFromRenderQueue(String renderableKey) {
+        synchronized (renderables) {
+            this.renderables.remove(renderableKey);
         }
     }
 
-    public void removeFromRenderQueue(Renderable renderable) {
-        synchronized (renderables) {
-            this.renderables.remove(renderable);
-        }
-    }
-
-    public void setCurrentFrameDelta(long frameDelta){
+    public void setCurrentFrameDelta(long frameDelta) {
         this.frameDelta = frameDelta;
     }
 
-    public long getCurrentFrameDelta(){
+    public long getCurrentFrameDelta() {
         return this.frameDelta;
     }
 

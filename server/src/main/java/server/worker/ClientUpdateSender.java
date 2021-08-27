@@ -34,10 +34,9 @@ public class ClientUpdateSender implements Runnable {
             for (SubscribedClient client : SubscriptionHandler.instance.subscribedClients.values()) {
                 CharacterUpdateSenderWorker worker = new CharacterUpdateSenderWorker(databaseConnection, client);
                 this.characterUpdatesToProcess.add(worker);
-                System.out.println("Client updates to sent in queue: " + this.characterUpdatesToProcess.size());
             }
             try {
-                Thread.sleep(1000);
+                Thread.sleep(10);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

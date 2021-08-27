@@ -3,13 +3,10 @@ package engine.object;
 import engine.enumeration.PrimitiveMeshShape;
 import engine.enumeration.ShaderType;
 
-public class Player extends GameObject {
+public class Player extends Character {
 
-    private String username;
-
-    public Player(String username, PrimitiveMeshShape primitiveMeshShape, ShaderType shaderKey, double positionX, double positionY) {
-        super(primitiveMeshShape,shaderKey,positionX,positionY);
-        this.username = username;
+    public Player(PrimitiveMeshShape primitiveMeshShape, ShaderType shaderKey) {
+        super(primitiveMeshShape, shaderKey);
     }
 
     public void moveUp(double delta) {

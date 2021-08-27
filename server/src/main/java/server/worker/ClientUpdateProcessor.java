@@ -44,26 +44,19 @@ public class ClientUpdateProcessor implements Runnable {
                     byte[] payload = clientUpdate.getEncryptedPayload();
                     EncryptionHandler encryptionHandler = new EncryptionHandler(subscribedClient.getEncryptionKey());
                     payload = encryptionHandler.decryptByteArray(payload);
-                    int packetSizeUnpadded = readHeaderToInt(payload);
+                    int packetSizeUnpadded = EncryptionHandler.readHeaderToInt(payload);
                     byte[] unpaddedPayload = Arrays.copyOfRange(payload, 2, packetSizeUnpadded + 2);
                     PlayerUpdateDto playerUpdateDto = (PlayerUpdateDto) SerializableUtil.fromByteArray(unpaddedPayload);
                     playerUpdateDto.setUserId(subscribedClient.getUserId());
                     playerUpdateDto.setCharacterId(subscribedClient.getCharacterId());
                     CharacterUpdateProcessorWorker serverPlayerUpdateWorker = new CharacterUpdateProcessorWorker(this.databaseConnection, playerUpdateDto);
                     characterUpdatesToProcess.add(serverPlayerUpdateWorker);
-                    System.out.println("Processing client Update for UserId: " + subscribedClient.getUserId());
                 } else {
                     System.out.println("Discarding update for unknown connectionId: " + clientUpdate.getConnectionId());
-                    System.out.println("Available connectionIds: " + SubscriptionHandler.instance.subscribedClients.keySet().toString());
                 }
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-
         }
-    }
-
-    private int readHeaderToInt(byte[] buffer) {
-        return ((buffer[1] & 0xff) << 8) | (buffer[0] & 0xff);
     }
 }

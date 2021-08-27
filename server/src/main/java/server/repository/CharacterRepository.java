@@ -23,7 +23,10 @@ public class CharacterRepository {
 
     public static final String RETRIEVE_CHARACTER_LOCATIONS = "SELECT " +
             "character_id, character_pos_x, character_pos_y " +
-            "FROM CHARACTER_LOCATIONS;";
+            "FROM CHARACTER_LOCATIONS " +
+            "WHERE character_id " +
+            "NOT IN " +
+            "(?);";
 
 
     public static boolean updateCharacterLocation(DatabaseConnection connection, PlayerUpdateDto playerUpdateDto) {
@@ -44,7 +47,7 @@ public class CharacterRepository {
     public static List<CharacterLocationDto> getCharacterLocationsForCharacterId(DatabaseConnection connection, int characterId) {
         List<CharacterLocationDto> resultList = new LinkedList<>();
         try {
-            ResultSet result = connection.executeQuery(RETRIEVE_CHARACTER_LOCATIONS);
+            ResultSet result = connection.executeQuery(RETRIEVE_CHARACTER_LOCATIONS, characterId);
             while (result.next()) {
                 resultList.add(CharacterLocationDto.builder()
                         .characterId(result.getInt(1))
