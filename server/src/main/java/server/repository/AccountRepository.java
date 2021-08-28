@@ -7,7 +7,7 @@ import server.repository.dto.UserDto;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class UserRepository {
+public class AccountRepository {
 
     private static final Logger LOG = LoggerFactory.getLogger(CharacterRepository.class);
     private static final String SELECT_USERNAME_PASSWORD = "SELECT user_account_id, username, password " +

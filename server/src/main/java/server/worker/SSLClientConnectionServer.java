@@ -14,11 +14,15 @@ public class SSLClientConnectionServer implements Runnable {
     private static final Logger LOG = LoggerFactory.getLogger(SSLClientConnectionServer.class);
     private static final ApplicationProperties applicationProperties = new ApplicationProperties();
     private final SSLServerSocket sslServerSocket;
-    private final String udpRecPort;
+    private final String port;
+    private final String udpAddress;
+    private final String udpPort;
 
-    public SSLClientConnectionServer(String udpRecPort) {
+    public SSLClientConnectionServer(String address, String port) {
         this.sslServerSocket = getSslServerSocket();
-        this.udpRecPort = udpRecPort;
+        this.port = String.valueOf(sslServerSocket.getLocalPort());
+        this.udpAddress = address;
+        this.udpPort = port;
     }
 
     @Override
@@ -31,7 +35,7 @@ public class SSLClientConnectionServer implements Runnable {
                 LOG.error("Error while waiting for a new connection. Exiting.");
                 System.exit(1);
             }
-            SSLClientConnectionWorker sslClientConnectionWorker = new SSLClientConnectionWorker(sslsocket, udpRecPort);
+            SSLClientConnectionWorker sslClientConnectionWorker = new SSLClientConnectionWorker(sslsocket, udpAddress, udpPort);
             new Thread(sslClientConnectionWorker).start();
         }
     }
@@ -46,5 +50,9 @@ public class SSLClientConnectionServer implements Runnable {
             System.exit(1);
         }
         return sslserversocket;
+    }
+
+    public String getPort() {
+        return port;
     }
 }

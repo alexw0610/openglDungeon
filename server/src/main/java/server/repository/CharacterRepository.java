@@ -3,6 +3,7 @@ package server.repository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import protocol.dto.update.PlayerUpdateDto;
+import server.repository.dto.CharacterDto;
 import server.repository.dto.CharacterLocationDto;
 
 import java.sql.ResultSet;
@@ -21,13 +22,18 @@ public class CharacterRepository {
             "DO UPDATE SET " +
             "character_pos_x = EXCLUDED.character_pos_x, " +
             "character_pos_y = EXCLUDED.character_pos_y;";
-
     private static final String RETRIEVE_CHARACTER_LOCATIONS = "SELECT " +
             "character_id, character_pos_x, character_pos_y " +
             "FROM CHARACTER_LOCATIONS " +
             "WHERE character_id " +
             "NOT IN " +
             "(?);";
+    private static final String RETRIEVE_CHARACTER = "SELECT " +
+            "character_id, user_account_id, character_name, character_level " +
+            "FROM CHARACTERS " +
+            "WHERE user_account_id = ? " +
+            "AND " +
+            "character_name = ?;";
 
 
     public static boolean updateCharacterLocation(DatabaseConnection connection, PlayerUpdateDto playerUpdateDto) {
@@ -52,5 +58,22 @@ public class CharacterRepository {
             LOG.warn("Failed to extract any DTOs {}", e.getMessage());
         }
         return resultList;
+    }
+
+    public static CharacterDto getCharacterForAccountAndCharacterName(DatabaseConnection connection, int userAccountId, String characterName) {
+        CharacterDto characterDto = null;
+        try {
+            ResultSet resultSet = connection.execute(RETRIEVE_CHARACTER, userAccountId, characterName);
+            resultSet.next();
+            characterDto = CharacterDto.builder()
+                    .characterId(resultSet.getInt("character_id"))
+                    .userAccountId(resultSet.getInt("user_account_id"))
+                    .characterName(resultSet.getString("character_name"))
+                    .characterLevel(resultSet.getInt("character_level"))
+                    .build();
+        } catch (SQLException e) {
+            LOG.warn("Failed to extract DTO {}", e.getMessage());
+        }
+        return characterDto;
     }
 }

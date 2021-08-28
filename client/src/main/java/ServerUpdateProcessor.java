@@ -1,6 +1,5 @@
 import engine.enumeration.PrimitiveMeshShape;
 import engine.enumeration.ShaderType;
-import engine.handler.SceneHandler;
 import engine.object.Character;
 import protocol.dto.udp.UpdateEncryptionWrapper;
 import protocol.dto.update.CharacterListUpdateDto;
@@ -10,13 +9,17 @@ import util.SerializableUtil;
 import java.util.Arrays;
 import java.util.concurrent.BlockingQueue;
 
+import static engine.handler.SceneHandler.SCENE_HANDLER;
+
 public class ServerUpdateProcessor implements Runnable {
     private final BlockingQueue<UpdateEncryptionWrapper> updatesToProcess;
     private final byte[] encryptionKey;
+    private final int connectionId;
 
-    public ServerUpdateProcessor(BlockingQueue<UpdateEncryptionWrapper> updatesToProcess, byte[] encryptionKey) {
+    public ServerUpdateProcessor(BlockingQueue<UpdateEncryptionWrapper> updatesToProcess, byte[] encryptionKey, int connectionId) {
         this.updatesToProcess = updatesToProcess;
         this.encryptionKey = encryptionKey;
+        this.connectionId = connectionId;
     }
 
     @Override
@@ -24,28 +27,35 @@ public class ServerUpdateProcessor implements Runnable {
         while (true) {
             try {
                 UpdateEncryptionWrapper update = this.updatesToProcess.take();
-                byte[] payload = update.getEncryptedPayload();
-                EncryptionHandler encryptionHandler = new EncryptionHandler(this.encryptionKey);
-                payload = encryptionHandler.decryptByteArray(payload);
-                int packetSizeUnpadded = EncryptionHandler.readHeaderToInt(payload);
-                byte[] unpaddedPayload = Arrays.copyOfRange(payload, 2, packetSizeUnpadded + 2);
-                CharacterListUpdateDto characterListUpdateDto = (CharacterListUpdateDto) SerializableUtil.fromByteArray(unpaddedPayload);
-                for (CharacterListUpdateDto.CharacterUpdateDto characterUpdateDto : characterListUpdateDto.getCharacterUpdateDtos()) {
-                    if (SceneHandler.SCENE_HANDLER.getCharacter(String.valueOf(characterUpdateDto.getCharacterId())) == null) {
-                        Character character = new Character(PrimitiveMeshShape.QUAD, ShaderType.DEFAULT);
-                        SceneHandler.SCENE_HANDLER.addCharacter(String.valueOf(characterUpdateDto.getCharacterId()), character);
-                        System.out.println("created character with id " + characterUpdateDto.getCharacterId());
-                    } else {
-                        Character character = SceneHandler.SCENE_HANDLER.getCharacter(String.valueOf(characterUpdateDto.getCharacterId()));
-                        character.setPositionX(characterUpdateDto.getPositionX());
-                        character.setPositionY(characterUpdateDto.getPositionY());
-                        System.out.println("update character with id " + characterUpdateDto.getCharacterId());
+                if (connectionId == update.getConnectionId()) {
+                    CharacterListUpdateDto characterListUpdateDto = decryptPayload(update);
+                    for (CharacterListUpdateDto.CharacterUpdateDto characterUpdateDto : characterListUpdateDto.getCharacterUpdateDtos()) {
+                        addOrUpdateCharacter(characterUpdateDto);
                     }
-                    System.out.println("processed one server character update for character id " + characterUpdateDto.getCharacterId());
                 }
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
+    }
+
+    private void addOrUpdateCharacter(CharacterListUpdateDto.CharacterUpdateDto characterUpdateDto) {
+        if (SCENE_HANDLER.containsCharacter(String.valueOf(characterUpdateDto.getCharacterId()))) {
+            Character character = SCENE_HANDLER.getCharacter(String.valueOf(characterUpdateDto.getCharacterId()));
+            character.setPositionX(characterUpdateDto.getPositionX());
+            character.setPositionY(characterUpdateDto.getPositionY());
+        } else {
+            Character character = new Character(PrimitiveMeshShape.QUAD, ShaderType.DEFAULT);
+            SCENE_HANDLER.addCharacter(String.valueOf(characterUpdateDto.getCharacterId()), character);
+        }
+    }
+
+    private CharacterListUpdateDto decryptPayload(UpdateEncryptionWrapper update) {
+        byte[] payload = update.getEncryptedPayload();
+        EncryptionHandler encryptionHandler = new EncryptionHandler(this.encryptionKey);
+        payload = encryptionHandler.decryptByteArray(payload);
+        int packetSizeUnpadded = EncryptionHandler.readHeaderToInt(payload);
+        byte[] unpaddedPayload = Arrays.copyOfRange(payload, 2, packetSizeUnpadded + 2);
+        return (CharacterListUpdateDto) SerializableUtil.fromByteArray(unpaddedPayload);
     }
 }

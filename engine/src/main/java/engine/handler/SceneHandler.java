@@ -43,6 +43,10 @@ public class SceneHandler {
         return null;
     }
 
+    public boolean containsCharacter(String key) {
+        return this.characters.containsKey(key);
+    }
+
     public void addObject(String key, GameObject gameObject) {
         String renderableKey = RenderHandler.RENDER_HANDLER.addToRenderQueue(gameObject);
         KeyObjectSet<String, GameObject> previousEntry = this.objects.put(key, new KeyObjectSet<>(renderableKey, gameObject));

@@ -6,9 +6,7 @@ import util.SerializableUtil;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.SocketException;
+import java.net.*;
 import java.util.Arrays;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -20,12 +18,19 @@ public class UpdateListener implements Runnable {
 
     public BlockingQueue<UpdateEncryptionWrapper> receivedUpdates = new LinkedBlockingQueue<>();
 
+    private String address;
     private final String port;
     private final DatagramSocket socket;
 
     public UpdateListener() {
         this.socket = createSocket();
         this.port = String.valueOf(this.socket.getLocalPort());
+        try {
+            this.address = InetAddress.getLocalHost().getHostAddress();
+        } catch (UnknownHostException e) {
+            System.err.println("Failed to get local address: " + e.getMessage());
+            System.exit(1);
+        }
     }
 
     @Override
@@ -58,7 +63,7 @@ public class UpdateListener implements Runnable {
     }
 
     public String getAddress() {
-        return this.socket.getLocalAddress().toString();
+        return this.address;
     }
 
     private static DatagramSocket createSocket() {

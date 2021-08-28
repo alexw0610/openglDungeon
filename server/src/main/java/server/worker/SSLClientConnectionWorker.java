@@ -25,14 +25,14 @@ public class SSLClientConnectionWorker implements Runnable {
     private ObjectInputStream objectInputStream;
     private final RequestProcessor requestProcessor;
 
-    public SSLClientConnectionWorker(SSLSocket socket, String udpRecPort) {
+    public SSLClientConnectionWorker(SSLSocket socket, String address, String port) {
         this.socket = socket;
         this.socket.setEnabledProtocols(new String[]{"TLSv1.2"});
         String url = applicationProperties.getProperty("dbUrl");
         String user = applicationProperties.getProperty("dbUser");
         String password = applicationProperties.getProperty("dbPassword");
         DatabaseConnection dbConnection = new DatabaseConnection(url, user, password);
-        requestProcessor = new RequestProcessor(dbConnection, udpRecPort);
+        requestProcessor = new RequestProcessor(dbConnection, address, port);
     }
 
     @Override

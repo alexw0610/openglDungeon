@@ -27,7 +27,7 @@ public class UpdateSender {
             UpdateEncryptionWrapper wrapper = wrapEnrcyptedPayload(encryptedPayload, connectionId);
             sendWrapper(wrapper);
         } catch (IOException e) {
-            System.err.println("Failed to send packet to client " + address.toString());
+            System.err.println("Failed to send packet to " + address.toString());
         }
     }
 

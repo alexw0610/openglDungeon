@@ -9,10 +9,11 @@ import lombok.experimental.SuperBuilder;
 @Setter
 @SuperBuilder
 @NoArgsConstructor
-public class CharacterLocationDto {
+public class CharacterDto {
 
     private int characterId;
-    private double positionX;
-    private double positionY;
+    private int userAccountId;
+    private String characterName;
+    private int characterLevel;
 
 }
