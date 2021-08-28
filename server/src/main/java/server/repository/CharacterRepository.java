@@ -1,10 +1,10 @@
 package server.repository;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import protocol.dto.update.PlayerUpdateDto;
-import server.DatabaseConnection;
 import server.repository.dto.CharacterLocationDto;
 
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.LinkedList;
@@ -12,7 +12,8 @@ import java.util.List;
 
 public class CharacterRepository {
 
-    public static final String UPSERT_CHARACTER_LOCATION = "INSERT INTO CHARACTER_LOCATIONS " +
+    private static final Logger LOG = LoggerFactory.getLogger(CharacterRepository.class);
+    private static final String UPSERT_CHARACTER_LOCATION = "INSERT INTO CHARACTER_LOCATIONS " +
             "(character_id, character_pos_x, character_pos_y) " +
             "VALUES " +
             "(?, ?, ?)" +
@@ -21,7 +22,7 @@ public class CharacterRepository {
             "character_pos_x = EXCLUDED.character_pos_x, " +
             "character_pos_y = EXCLUDED.character_pos_y;";
 
-    public static final String RETRIEVE_CHARACTER_LOCATIONS = "SELECT " +
+    private static final String RETRIEVE_CHARACTER_LOCATIONS = "SELECT " +
             "character_id, character_pos_x, character_pos_y " +
             "FROM CHARACTER_LOCATIONS " +
             "WHERE character_id " +
@@ -30,34 +31,25 @@ public class CharacterRepository {
 
 
     public static boolean updateCharacterLocation(DatabaseConnection connection, PlayerUpdateDto playerUpdateDto) {
-        try {
-            PreparedStatement statement = connection.getConnection().prepareStatement(UPSERT_CHARACTER_LOCATION);
-            statement.setInt(1, playerUpdateDto.getCharacterId());
-            statement.setDouble(2, playerUpdateDto.getPositionX());
-            statement.setDouble(3, playerUpdateDto.getPositionY());
-            statement.executeUpdate();
-            return true;
-        } catch (SQLException throwables) {
-            System.err.println("Error while executing Query!");
-            throwables.printStackTrace();
-            return false;
-        }
+        return connection.executeUpdate(UPSERT_CHARACTER_LOCATION,
+                playerUpdateDto.getCharacterId(),
+                playerUpdateDto.getPositionX(),
+                playerUpdateDto.getPositionY());
     }
 
     public static List<CharacterLocationDto> getCharacterLocationsForCharacterId(DatabaseConnection connection, int characterId) {
         List<CharacterLocationDto> resultList = new LinkedList<>();
         try {
-            ResultSet result = connection.executeQuery(RETRIEVE_CHARACTER_LOCATIONS, characterId);
-            while (result.next()) {
+            ResultSet resultSet = connection.execute(RETRIEVE_CHARACTER_LOCATIONS, characterId);
+            while (resultSet.next()) {
                 resultList.add(CharacterLocationDto.builder()
-                        .characterId(result.getInt(1))
-                        .positionX(result.getDouble(2))
-                        .positionY(result.getDouble(3))
+                        .characterId(resultSet.getInt(1))
+                        .positionX(resultSet.getDouble(2))
+                        .positionY(resultSet.getDouble(3))
                         .build());
             }
-        } catch (SQLException throwables) {
-            System.err.println("Error while executing Query!");
-            throwables.printStackTrace();
+        } catch (SQLException e) {
+            LOG.warn("Failed to extract any DTOs {}", e.getMessage());
         }
         return resultList;
     }

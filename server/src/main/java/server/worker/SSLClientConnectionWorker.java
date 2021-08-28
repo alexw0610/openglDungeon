@@ -1,21 +1,24 @@
 package server.worker;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import protocol.dto.Request;
 import protocol.dto.ssl.AuthenticationRequest;
 import protocol.dto.ssl.GenericResponse;
 import protocol.dto.ssl.ReadyForReceivingRequest;
-import server.DatabaseConnection;
 import server.protocol.RequestProcessor;
+import server.repository.DatabaseConnection;
 import util.ApplicationProperties;
 
 import javax.net.ssl.SSLSocket;
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.sql.SQLException;
 
 public class SSLClientConnectionWorker implements Runnable {
 
+    private static final Logger LOG = LoggerFactory.getLogger(SSLClientConnectionWorker.class);
     private static final ApplicationProperties applicationProperties = new ApplicationProperties();
     private final SSLSocket socket;
     private ObjectOutputStream objectOutputStream;
@@ -30,38 +33,32 @@ public class SSLClientConnectionWorker implements Runnable {
         String password = applicationProperties.getProperty("dbPassword");
         DatabaseConnection dbConnection = new DatabaseConnection(url, user, password);
         requestProcessor = new RequestProcessor(dbConnection, udpRecPort);
-
-
     }
 
     @Override
     public void run() {
-        System.out.println(String.format("%s starting.", Thread.currentThread().getName()));
         try {
             createObjectIOStreams();
         } catch (IOException e) {
-            System.err.println("Error while creating IO Socket Objects! " + e.getMessage());
-            ;
+            LOG.error("Error while creating IO Socket Objects! {}", e.getMessage());
             return;
         }
         try {
             listenForRequests();
         } catch (IOException | ClassNotFoundException e) {
-            System.err.println("Error while processing Request! " + e.getMessage());
-        }
+            if (e instanceof EOFException && this.requestProcessor.getServedClient() != null) {
+                LOG.info("SSL connection with client finished! \n {}", this.requestProcessor.getServedClient().toString());
 
-        try {
-            requestProcessor.close();
-        } catch (SQLException e) {
-            System.err.println("Error while gracefully trying to close DB connection! " + e.getMessage());
+            } else {
+                LOG.warn("Error while processing Request! {} ", e.getMessage());
+            }
         }
-
+        requestProcessor.close();
         try {
             socket.close();
         } catch (IOException e) {
-            System.err.println("Error while gracefully closing socket! " + e.getMessage());
+            LOG.warn("Error while gracefully closing socket! {}", e.getMessage());
         }
-        System.out.println(String.format("%s closing.", Thread.currentThread().getName()));
     }
 
     private void listenForRequests() throws IOException, ClassNotFoundException {

@@ -4,16 +4,15 @@ import lombok.SneakyThrows;
 import protocol.dto.ssl.AuthenticationRequest;
 import protocol.dto.ssl.GenericResponse;
 import protocol.dto.ssl.ReadyForReceivingRequest;
-import server.DatabaseConnection;
 import server.connection.SubscribedClient;
 import server.connection.SubscriptionHandler;
+import server.repository.DatabaseConnection;
 import server.repository.UserRepository;
+import server.repository.dto.UserDto;
 
 import java.net.InetAddress;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,7 +27,8 @@ public class RequestProcessor {
     private final String udpRecPort;
     private boolean isAuthenticated = false;
     private final byte[] encryptionKey = new byte[16];
-    private String userAccountId;
+    private int userAccountId;
+    private SubscribedClient servedClient;
 
     @SneakyThrows
     public RequestProcessor(DatabaseConnection connection, String udpRecPort) {
@@ -38,53 +38,46 @@ public class RequestProcessor {
     }
 
     public GenericResponse processAuthenticationRequest(AuthenticationRequest authenticationRequest) {
-        try {
-            ResultSet resultSet = UserRepository.getByUsernameAndPassword(connection, authenticationRequest.getUsername(), authenticationRequest.getPassword());
-            //TODO: get character for user
-            GenericResponse genericResponse;
-            if (resultSet.next()) {
-                this.userAccountId = resultSet.getString("user_account_id");
-                Map<String, String> parameters = new HashMap<>();
-                parameters.put(ENCRYPTION_KEY, getEncodedEncryptionKey());
-                genericResponse = GenericResponse.builder()
-                        .responseStatus(true)
-                        .responseText(String.format("Hello %s, successfully authenticated.", authenticationRequest.getUsername()))
-                        .responseParameters(parameters)
-                        .build();
-                this.isAuthenticated = true;
-            } else {
-                genericResponse = GenericResponse.builder()
-                        .responseStatus(false)
-                        .responseText("Wrong username and/or password!")
-                        .build();
-            }
-            return genericResponse;
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
+
+        UserDto user = UserRepository.getByUsernameAndPassword(connection, authenticationRequest.getUsername(), authenticationRequest.getPassword());
+        //TODO: get character for user
+        GenericResponse genericResponse;
+        if (user != null) {
+            this.userAccountId = user.getUserAccountId();
+            Map<String, String> parameters = new HashMap<>();
+            parameters.put(ENCRYPTION_KEY, getEncodedEncryptionKey());
+            genericResponse = GenericResponse.builder()
+                    .responseStatus(true)
+                    .responseText(String.format("Hello %s, successfully authenticated.", authenticationRequest.getUsername()))
+                    .responseParameters(parameters)
+                    .build();
+            this.isAuthenticated = true;
+        } else {
+            genericResponse = GenericResponse.builder()
+                    .responseStatus(false)
+                    .responseText("Failed to authenticate. Wrong username and/or password")
+                    .build();
         }
-        return GenericResponse.builder()
-                .responseStatus(false)
-                .responseText("Authentication service currently unavailable!")
-                .build();
+        return genericResponse;
     }
 
     public GenericResponse processReadyForReceivingRequest(ReadyForReceivingRequest readyForReceivingRequest, InetAddress clientAddress) {
-        if (isAuthenticated && userAccountId != null) {
+        if (this.isAuthenticated) {
             if (UserRepository.setUserAccountActive(connection, this.userAccountId, clientAddress.getHostAddress(), readyForReceivingRequest.getReceivingPort())) {
-                SubscribedClient client = SubscribedClient.builder()
+                servedClient = SubscribedClient.builder()
                         .clientAddress(clientAddress)
                         .clientPort(readyForReceivingRequest.getReceivingPort())
                         .encryptionKey(this.encryptionKey)
-                        .characterId(Integer.parseInt(this.userAccountId))
-                        .userId(Integer.parseInt(this.userAccountId))
+                        .characterId(this.userAccountId)
+                        .userId(this.userAccountId)
                         .build();
-                SubscriptionHandler.instance.subscribedClients.put(client.hashCode(), client);
+                SubscriptionHandler.instance.subscribedClients.put(servedClient.hashCode(), servedClient);
                 Map<String, String> parameters = new HashMap<>();
-                parameters.put(UDP_LISTENING_PORT, udpRecPort);
-                parameters.put(CONNECTION_ID, String.valueOf(client.hashCode()));
+                parameters.put(UDP_LISTENING_PORT, this.udpRecPort);
+                parameters.put(CONNECTION_ID, String.valueOf(servedClient.hashCode()));
                 return GenericResponse.builder()
                         .responseStatus(true)
-                        .responseText("UDP address/port successfully registered! Send your updates to the port UDP_LISTENING_PORT")
+                        .responseText("UDP address/port successfully registered!")
                         .responseParameters(parameters)
                         .build();
             } else {
@@ -96,7 +89,7 @@ public class RequestProcessor {
         }
         return GenericResponse.builder()
                 .responseStatus(false)
-                .responseText("Error while registering UDP address/port!")
+                .responseText("Error while registering UDP address/port! You are not authenticated!")
                 .build();
     }
 
@@ -106,7 +99,11 @@ public class RequestProcessor {
         return new String(encodedRandomBytes, StandardCharsets.UTF_8);
     }
 
-    public void close() throws SQLException {
+    public void close() {
         this.connection.close();
+    }
+
+    public SubscribedClient getServedClient() {
+        return this.servedClient;
     }
 }

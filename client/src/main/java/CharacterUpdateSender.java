@@ -25,7 +25,6 @@ public class CharacterUpdateSender implements Runnable {
                     .characterId(1)
                     .build();
             this.updateSender.sendUpdate(playerUpdateDto, this.connectionId);
-            System.out.println("Sent update for ConnectionId: " + this.connectionId);
             try {
                 Thread.sleep(10);
             } catch (InterruptedException e) {

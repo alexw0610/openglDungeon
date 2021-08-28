@@ -1,19 +1,21 @@
 package server.repository;
 
-import server.DatabaseConnection;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import server.repository.dto.UserDto;
 
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class UserRepository {
 
-    public static final String SELECT_USERNAME_PASSWORD = "SELECT user_account_id, username, password " +
+    private static final Logger LOG = LoggerFactory.getLogger(CharacterRepository.class);
+    private static final String SELECT_USERNAME_PASSWORD = "SELECT user_account_id, username, password " +
             "FROM accounts " +
             "WHERE username = ? " +
             "AND password = ?;";
 
-    public static final String INSERT_CONNECTED_USER = "INSERT INTO CONNECTED_ACCOUNTS " +
+    private static final String INSERT_CONNECTED_USER = "INSERT INTO CONNECTED_ACCOUNTS " +
             "(user_account_id, connected_ip_address, connected_udp_port) " +
             "VALUES " +
             "(?, ?, ?)" +
@@ -22,22 +24,23 @@ public class UserRepository {
             "connected_ip_address = EXCLUDED.connected_ip_address, " +
             "connected_udp_port = EXCLUDED.connected_udp_port;";
 
-    public static ResultSet getByUsernameAndPassword(DatabaseConnection connection, String username, String password) {
-        return connection.executeQuery(SELECT_USERNAME_PASSWORD, username, password);
+    public static UserDto getByUsernameAndPassword(DatabaseConnection connection, String username, String password) {
+        UserDto userDto = null;
+        ResultSet resultSet = connection.execute(SELECT_USERNAME_PASSWORD, username, password);
+        try {
+            resultSet.next();
+            userDto = UserDto.builder()
+                    .userAccountId(resultSet.getInt("user_account_id"))
+                    .username(resultSet.getString("username"))
+                    .password(resultSet.getString("password"))
+                    .build();
+        } catch (SQLException e) {
+            LOG.warn("Failed to extract DTO {}", e.getMessage());
+        }
+        return userDto;
     }
 
-    public static boolean setUserAccountActive(DatabaseConnection connection, String user_account_id, String ip_address, String udp_port) {
-        try {
-            PreparedStatement statement = connection.getConnection().prepareStatement(INSERT_CONNECTED_USER);
-            statement.setInt(1, Integer.parseInt(user_account_id));
-            statement.setString(2, ip_address);
-            statement.setString(3, udp_port);
-            statement.executeUpdate();
-            return true;
-        } catch (SQLException throwables) {
-            System.err.println("Error while executing Query!");
-            throwables.printStackTrace();
-            return false;
-        }
+    public static boolean setUserAccountActive(DatabaseConnection connection, int user_account_id, String ip_address, String udp_port) {
+        return connection.executeUpdate(INSERT_CONNECTED_USER, user_account_id, ip_address, udp_port);
     }
 }

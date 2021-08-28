@@ -46,6 +46,7 @@ public class Client {
 
         UpdateListener updateListener = new UpdateListener();
         new Thread(updateListener).start();
+
         GenericResponse response = registerUdpListener(updateListener, sslServerConnection);
 
         String serverUdpUpdatePort = ParameterUtil.getParameterIfExists(response.getResponseParameters(), UDP_LISTENING_PORT);
@@ -65,7 +66,6 @@ public class Client {
 
         ServerUpdateProcessor serverUpdateProcessor = new ServerUpdateProcessor(updateListener.receivedUpdates, key);
         new Thread(serverUpdateProcessor).start();
-
         sslServerConnection.close();
     }
 

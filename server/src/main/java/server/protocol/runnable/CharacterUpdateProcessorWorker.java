@@ -1,8 +1,8 @@
 package server.protocol.runnable;
 
 import protocol.dto.update.PlayerUpdateDto;
-import server.DatabaseConnection;
 import server.repository.CharacterRepository;
+import server.repository.DatabaseConnection;
 
 public class CharacterUpdateProcessorWorker implements Runnable {
 
@@ -16,8 +16,6 @@ public class CharacterUpdateProcessorWorker implements Runnable {
 
     @Override
     public void run() {
-        if (!CharacterRepository.updateCharacterLocation(connection, playerUpdateDto)) {
-            System.err.println("Error while updating character location! " + this.playerUpdateDto.toString());
-        }
+        CharacterRepository.updateCharacterLocation(connection, playerUpdateDto);
     }
 }

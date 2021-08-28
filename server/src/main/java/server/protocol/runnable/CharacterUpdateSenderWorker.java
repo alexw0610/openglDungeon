@@ -1,9 +1,9 @@
 package server.protocol.runnable;
 
 import protocol.dto.update.CharacterListUpdateDto;
-import server.DatabaseConnection;
 import server.connection.SubscribedClient;
 import server.repository.CharacterRepository;
+import server.repository.DatabaseConnection;
 import server.repository.dto.CharacterLocationDto;
 import udp.UpdateSender;
 
@@ -37,6 +37,5 @@ public class CharacterUpdateSenderWorker implements Runnable {
         CharacterListUpdateDto characterListUpdateDto = new CharacterListUpdateDto();
         characterListUpdateDto.setCharacterUpdateDtos(characterUpdateDtoList);
         sender.sendUpdate(characterListUpdateDto, connectionId);
-        System.out.println("sent update to client");
     }
 }

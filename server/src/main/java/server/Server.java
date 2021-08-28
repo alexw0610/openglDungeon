@@ -1,5 +1,8 @@
 package server;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import server.repository.DatabaseConnection;
 import server.worker.ClientUpdateProcessor;
 import server.worker.ClientUpdateSender;
 import server.worker.SSLClientConnectionServer;
@@ -10,10 +13,10 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.sql.SQLException;
 
 public class Server {
 
+    private static final Logger LOG = LoggerFactory.getLogger(Server.class);
     private static final ApplicationProperties applicationProperties = new ApplicationProperties();
 
     public static void main(String[] args) {
@@ -31,6 +34,8 @@ public class Server {
 
         SSLClientConnectionServer sslClientConnectionServer = new SSLClientConnectionServer(clientUpdateListener.getPort());
         new Thread(sslClientConnectionServer).start();
+
+        LOG.info("Server startup finished");
     }
 
     private static void setSystemProperties() {
@@ -46,12 +51,7 @@ public class Server {
         processFilesInDirectory("function", databaseConnection);
         processFilesInDirectory("table", databaseConnection);
         processFilesInDirectory("foreignKey", databaseConnection);
-        try {
-            databaseConnection.close();
-        } catch (SQLException e) {
-            System.err.println("Error while gracefully trying to close DB connection!");
-            e.printStackTrace();
-        }
+        databaseConnection.close();
     }
 
     private static void processFilesInDirectory(String folderName, DatabaseConnection databaseConnection) {
@@ -59,9 +59,9 @@ public class Server {
         for (File file : resourceDir.listFiles()) {
             try {
                 String content = new String(Files.readAllBytes(Paths.get(file.getPath())));
-                databaseConnection.executeUpdate(content);
+                databaseConnection.execute(content);
             } catch (IOException e) {
-                System.err.println(String.format("Error while creating DB Schema with files from /%s Error: %s", folderName, e.getMessage()));
+                LOG.error(String.format("Error while creating DB Schema with files from /%s Error: %s", folderName, e.getMessage()));
             }
         }
     }

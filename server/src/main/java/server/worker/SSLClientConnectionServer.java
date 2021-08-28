@@ -1,5 +1,7 @@
 package server.worker;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import util.ApplicationProperties;
 
 import javax.net.ssl.SSLServerSocket;
@@ -9,6 +11,7 @@ import java.io.IOException;
 
 public class SSLClientConnectionServer implements Runnable {
 
+    private static final Logger LOG = LoggerFactory.getLogger(SSLClientConnectionServer.class);
     private static final ApplicationProperties applicationProperties = new ApplicationProperties();
     private final SSLServerSocket sslServerSocket;
     private final String udpRecPort;
@@ -25,7 +28,7 @@ public class SSLClientConnectionServer implements Runnable {
             try {
                 sslsocket = (SSLSocket) sslServerSocket.accept();
             } catch (IOException e) {
-                System.err.println("Error while waiting for a new connection.");
+                LOG.error("Error while waiting for a new connection. Exiting.");
                 System.exit(1);
             }
             SSLClientConnectionWorker sslClientConnectionWorker = new SSLClientConnectionWorker(sslsocket, udpRecPort);
@@ -39,7 +42,7 @@ public class SSLClientConnectionServer implements Runnable {
         try {
             sslserversocket = (SSLServerSocket) factory.createServerSocket(Integer.parseInt(applicationProperties.getProperty("port")));
         } catch (IOException e) {
-            System.err.println("Error creating SSLServerSocket. " + e.getMessage());
+            LOG.error("Error creating SSLServerSocket. Exiting. {}", e.getMessage());
             System.exit(1);
         }
         return sslserversocket;
