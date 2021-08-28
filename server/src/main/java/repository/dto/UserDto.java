@@ -1,4 +1,4 @@
-package server.repository.dto;
+package repository.dto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,11 +9,10 @@ import lombok.experimental.SuperBuilder;
 @Setter
 @SuperBuilder
 @NoArgsConstructor
-public class CharacterDto {
+public class UserDto {
 
-    private int characterId;
     private int userAccountId;
-    private String characterName;
-    private int characterLevel;
+    private String username;
+    private String password;
 
 }

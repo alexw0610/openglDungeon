@@ -1,10 +1,11 @@
-package server.protocol.runnable;
+package processor.worker;
 
-import protocol.dto.update.CharacterListUpdateDto;
-import server.connection.SubscribedClient;
-import server.repository.CharacterRepository;
-import server.repository.DatabaseConnection;
-import server.repository.dto.CharacterLocationDto;
+import connection.dto.SubscribedClient;
+import exception.UDPServerException;
+import protocol.dto.udp.CharacterListUpdateDto;
+import repository.CharacterRepository;
+import repository.DatabaseConnection;
+import repository.dto.CharacterLocationDto;
 import udp.UpdateSender;
 
 import java.util.LinkedList;
@@ -36,6 +37,10 @@ public class CharacterUpdateSenderWorker implements Runnable {
         }
         CharacterListUpdateDto characterListUpdateDto = new CharacterListUpdateDto();
         characterListUpdateDto.setCharacterUpdateDtos(characterUpdateDtoList);
-        sender.sendUpdate(characterListUpdateDto, connectionId);
+        try {
+            sender.sendUpdate(characterListUpdateDto, connectionId);
+        } catch (UDPServerException e) {
+            System.err.println(e.getMessage());
+        }
     }
 }

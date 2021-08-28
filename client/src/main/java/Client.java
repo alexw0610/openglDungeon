@@ -5,7 +5,10 @@ import engine.handler.SceneHandler;
 import engine.object.Camera;
 import engine.object.GameObject;
 import engine.object.Player;
+import exception.UDPServerException;
 import org.apache.commons.lang3.StringUtils;
+import processor.CharacterUpdateSender;
+import processor.ServerUpdateProcessor;
 import protocol.dto.ssl.AuthenticationRequest;
 import protocol.dto.ssl.GenericResponse;
 import protocol.dto.ssl.ReadyForReceivingRequest;
@@ -25,6 +28,7 @@ public class Client {
     private static final String SERVER_UDP_HOST = "UDP_LISTENING_ADDRESS";
     private static final String SERVER_UDP_PORT = "UDP_LISTENING_PORT";
     private static final String CONNECTION_ID = "CONNECTION_ID";
+    private static final String DEFAULT_UDP_PORT = "defaultUDPPort";
 
     private static String serverUdpUpdatePort;
     private static String serverUdpUpdateHost;
@@ -42,14 +46,19 @@ public class Client {
         SceneHandler.SCENE_HANDLER.addObject("floor", floor);
         Camera.CAMERA.setLookAtTarget(player);
 
-        establishServerConnection();
+        try {
+            establishServerConnection();
+        } catch (UDPServerException e) {
+            System.err.println("Failed to create server connection! " + e.getMessage());
+            System.exit(1);
+        }
     }
 
-    private static void establishServerConnection() {
+    private static void establishServerConnection() throws UDPServerException {
         SSLServerConnection sslServerConnection = new SSLServerConnection();
         startAuthenticationProcess(sslServerConnection);
 
-        UpdateListener updateListener = new UpdateListener();
+        UpdateListener updateListener = new UpdateListener(applicationProperties.getProperty(DEFAULT_UDP_PORT));
         new Thread(updateListener).start();
 
         registerUdpListener(updateListener, sslServerConnection);
@@ -69,7 +78,7 @@ public class Client {
                 .password(applicationProperties.getProperty("password"))
                 .build();
         GenericResponse genericResponse = serverConnection.sendAndAwait(authenticationRequest);
-        if (!genericResponse.isSuccessful()) {
+        if (genericResponse.isFailed()) {
             System.err.println("Error while authenticating with the server. Response does not contain encryption key.");
             serverConnection.close();
             System.exit(1);
@@ -84,7 +93,7 @@ public class Client {
                 .characterName(applicationProperties.getProperty("characterName"))
                 .build();
         GenericResponse genericResponse = serverConnection.sendAndAwait(readyForReceivingRequest);
-        if (!genericResponse.isSuccessful()) {
+        if (genericResponse.isFailed()) {
             System.err.println("Error while registering UDP Socket with the server. Request was not successful " + genericResponse.getResponseText());
             System.exit(1);
         }

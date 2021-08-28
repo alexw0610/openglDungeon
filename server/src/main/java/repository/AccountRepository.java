@@ -1,8 +1,8 @@
-package server.repository;
+package repository;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import server.repository.dto.UserDto;
+import repository.dto.UserDto;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

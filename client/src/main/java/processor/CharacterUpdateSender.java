@@ -1,5 +1,8 @@
+package processor;
+
 import engine.object.Player;
-import protocol.dto.update.PlayerUpdateDto;
+import exception.UDPServerException;
+import protocol.dto.udp.PlayerUpdateDto;
 import udp.UpdateSender;
 
 public class CharacterUpdateSender implements Runnable {
@@ -16,6 +19,7 @@ public class CharacterUpdateSender implements Runnable {
 
     @Override
     public void run() {
+        //TODO Sheduled task executor
         while (true) {
             PlayerUpdateDto playerUpdateDto = PlayerUpdateDto.builder()
                     .positionX(this.player.getPosition().x())
@@ -24,7 +28,11 @@ public class CharacterUpdateSender implements Runnable {
                     .zoneId(1)
                     .characterId(1)
                     .build();
-            this.updateSender.sendUpdate(playerUpdateDto, this.connectionId);
+            try {
+                this.updateSender.sendUpdate(playerUpdateDto, this.connectionId);
+            } catch (UDPServerException e) {
+                System.err.println(e.getMessage());
+            }
             try {
                 Thread.sleep(10);
             } catch (InterruptedException e) {

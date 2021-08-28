@@ -18,8 +18,8 @@ public class GenericResponse implements Serializable, Response {
     public String responseText;
     public Map<String, String> responseParameters;
 
-    public boolean isSuccessful() {
-        return responseStatus;
+    public boolean isFailed() {
+        return !responseStatus;
     }
 
 }

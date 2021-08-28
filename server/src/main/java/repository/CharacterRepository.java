@@ -1,10 +1,10 @@
-package server.repository;
+package repository;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import protocol.dto.update.PlayerUpdateDto;
-import server.repository.dto.CharacterDto;
-import server.repository.dto.CharacterLocationDto;
+import protocol.dto.udp.PlayerUpdateDto;
+import repository.dto.CharacterDto;
+import repository.dto.CharacterLocationDto;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

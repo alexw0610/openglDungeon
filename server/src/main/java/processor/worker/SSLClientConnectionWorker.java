@@ -1,13 +1,13 @@
-package server.worker;
+package processor.worker;
 
+import connection.RequestProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import protocol.dto.Request;
 import protocol.dto.ssl.AuthenticationRequest;
 import protocol.dto.ssl.GenericResponse;
 import protocol.dto.ssl.ReadyForReceivingRequest;
-import server.protocol.RequestProcessor;
-import server.repository.DatabaseConnection;
+import repository.DatabaseConnection;
 import util.ApplicationProperties;
 
 import javax.net.ssl.SSLSocket;

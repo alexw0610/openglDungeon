@@ -1,8 +1,8 @@
-package server.protocol.runnable;
+package processor.worker;
 
-import protocol.dto.update.PlayerUpdateDto;
-import server.repository.CharacterRepository;
-import server.repository.DatabaseConnection;
+import protocol.dto.udp.PlayerUpdateDto;
+import repository.CharacterRepository;
+import repository.DatabaseConnection;
 
 public class CharacterUpdateProcessorWorker implements Runnable {
 

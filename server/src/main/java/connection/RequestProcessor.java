@@ -1,16 +1,15 @@
-package server.protocol;
+package connection;
 
+import connection.dto.SubscribedClient;
 import lombok.SneakyThrows;
 import protocol.dto.ssl.AuthenticationRequest;
 import protocol.dto.ssl.GenericResponse;
 import protocol.dto.ssl.ReadyForReceivingRequest;
-import server.connection.SubscribedClient;
-import server.connection.SubscriptionHandler;
-import server.repository.AccountRepository;
-import server.repository.CharacterRepository;
-import server.repository.DatabaseConnection;
-import server.repository.dto.CharacterDto;
-import server.repository.dto.UserDto;
+import repository.AccountRepository;
+import repository.CharacterRepository;
+import repository.DatabaseConnection;
+import repository.dto.CharacterDto;
+import repository.dto.UserDto;
 
 import java.net.InetAddress;
 import java.nio.charset.StandardCharsets;

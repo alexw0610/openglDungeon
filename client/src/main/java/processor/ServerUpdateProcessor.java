@@ -1,8 +1,11 @@
+package processor;
+
 import engine.enumeration.PrimitiveMeshShape;
 import engine.enumeration.ShaderType;
 import engine.object.Character;
+import exception.EncryptionException;
+import protocol.dto.udp.CharacterListUpdateDto;
 import protocol.dto.udp.UpdateEncryptionWrapper;
-import protocol.dto.update.CharacterListUpdateDto;
 import security.EncryptionHandler;
 import util.SerializableUtil;
 
@@ -28,7 +31,12 @@ public class ServerUpdateProcessor implements Runnable {
             try {
                 UpdateEncryptionWrapper update = this.updatesToProcess.take();
                 if (connectionId == update.getConnectionId()) {
-                    CharacterListUpdateDto characterListUpdateDto = decryptPayload(update);
+                    CharacterListUpdateDto characterListUpdateDto = null;
+                    try {
+                        characterListUpdateDto = decryptPayload(update);
+                    } catch (EncryptionException e) {
+                        System.err.println(e.getMessage());
+                    }
                     for (CharacterListUpdateDto.CharacterUpdateDto characterUpdateDto : characterListUpdateDto.getCharacterUpdateDtos()) {
                         addOrUpdateCharacter(characterUpdateDto);
                     }
@@ -50,7 +58,7 @@ public class ServerUpdateProcessor implements Runnable {
         }
     }
 
-    private CharacterListUpdateDto decryptPayload(UpdateEncryptionWrapper update) {
+    private CharacterListUpdateDto decryptPayload(UpdateEncryptionWrapper update) throws EncryptionException {
         byte[] payload = update.getEncryptedPayload();
         EncryptionHandler encryptionHandler = new EncryptionHandler(this.encryptionKey);
         payload = encryptionHandler.decryptByteArray(payload);

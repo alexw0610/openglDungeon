@@ -1,5 +1,6 @@
 package udp;
 
+import exception.UDPServerException;
 import protocol.dto.udp.UpdateEncryptionWrapper;
 import security.EncryptionHandler;
 import util.SerializableUtil;
@@ -21,13 +22,13 @@ public class UpdateSender {
         this.encryptionKey = encryptionKey;
     }
 
-    public void sendUpdate(Serializable objectToSend, int connectionId) {
+    public void sendUpdate(Serializable objectToSend, int connectionId) throws UDPServerException {
         try {
             byte[] encryptedPayload = encryptObjectToSend(objectToSend);
             UpdateEncryptionWrapper wrapper = wrapEnrcyptedPayload(encryptedPayload, connectionId);
             sendWrapper(wrapper);
         } catch (IOException e) {
-            System.err.println("Failed to send packet to " + address.toString());
+            throw new UDPServerException("Failed to send packet to " + address.toString() + " with connectionId:" + connectionId);
         }
     }
 

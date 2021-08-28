@@ -1,11 +1,11 @@
-package server.worker;
+package processor;
 
+import connection.SubscriptionHandler;
+import connection.dto.SubscribedClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import server.connection.SubscribedClient;
-import server.connection.SubscriptionHandler;
-import server.protocol.runnable.CharacterUpdateSenderWorker;
-import server.repository.DatabaseConnection;
+import processor.worker.CharacterUpdateSenderWorker;
+import repository.DatabaseConnection;
 import util.ApplicationProperties;
 
 import java.util.concurrent.*;

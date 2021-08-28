@@ -1,11 +1,12 @@
-package server.service;
+package service;
 
+import exception.UDPServerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import server.repository.DatabaseConnection;
-import server.worker.ClientUpdateProcessor;
-import server.worker.ClientUpdateSender;
-import server.worker.SSLClientConnectionServer;
+import processor.ClientUpdateProcessor;
+import processor.ClientUpdateSender;
+import processor.SSLClientConnectionServer;
+import repository.DatabaseConnection;
 import udp.UpdateListener;
 import util.ApplicationProperties;
 
@@ -18,14 +19,21 @@ public class Server {
 
     private static Logger LOG;
     private static final ApplicationProperties applicationProperties = new ApplicationProperties();
+    private static final String DEFAULT_UDP_PORT = "defaultUDPPort";
 
     public static void main(String[] args) {
         setSystemProperties();
         LOG = LoggerFactory.getLogger(Server.class);
         setupDatabase();
 
-        UpdateListener clientUpdateListener = new UpdateListener();
-        new Thread(clientUpdateListener).start();
+        UpdateListener clientUpdateListener = null;
+        try {
+            clientUpdateListener = new UpdateListener(applicationProperties.getProperty(DEFAULT_UDP_PORT));
+            new Thread(clientUpdateListener).start();
+        } catch (UDPServerException e) {
+            LOG.error("Failed to create UDP listener. {}", e.getMessage());
+            System.exit(1);
+        }
 
         ClientUpdateProcessor clientUpdateProcessor = new ClientUpdateProcessor(clientUpdateListener.receivedUpdates);
         new Thread(clientUpdateProcessor).start();

@@ -1,7 +1,8 @@
-package server.worker;
+package processor;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import processor.worker.SSLClientConnectionWorker;
 import util.ApplicationProperties;
 
 import javax.net.ssl.SSLServerSocket;

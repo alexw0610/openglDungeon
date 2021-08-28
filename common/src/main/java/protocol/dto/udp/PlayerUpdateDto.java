@@ -1,4 +1,4 @@
-package protocol.dto.update;
+package protocol.dto.udp;
 
 import lombok.Builder;
 import lombok.Getter;

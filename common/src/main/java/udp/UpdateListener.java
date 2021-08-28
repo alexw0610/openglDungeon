@@ -1,7 +1,7 @@
 package udp;
 
+import exception.UDPServerException;
 import protocol.dto.udp.UpdateEncryptionWrapper;
-import util.ApplicationProperties;
 import util.SerializableUtil;
 
 import java.io.IOException;
@@ -13,23 +13,18 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 public class UpdateListener implements Runnable {
 
-    private static final ApplicationProperties applicationProperties = new ApplicationProperties();
-    public static final String DEFAULT_UDP_LISTENING_PORT = "defaultUDPListeningPort";
-
     public BlockingQueue<UpdateEncryptionWrapper> receivedUpdates = new LinkedBlockingQueue<>();
-
-    private String address;
+    private final String address;
     private final String port;
     private final DatagramSocket socket;
 
-    public UpdateListener() {
-        this.socket = createSocket();
+    public UpdateListener(String defaultPort) throws UDPServerException {
+        this.socket = createSocket(defaultPort);
         this.port = String.valueOf(this.socket.getLocalPort());
         try {
             this.address = InetAddress.getLocalHost().getHostAddress();
         } catch (UnknownHostException e) {
-            System.err.println("Failed to get local address: " + e.getMessage());
-            System.exit(1);
+            throw new UDPServerException("Failed to get local address: " + e.getMessage());
         }
     }
 
@@ -66,21 +61,17 @@ public class UpdateListener implements Runnable {
         return this.address;
     }
 
-    private static DatagramSocket createSocket() {
+    private static DatagramSocket createSocket(String defaultPort) throws UDPServerException {
         DatagramSocket sock;
         try {
-            sock = new DatagramSocket(Integer.parseInt(applicationProperties.getProperty(DEFAULT_UDP_LISTENING_PORT)));
+            sock = new DatagramSocket(Integer.parseInt(defaultPort));
             return sock;
         } catch (SocketException e) {
-            System.err.println(String.format("Error while creating UDP listener socket on default port %s", applicationProperties.getProperty(DEFAULT_UDP_LISTENING_PORT)));
             try {
                 sock = new DatagramSocket();
-                System.out.println(String.format("UDP listener socket created on alternative port %d", sock.getLocalPort()));
                 return sock;
             } catch (SocketException socketException) {
-                System.err.println("Failed to create UDP listener socket. Exiting.");
-                System.exit(1);
-                return null;
+                throw new UDPServerException("Failed to create UDP listener socket. Default port was " + defaultPort);
             }
         }
     }

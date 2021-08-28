@@ -1,5 +1,7 @@
 package security;
 
+import exception.EncryptionException;
+
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
@@ -33,11 +35,11 @@ public class EncryptionHandler {
         return encryptByteArray(request);
     }
 
-    public Serializable decryptByteArrayToObject(byte[] byteArray) {
+    public Serializable decryptByteArrayToObject(byte[] byteArray) throws EncryptionException {
         return fromByteArray(decryptByteArray(byteArray));
     }
 
-    public byte[] decryptByteArray(byte[] byteArray) {
+    public byte[] decryptByteArray(byte[] byteArray) throws EncryptionException {
         byte[] encryptedRequest = null;
         try {
             Cipher cipher = Cipher.getInstance(ALGORITHM);
@@ -45,7 +47,7 @@ public class EncryptionHandler {
             encryptedRequest = cipher.doFinal(byteArray);
 
         } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | BadPaddingException | IllegalBlockSizeException e) {
-            e.printStackTrace();
+            throw new EncryptionException("Error decrypting byte array. " + e.getMessage());
         }
         return encryptedRequest;
     }

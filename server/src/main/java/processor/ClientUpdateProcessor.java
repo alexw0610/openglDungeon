@@ -1,14 +1,15 @@
-package server.worker;
+package processor;
 
+import connection.SubscriptionHandler;
+import connection.dto.SubscribedClient;
+import exception.EncryptionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import processor.worker.CharacterUpdateProcessorWorker;
+import protocol.dto.udp.PlayerUpdateDto;
 import protocol.dto.udp.UpdateEncryptionWrapper;
-import protocol.dto.update.PlayerUpdateDto;
+import repository.DatabaseConnection;
 import security.EncryptionHandler;
-import server.connection.SubscribedClient;
-import server.connection.SubscriptionHandler;
-import server.protocol.runnable.CharacterUpdateProcessorWorker;
-import server.repository.DatabaseConnection;
 import util.ApplicationProperties;
 import util.SerializableUtil;
 
@@ -42,17 +43,22 @@ public class ClientUpdateProcessor implements Runnable {
         while (true) {
             try {
                 UpdateEncryptionWrapper clientUpdate = receivedUpdates.take();
-                processUpdate(clientUpdate);
+                try {
+                    processUpdate(clientUpdate);
+                } catch (EncryptionException e) {
+                    LOG.error("Failed to process update for connectionId: {} Error:{}", clientUpdate.getConnectionId(), e.getMessage());
+                }
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
     }
 
-    private void processUpdate(UpdateEncryptionWrapper clientUpdate) {
+    private void processUpdate(UpdateEncryptionWrapper clientUpdate) throws EncryptionException {
         SubscribedClient subscribedClient = SubscriptionHandler.instance.subscribedClients.get(clientUpdate.getConnectionId());
         if (subscribedClient != null) {
-            PlayerUpdateDto playerUpdateDto = decryptPayload(clientUpdate.getEncryptedPayload(), subscribedClient);
+            PlayerUpdateDto playerUpdateDto = null;
+            playerUpdateDto = decryptPayload(clientUpdate.getEncryptedPayload(), subscribedClient);
             playerUpdateDto.setUserId(subscribedClient.getUserId());
             playerUpdateDto.setCharacterId(subscribedClient.getCharacterId());
             CharacterUpdateProcessorWorker serverPlayerUpdateWorker = new CharacterUpdateProcessorWorker(this.databaseConnection, playerUpdateDto);
@@ -62,7 +68,7 @@ public class ClientUpdateProcessor implements Runnable {
         }
     }
 
-    private static PlayerUpdateDto decryptPayload(byte[] payload, SubscribedClient subscribedClient) {
+    private static PlayerUpdateDto decryptPayload(byte[] payload, SubscribedClient subscribedClient) throws EncryptionException {
         EncryptionHandler encryptionHandler = new EncryptionHandler(subscribedClient.getEncryptionKey());
         payload = encryptionHandler.decryptByteArray(payload);
         int packetSizeUnpadded = EncryptionHandler.readHeaderToInt(payload);

@@ -1,4 +1,6 @@
-package server.connection;
+package connection;
+
+import connection.dto.SubscribedClient;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;

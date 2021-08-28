@@ -1,4 +1,4 @@
-package server.connection;
+package connection.dto;
 
 import lombok.Builder;
 import lombok.Getter;

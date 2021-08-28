@@ -54,7 +54,7 @@
         <appender-ref ref="SERVICE"/>
     </logger>
 
-    <logger name="server.worker">
+    <logger name="server.processor">
         <appender-ref ref="ACCESS"/>
     </logger>
 
