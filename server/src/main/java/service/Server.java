@@ -54,7 +54,7 @@ public class Server {
     }
 
     private static void setSystemProperties() {
-        System.setProperty("javax.net.ssl.keyStore", applicationProperties.getResourceRootPath() + applicationProperties.getProperty("keyStore"));
+        System.setProperty("javax.net.ssl.keyStore", applicationProperties.getFileFromResourcePath(applicationProperties.getProperty("keyStore")).getPath());
         System.setProperty("javax.net.ssl.keyStorePassword", applicationProperties.getProperty("keyStorePassword"));
         System.setProperty("logback.configurationFile", applicationProperties.getProperty("logback.configurationFile"));
     }
@@ -71,7 +71,7 @@ public class Server {
     }
 
     private static void processFilesInDirectory(String folderName, DatabaseConnection databaseConnection) {
-        File resourceDir = new File(applicationProperties.getResourceRootPath() + "/database/" + folderName);
+        File resourceDir = applicationProperties.getFileFromResourcePath("database/" + folderName);
         for (File file : resourceDir.listFiles()) {
             try {
                 String content = new String(Files.readAllBytes(Paths.get(file.getPath())));
