@@ -50,15 +50,15 @@
     </appender>
 
 
-    <logger name="server.service">
+    <logger name="service">
         <appender-ref ref="SERVICE"/>
     </logger>
 
-    <logger name="server.processor">
+    <logger name="processor">
         <appender-ref ref="ACCESS"/>
     </logger>
 
-    <logger name="server.repository">
+    <logger name="repository">
         <appender-ref ref="DATABASE"/>
     </logger>
 
