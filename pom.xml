@@ -11,7 +11,5 @@
     <modules>
         <module>engine</module>
         <module>client</module>
-        <module>server</module>
-        <module>common</module>
     </modules>
 </project>

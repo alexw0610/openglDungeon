@@ -13,6 +13,7 @@ import engine.object.Mesh;
 import engine.object.Renderable;
 
 import java.nio.DoubleBuffer;
+import java.util.Arrays;
 
 public class RenderService {
 
@@ -26,10 +27,11 @@ public class RenderService {
     private long lastExecutionTimestamp = 0;
 
     public void renderNextFrame() {
-        Renderable[] renderables = renderHandler.getRenderables();
         clearCall();
+        Renderable[] renderables = renderHandler.getRenderables();
+        Arrays.sort(renderables);
         for (Renderable renderable : renderables) {
-            render(renderable);
+            this.render(renderable);
         }
         renderHandler.setCurrentFrameDelta(System.nanoTime() - lastExecutionTimestamp);
         lastExecutionTimestamp = System.nanoTime();

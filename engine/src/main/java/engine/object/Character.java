@@ -7,11 +7,15 @@ public class Character extends GameObject {
 
     private String characterId;
     private String characterName;
-    private short characterLevel;
-    private float characterHealth;
+    private final CharacterStats characterStats;
 
     public Character(PrimitiveMeshShape primitiveMeshShape, ShaderType shaderKey) {
         super(primitiveMeshShape, shaderKey);
+        this.characterStats = new CharacterStats();
+    }
+
+    public CharacterStats getCharacterStats() {
+        return this.characterStats;
     }
 
     public String getCharacterId() {
@@ -28,21 +32,5 @@ public class Character extends GameObject {
 
     public void setCharacterName(String characterName) {
         this.characterName = characterName;
-    }
-
-    public short getCharacterLevel() {
-        return characterLevel;
-    }
-
-    public void setCharacterLevel(short characterLevel) {
-        this.characterLevel = characterLevel;
-    }
-
-    public float getCharacterHealth() {
-        return characterHealth;
-    }
-
-    public void setCharacterHealth(float characterHealth) {
-        this.characterHealth = characterHealth;
     }
 }

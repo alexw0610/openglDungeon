@@ -6,12 +6,13 @@ import org.joml.Vector2d;
 
 public class GameObject implements Renderable {
 
-    private PrimitiveMeshShape primitiveMeshShape;
+    private final PrimitiveMeshShape primitiveMeshShape;
     private ShaderType shaderType;
     private String textureKey;
     protected double positionX;
     protected double positionY;
     protected double scale;
+    protected short renderLayer;
 
     public GameObject() {
         this.primitiveMeshShape = PrimitiveMeshShape.QUAD;
@@ -19,6 +20,7 @@ public class GameObject implements Renderable {
         this.positionX = 0;
         this.positionY = 0;
         this.scale = 1;
+        this.renderLayer = 0;
     }
 
     public GameObject(PrimitiveMeshShape primitiveMeshShape) {
@@ -27,6 +29,7 @@ public class GameObject implements Renderable {
         this.positionX = 0;
         this.positionY = 0;
         this.scale = 1;
+        this.renderLayer = 0;
     }
 
     public GameObject(PrimitiveMeshShape primitiveMeshShape, ShaderType shaderType) {
@@ -35,6 +38,7 @@ public class GameObject implements Renderable {
         this.positionX = 0;
         this.positionY = 0;
         this.scale = 1;
+        this.renderLayer = 0;
     }
 
     public GameObject(PrimitiveMeshShape primitiveMeshShape, ShaderType shaderType, double positionX, double positionY) {
@@ -43,6 +47,7 @@ public class GameObject implements Renderable {
         this.positionX = positionX;
         this.positionY = positionY;
         this.scale = 1;
+        this.renderLayer = 0;
     }
 
     @Override
@@ -64,7 +69,7 @@ public class GameObject implements Renderable {
         return this.textureKey;
     }
 
-    public void setTextureKey(String textureKey){
+    public void setTextureKey(String textureKey) {
         this.textureKey = textureKey;
     }
 
@@ -73,7 +78,12 @@ public class GameObject implements Renderable {
         return this.scale;
     }
 
-    public void setScale(double scale){
+    @Override
+    public short getRenderLayer() {
+        return this.renderLayer;
+    }
+
+    public void setScale(double scale) {
         this.scale = scale;
     }
 
@@ -90,8 +100,12 @@ public class GameObject implements Renderable {
         return new Vector2d(this.positionX, this.positionY);
     }
 
+    public void setRenderLayer(short renderLayer) {
+        this.renderLayer = renderLayer;
+    }
+
     @Override
-    public boolean equals(Object obj) {
-        return super.equals(obj);
+    public int compareTo(Renderable other) {
+        return Short.compare(this.renderLayer, other.getRenderLayer());
     }
 }

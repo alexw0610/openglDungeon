@@ -1,3 +1,6 @@
+import dto.ssl.AuthenticationRequest;
+import dto.ssl.GenericResponse;
+import dto.ssl.ReadyForReceivingRequest;
 import engine.Engine;
 import engine.enumeration.PrimitiveMeshShape;
 import engine.enumeration.ShaderType;
@@ -9,9 +12,6 @@ import exception.UDPServerException;
 import org.apache.commons.lang3.StringUtils;
 import processor.CharacterUpdateSender;
 import processor.ServerUpdateProcessor;
-import protocol.dto.ssl.AuthenticationRequest;
-import protocol.dto.ssl.GenericResponse;
-import protocol.dto.ssl.ReadyForReceivingRequest;
 import udp.UpdateListener;
 import udp.UpdateSender;
 import util.ApplicationProperties;
@@ -39,19 +39,25 @@ public class Client {
         Engine engine = new Engine();
         engine.start();
         Player player = new Player(PrimitiveMeshShape.QUAD, ShaderType.DEFAULT);
+        player.setRenderLayer((short) 1);
         SceneHandler.SCENE_HANDLER.setPlayer(player);
         GameObject floor = new GameObject(PrimitiveMeshShape.QUAD, ShaderType.DEFAULT, 0.5, 0.3);
         floor.setScale(10);
         floor.setTextureKey("stone_rough_yellow");
+        floor.setRenderLayer((short) 0);
         SceneHandler.SCENE_HANDLER.addObject("floor", floor);
         Camera.CAMERA.setLookAtTarget(player);
 
-        try {
-            establishServerConnection();
-        } catch (UDPServerException e) {
-            System.err.println("Failed to create server connection! " + e.getMessage());
-            System.exit(1);
+
+        if (!Boolean.parseBoolean(applicationProperties.getProperty("offlineMode"))) {
+            try {
+                establishServerConnection();
+            } catch (UDPServerException e) {
+                System.err.println("Failed to create server connection! " + e.getMessage());
+                System.exit(1);
+            }
         }
+
     }
 
     private static void establishServerConnection() throws UDPServerException {

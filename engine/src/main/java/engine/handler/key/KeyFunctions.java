@@ -8,7 +8,7 @@ import java.util.Map;
 public abstract class KeyFunctions {
 
     private final Map<Short, KeyFunction> functionMap = new HashMap<>();
-    static final double FRAME_DELTA_FACTOR = 0.00000001f;
+    static final double FRAME_DELTA_FACTOR = 0.00000000001f;
 
     public KeyFunctions() {
         KeyFunction movePlayerUp = ((frameDelta, player, camera) -> player.moveUp(frameDelta));

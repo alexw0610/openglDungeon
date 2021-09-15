@@ -22,15 +22,20 @@ public class KeyHandler extends KeyFunctions {
 
 
     public void setKeyPressed(KeyEvent keyEvent) {
-        keyMap[keyEvent.getKeyCode()] = 1;
+        if (!keyEvent.isAutoRepeat()) {
+            keyMap[keyEvent.getKeyCode()] = 1;
+        }
+
     }
 
     public void setKeyReleased(KeyEvent keyEvent) {
-        keyMap[keyEvent.getKeyCode()] = 0;
+        if (!keyEvent.isAutoRepeat()) {
+            keyMap[keyEvent.getKeyCode()] = 0;
+        }
     }
 
-    public void setMouseWheelRotation(MouseEvent mouseEvent){
-        mouseWheelRotation = mouseEvent.getRotation()[1] < 0 ? (byte)-1 : (byte)1;
+    public void setMouseWheelRotation(MouseEvent mouseEvent) {
+        mouseWheelRotation = mouseEvent.getRotation()[1] < 0 ? (byte) -1 : (byte) 1;
     }
 
     private boolean isKeyPressed(int keyCode) {
@@ -41,8 +46,8 @@ public class KeyHandler extends KeyFunctions {
         for (short i = 0; i < 255; i++) {
             if (isKeyPressed(i)) {
                 KeyFunction keyFunction = getFunctionForKey(i);
-                if(keyFunction != null){
-                    keyFunction.run(renderHandler.getCurrentFrameDelta()*FRAME_DELTA_FACTOR, sceneHandler.getPlayer(), Camera.CAMERA);
+                if (keyFunction != null) {
+                    keyFunction.run(renderHandler.getCurrentFrameDelta() * FRAME_DELTA_FACTOR, sceneHandler.getPlayer(), Camera.CAMERA);
                 }
             }
         }

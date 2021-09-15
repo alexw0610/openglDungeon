@@ -1,11 +1,11 @@
 package processor;
 
+import dto.udp.CharacterListUpdateDto;
+import dto.udp.UpdateEncryptionWrapper;
 import engine.enumeration.PrimitiveMeshShape;
 import engine.enumeration.ShaderType;
 import engine.object.Character;
 import exception.EncryptionException;
-import protocol.dto.udp.CharacterListUpdateDto;
-import protocol.dto.udp.UpdateEncryptionWrapper;
 import security.EncryptionHandler;
 import util.SerializableUtil;
 

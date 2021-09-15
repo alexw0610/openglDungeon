@@ -10,19 +10,19 @@ public class Player extends Character {
     }
 
     public void moveUp(double delta) {
-        this.positionY += delta;
+        this.positionY += this.getCharacterStats().getMovementSpeed() * delta;
     }
 
     public void moveDown(double delta) {
-        this.positionY -= delta;
+        this.positionY -= this.getCharacterStats().getMovementSpeed() * delta;
     }
 
     public void moveLeft(double delta) {
-        this.positionX -= delta;
+        this.positionX -= this.getCharacterStats().getMovementSpeed() * delta;
     }
 
     public void moveRight(double delta) {
-        this.positionX += delta;
+        this.positionX += this.getCharacterStats().getMovementSpeed() * delta;
     }
 
 }

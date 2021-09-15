@@ -20,7 +20,7 @@ public class TextureLoader {
             InputStream resourceAsStream = TextureLoader.class.getClassLoader().getResourceAsStream(RESOURCE_TEXTURE_SUBFOLDER + textureName + DEFAULT_TEXTURE_FILE_EXTENSION);
             textureImage = ImageIO.read(resourceAsStream);
         } catch (IOException e) {
-            throw new MissingResourceException("The specified Texture cant be found (or opened) in the resource path." + e, this.getClass().getName(), textureName);
+            throw new MissingResourceException("The specified Texture cant be found (or opened) in the resource path. " + e, this.getClass().getName(), textureName);
         }
 
         ByteBuffer textureBuffer = ByteBuffer.allocate(textureImage.getWidth() * textureImage.getHeight() * 4);

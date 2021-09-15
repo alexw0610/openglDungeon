@@ -1,8 +1,8 @@
 package processor;
 
+import dto.udp.PlayerUpdateDto;
 import engine.object.Player;
 import exception.UDPServerException;
-import protocol.dto.udp.PlayerUpdateDto;
 import udp.UpdateSender;
 
 public class CharacterUpdateSender implements Runnable {

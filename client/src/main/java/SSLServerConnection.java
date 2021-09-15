@@ -1,6 +1,6 @@
+import dto.Request;
+import dto.ssl.GenericResponse;
 import exception.TrustStoreException;
-import protocol.dto.Request;
-import protocol.dto.ssl.GenericResponse;
 import util.ApplicationProperties;
 
 import javax.net.ssl.SSLContext;
