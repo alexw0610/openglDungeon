@@ -8,13 +8,12 @@ import java.util.Map;
 public abstract class KeyFunctions {
 
     private final Map<Short, KeyFunction> functionMap = new HashMap<>();
-    static final double FRAME_DELTA_FACTOR = 0.00000000001f;
 
     public KeyFunctions() {
-        KeyFunction movePlayerUp = ((frameDelta, player, camera) -> player.moveUp(frameDelta));
-        KeyFunction movePlayerDown = ((frameDelta, player, camera) -> player.moveDown(frameDelta));
-        KeyFunction movePlayerLeft = ((frameDelta, player, camera) -> player.moveLeft(frameDelta));
-        KeyFunction movePlayerRight = ((frameDelta, player, camera) -> player.moveRight(frameDelta));
+        KeyFunction movePlayerUp = ((frameDelta, player, camera) -> player.addMomentumY(frameDelta));
+        KeyFunction movePlayerDown = ((frameDelta, player, camera) -> player.addMomentumY(-frameDelta));
+        KeyFunction movePlayerRight = ((frameDelta, player, camera) -> player.addMomentumX(frameDelta));
+        KeyFunction movePlayerLeft = ((frameDelta, player, camera) -> player.addMomentumX(-frameDelta));
 
         KeyFunction moveCameraUp = ((frameDelta, player, camera) -> camera.moveUp(frameDelta));
         KeyFunction moveCameraDown = ((frameDelta, player, camera) -> camera.moveDown(frameDelta));

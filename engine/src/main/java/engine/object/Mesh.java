@@ -4,6 +4,7 @@ import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL3;
 import com.jogamp.opengl.GLContext;
 import engine.enumeration.PrimitiveMeshShape;
+import engine.object.enums.Primitives;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;

@@ -9,7 +9,7 @@ import engine.object.generic.KeyObjectSet;
 import java.util.HashMap;
 
 public class SceneHandler {
-    public static final SceneHandler SCENE_HANDLER = new SceneHandler();
+    private static final SceneHandler SCENE_HANDLER = new SceneHandler();
 
     private final HashMap<String, KeyObjectSet<String, Character>> characters = new HashMap<>();
     private final HashMap<String, KeyObjectSet<String, GameObject>> objects = new HashMap<>();
@@ -18,6 +18,10 @@ public class SceneHandler {
 
     private SceneHandler() {
 
+    }
+
+    public static SceneHandler getInstance() {
+        return SCENE_HANDLER;
     }
 
     public void addCharacter(String key, Character character) {
@@ -68,7 +72,10 @@ public class SceneHandler {
     }
 
     public Player getPlayer() {
-        return this.player.object;
+        if (this.player != null) {
+            return this.player.object;
+        }
+        return null;
     }
 
     public void setPlayer(Player player) {

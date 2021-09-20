@@ -4,6 +4,7 @@ import dto.udp.CharacterListUpdateDto;
 import dto.udp.UpdateEncryptionWrapper;
 import engine.enumeration.PrimitiveMeshShape;
 import engine.enumeration.ShaderType;
+import engine.handler.SceneHandler;
 import engine.object.Character;
 import exception.EncryptionException;
 import security.EncryptionHandler;
@@ -11,8 +12,6 @@ import util.SerializableUtil;
 
 import java.util.Arrays;
 import java.util.concurrent.BlockingQueue;
-
-import static engine.handler.SceneHandler.SCENE_HANDLER;
 
 public class ServerUpdateProcessor implements Runnable {
     private final BlockingQueue<UpdateEncryptionWrapper> updatesToProcess;
@@ -48,13 +47,13 @@ public class ServerUpdateProcessor implements Runnable {
     }
 
     private void addOrUpdateCharacter(CharacterListUpdateDto.CharacterUpdateDto characterUpdateDto) {
-        if (SCENE_HANDLER.containsCharacter(String.valueOf(characterUpdateDto.getCharacterId()))) {
-            Character character = SCENE_HANDLER.getCharacter(String.valueOf(characterUpdateDto.getCharacterId()));
+        if (SceneHandler.getInstance().containsCharacter(String.valueOf(characterUpdateDto.getCharacterId()))) {
+            Character character = SceneHandler.getInstance().getCharacter(String.valueOf(characterUpdateDto.getCharacterId()));
             character.setPositionX(characterUpdateDto.getPositionX());
             character.setPositionY(characterUpdateDto.getPositionY());
         } else {
             Character character = new Character(PrimitiveMeshShape.QUAD, ShaderType.DEFAULT);
-            SCENE_HANDLER.addCharacter(String.valueOf(characterUpdateDto.getCharacterId()), character);
+            SceneHandler.getInstance().addCharacter(String.valueOf(characterUpdateDto.getCharacterId()), character);
         }
     }
 

@@ -1,4 +1,4 @@
-package engine.object;
+package engine.object.interfaces;
 
 
 import engine.enumeration.PrimitiveMeshShape;

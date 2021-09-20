@@ -40,12 +40,12 @@ public class Client {
         engine.start();
         Player player = new Player(PrimitiveMeshShape.QUAD, ShaderType.DEFAULT);
         player.setRenderLayer((short) 1);
-        SceneHandler.SCENE_HANDLER.setPlayer(player);
+        SceneHandler.getInstance().setPlayer(player);
         GameObject floor = new GameObject(PrimitiveMeshShape.QUAD, ShaderType.DEFAULT, 0.5, 0.3);
         floor.setScale(10);
         floor.setTextureKey("stone_rough_yellow");
         floor.setRenderLayer((short) 0);
-        SceneHandler.SCENE_HANDLER.addObject("floor", floor);
+        SceneHandler.getInstance().addObject("floor", floor);
         Camera.CAMERA.setLookAtTarget(player);
 
 
@@ -70,7 +70,7 @@ public class Client {
         registerUdpListener(updateListener, sslServerConnection);
 
         UpdateSender updateSender = new UpdateSender(getInetAddressFromName(serverUdpUpdateHost), Integer.parseInt(serverUdpUpdatePort), encryptionKey);
-        CharacterUpdateSender characterUpdateSender = new CharacterUpdateSender(SceneHandler.SCENE_HANDLER.getPlayer(), connectionId, updateSender);
+        CharacterUpdateSender characterUpdateSender = new CharacterUpdateSender(SceneHandler.getInstance().getPlayer(), connectionId, updateSender);
         new Thread(characterUpdateSender).start();
 
         ServerUpdateProcessor serverUpdateProcessor = new ServerUpdateProcessor(updateListener.receivedUpdates, encryptionKey, connectionId);

@@ -1,6 +1,6 @@
 package engine.handler;
 
-import engine.object.Renderable;
+import engine.object.interfaces.Renderable;
 import org.apache.commons.lang3.RandomStringUtils;
 
 import java.util.HashMap;

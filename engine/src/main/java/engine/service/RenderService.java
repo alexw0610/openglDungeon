@@ -10,7 +10,7 @@ import engine.handler.ShaderHandler;
 import engine.handler.TextureHandler;
 import engine.object.Camera;
 import engine.object.Mesh;
-import engine.object.Renderable;
+import engine.object.interfaces.Renderable;
 
 import java.nio.DoubleBuffer;
 import java.util.Arrays;

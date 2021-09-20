@@ -1,5 +1,6 @@
 package engine.object;
 
+import engine.EngineConstants;
 import org.joml.Vector2d;
 import org.joml.Vector3d;
 
@@ -8,7 +9,8 @@ public class Camera {
     public static final Camera CAMERA = new Camera();
 
     private static final double MAX_ZOOM_DISTANCE = 0.1f;
-    private static final double LERP_SPEED = 1000000.0f;
+    private static final double LERP_SPEED = 250;
+    private static final double CAMERA_MOVE_SPEED = 100;
 
     private GameObject lookAtTarget;
 
@@ -29,7 +31,7 @@ public class Camera {
     public void lerpToLookAtTarget(double frameDelta) {
         if (this.lookAtTarget != null) {
             Vector2d temp = new Vector2d(this.positionX, this.positionY);
-            temp.lerp(this.lookAtTarget.getPosition(), (1.0f / frameDelta)*LERP_SPEED);
+            temp.lerp(this.lookAtTarget.getPosition(), (1.0f * (frameDelta * EngineConstants.FRAME_DELTA_FACTOR)) * LERP_SPEED);
             this.positionX = temp.x();
             this.positionY = temp.y();
         }
@@ -40,19 +42,19 @@ public class Camera {
     }
 
     public void moveUp(double delta) {
-        this.positionY += delta;
+        this.positionY += delta * CAMERA_MOVE_SPEED;
     }
 
     public void moveDown(double delta) {
-        this.positionY -= delta;
+        this.positionY -= delta * CAMERA_MOVE_SPEED;
     }
 
     public void moveLeft(double delta) {
-        this.positionX -= delta;
+        this.positionX -= delta * CAMERA_MOVE_SPEED;
     }
 
     public void moveRight(double delta) {
-        this.positionX += delta;
+        this.positionX += delta * CAMERA_MOVE_SPEED;
     }
 
     public void zoomOut(double delta) {

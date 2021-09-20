@@ -2,43 +2,32 @@ package engine.object;
 
 import engine.enumeration.PrimitiveMeshShape;
 import engine.enumeration.ShaderType;
+import engine.object.interfaces.Collidable;
+import engine.object.interfaces.Renderable;
 import org.joml.Vector2d;
 
-public class GameObject implements Renderable {
+public class GameObject implements Renderable, Collidable {
 
     private final PrimitiveMeshShape primitiveMeshShape;
     private ShaderType shaderType;
     private String textureKey;
+    private Hitbox hitbox;
     protected double positionX;
     protected double positionY;
     protected double scale;
     protected short renderLayer;
+    private boolean collision;
 
     public GameObject() {
-        this.primitiveMeshShape = PrimitiveMeshShape.QUAD;
-        this.shaderType = ShaderType.DEFAULT;
-        this.positionX = 0;
-        this.positionY = 0;
-        this.scale = 1;
-        this.renderLayer = 0;
+        this(PrimitiveMeshShape.QUAD);
     }
 
     public GameObject(PrimitiveMeshShape primitiveMeshShape) {
-        this.primitiveMeshShape = primitiveMeshShape;
-        this.shaderType = ShaderType.DEFAULT;
-        this.positionX = 0;
-        this.positionY = 0;
-        this.scale = 1;
-        this.renderLayer = 0;
+        this(primitiveMeshShape, ShaderType.DEFAULT);
     }
 
     public GameObject(PrimitiveMeshShape primitiveMeshShape, ShaderType shaderType) {
-        this.primitiveMeshShape = primitiveMeshShape;
-        this.shaderType = shaderType;
-        this.positionX = 0;
-        this.positionY = 0;
-        this.scale = 1;
-        this.renderLayer = 0;
+        this(primitiveMeshShape, shaderType, 0, 0);
     }
 
     public GameObject(PrimitiveMeshShape primitiveMeshShape, ShaderType shaderType, double positionX, double positionY) {
@@ -48,6 +37,7 @@ public class GameObject implements Renderable {
         this.positionY = positionY;
         this.scale = 1;
         this.renderLayer = 0;
+        this.collision = false;
     }
 
     @Override
@@ -107,5 +97,19 @@ public class GameObject implements Renderable {
     @Override
     public int compareTo(Renderable other) {
         return Short.compare(this.renderLayer, other.getRenderLayer());
+    }
+
+    @Override
+    public boolean isCollidable() {
+        return this.collision;
+    }
+
+    public void setCollidable(boolean collision) {
+        this.collision = collision;
+    }
+
+    @Override
+    public Hitbox getHitbox() {
+        return null;
     }
 }
