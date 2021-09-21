@@ -4,7 +4,9 @@ import engine.object.Hitbox;
 
 public interface Collidable {
 
-    boolean isCollidable();
+    boolean isSurface();
+
+    boolean isObstacle();
 
     Hitbox getHitbox();
 }

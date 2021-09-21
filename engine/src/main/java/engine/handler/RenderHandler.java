@@ -45,11 +45,11 @@ public class RenderHandler {
         }
     }
 
-    public void setCurrentFrameDelta(long frameDelta) {
+    public void setCurrentFrameDeltaMs(long frameDelta) {
         this.frameDelta = frameDelta;
     }
 
-    public long getCurrentFrameDelta() {
+    public long getCurrentFrameDeltaMs() {
         return this.frameDelta;
     }
 

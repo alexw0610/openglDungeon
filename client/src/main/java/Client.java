@@ -7,7 +7,9 @@ import engine.enumeration.ShaderType;
 import engine.handler.SceneHandler;
 import engine.object.Camera;
 import engine.object.GameObject;
+import engine.object.Hitbox;
 import engine.object.Player;
+import engine.object.enums.HitboxType;
 import exception.UDPServerException;
 import org.apache.commons.lang3.StringUtils;
 import processor.CharacterUpdateSender;
@@ -38,16 +40,27 @@ public class Client {
     public static void main(String[] args) {
         Engine engine = new Engine();
         engine.start();
+
         Player player = new Player(PrimitiveMeshShape.QUAD, ShaderType.DEFAULT);
-        player.setRenderLayer((short) 1);
+        player.setHitbox(new Hitbox(HitboxType.AABB, 0.5));
+        player.setRenderLayer((short) 2);
         SceneHandler.getInstance().setPlayer(player);
-        GameObject floor = new GameObject(PrimitiveMeshShape.QUAD, ShaderType.DEFAULT, 0.5, 0.3);
+
+        GameObject floor = new GameObject(PrimitiveMeshShape.QUAD, ShaderType.DEFAULT, new Hitbox(HitboxType.AABB, 5.0), 0, 0);
         floor.setScale(10);
         floor.setTextureKey("stone_rough_yellow");
         floor.setRenderLayer((short) 0);
+        floor.setSurface(true);
         SceneHandler.getInstance().addObject("floor", floor);
-        Camera.CAMERA.setLookAtTarget(player);
 
+        GameObject wall = new GameObject(PrimitiveMeshShape.QUAD, ShaderType.DEFAULT, new Hitbox(HitboxType.AABB, 0.5), 3, 0);
+        wall.setScale(1);
+        wall.setTextureKey("loosebrickwall");
+        wall.setRenderLayer((short) 1);
+        wall.setObstacle(true);
+        SceneHandler.getInstance().addObject("wall", wall);
+
+        Camera.CAMERA.setLookAtTarget(player);
 
         if (!Boolean.parseBoolean(applicationProperties.getProperty("offlineMode"))) {
             try {

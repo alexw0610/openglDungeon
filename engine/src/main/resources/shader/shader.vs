@@ -18,8 +18,8 @@ void main()
     outTexture = vec2(texture.x*cameraBuffer.scale,texture.y*cameraBuffer.scale);
     outVertex = vertex;
     vec3 objectScale = vec3(vertex.x * cameraBuffer.scale, vertex.y * cameraBuffer.scale, 1);
-    vec3 positionScale = vec3(objectScale.x * cameraBuffer.camera.z, objectScale.y * cameraBuffer.camera.z, objectScale.z);
+    vec3 positionScale = vec3(objectScale.x, objectScale.y, objectScale.z);
     vec3 positionObjectTranslation = positionScale + vec3(cameraBuffer.position.x,cameraBuffer.position.y,0);
     vec3 positionCameraTranslation = positionObjectTranslation - vec3(cameraBuffer.camera.x,cameraBuffer.camera.y,0);
-    gl_Position = vec4(positionCameraTranslation, 1);
+    gl_Position = vec4(positionCameraTranslation * cameraBuffer.camera.z, 1);
 }

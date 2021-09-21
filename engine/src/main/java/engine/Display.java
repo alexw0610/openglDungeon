@@ -24,8 +24,8 @@ public class Display implements GLEventListener {
     public void display(GLAutoDrawable glAutoDrawable) {
         renderService.renderNextFrame();
         keyHandler.processActiveKeys();
-        physicsService.doPhysics(RenderHandler.RENDER_HANDLER.getCurrentFrameDelta());
-        Camera.CAMERA.lerpToLookAtTarget(RenderHandler.RENDER_HANDLER.getCurrentFrameDelta());
+        physicsService.doPhysics(RenderHandler.RENDER_HANDLER.getCurrentFrameDeltaMs());
+        Camera.CAMERA.lerpToLookAtTarget(RenderHandler.RENDER_HANDLER.getCurrentFrameDeltaMs());
 
     }
 

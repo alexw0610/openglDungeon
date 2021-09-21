@@ -2,7 +2,6 @@ package engine.handler.key;
 
 import com.jogamp.newt.event.KeyEvent;
 import com.jogamp.newt.event.MouseEvent;
-import engine.EngineConstants;
 import engine.handler.RenderHandler;
 import engine.handler.SceneHandler;
 import engine.object.Camera;
@@ -48,7 +47,7 @@ public class KeyHandler extends KeyFunctions {
             if (isKeyPressed(i)) {
                 KeyFunction keyFunction = getFunctionForKey(i);
                 if (keyFunction != null) {
-                    keyFunction.run(renderHandler.getCurrentFrameDelta() * EngineConstants.FRAME_DELTA_FACTOR, sceneHandler.getPlayer(), Camera.CAMERA);
+                    keyFunction.run(renderHandler.getCurrentFrameDeltaMs(), sceneHandler.getPlayer(), Camera.CAMERA);
                 }
             }
         }

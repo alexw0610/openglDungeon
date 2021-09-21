@@ -2,6 +2,7 @@ package engine.object;
 
 import engine.enumeration.PrimitiveMeshShape;
 import engine.enumeration.ShaderType;
+import engine.object.enums.HitboxType;
 import engine.object.interfaces.Collidable;
 import engine.object.interfaces.Renderable;
 import org.joml.Vector2d;
@@ -16,7 +17,8 @@ public class GameObject implements Renderable, Collidable {
     protected double positionY;
     protected double scale;
     protected short renderLayer;
-    private boolean collision;
+    private boolean obstacle;
+    private boolean surface;
 
     public GameObject() {
         this(PrimitiveMeshShape.QUAD);
@@ -31,13 +33,19 @@ public class GameObject implements Renderable, Collidable {
     }
 
     public GameObject(PrimitiveMeshShape primitiveMeshShape, ShaderType shaderType, double positionX, double positionY) {
+        this(primitiveMeshShape, shaderType, new Hitbox(HitboxType.AABB, 0.5), 0, 0);
+    }
+
+    public GameObject(PrimitiveMeshShape primitiveMeshShape, ShaderType shaderType, Hitbox hitbox, double positionX, double positionY) {
         this.primitiveMeshShape = primitiveMeshShape;
         this.shaderType = shaderType;
         this.positionX = positionX;
         this.positionY = positionY;
         this.scale = 1;
         this.renderLayer = 0;
-        this.collision = false;
+        this.obstacle = false;
+        this.surface = false;
+        this.hitbox = hitbox;
     }
 
     @Override
@@ -100,16 +108,29 @@ public class GameObject implements Renderable, Collidable {
     }
 
     @Override
-    public boolean isCollidable() {
-        return this.collision;
+    public boolean isSurface() {
+        return this.surface;
     }
 
-    public void setCollidable(boolean collision) {
-        this.collision = collision;
+    public void setSurface(boolean surface) {
+        this.surface = surface;
+    }
+
+    @Override
+    public boolean isObstacle() {
+        return this.obstacle;
+    }
+
+    public void setObstacle(boolean obstacle) {
+        this.obstacle = obstacle;
     }
 
     @Override
     public Hitbox getHitbox() {
-        return null;
+        return this.hitbox;
+    }
+
+    public void setHitbox(Hitbox hitbox) {
+        this.hitbox = hitbox;
     }
 }

@@ -33,7 +33,7 @@ public class RenderService {
         for (Renderable renderable : renderables) {
             this.render(renderable);
         }
-        renderHandler.setCurrentFrameDelta(System.nanoTime() - lastExecutionTimestamp);
+        renderHandler.setCurrentFrameDeltaMs((System.nanoTime() - lastExecutionTimestamp) / 1000);
         lastExecutionTimestamp = System.nanoTime();
     }
 

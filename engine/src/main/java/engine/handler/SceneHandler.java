@@ -6,6 +6,7 @@ import engine.object.GameObject;
 import engine.object.Player;
 import engine.object.generic.KeyObjectSet;
 
+import java.util.Collection;
 import java.util.HashMap;
 
 public class SceneHandler {
@@ -76,6 +77,10 @@ public class SceneHandler {
             return this.player.object;
         }
         return null;
+    }
+
+    public Collection<KeyObjectSet<String, GameObject>> getObjects() {
+        return this.objects.values();
     }
 
     public void setPlayer(Player player) {
