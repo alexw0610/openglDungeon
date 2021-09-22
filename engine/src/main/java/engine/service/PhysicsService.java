@@ -107,7 +107,6 @@ public class PhysicsService {
     }
 
     private double decay(double momentum) {
-        System.out.println(momentum);
         if (Math.abs(momentum) > 0.001) {
             return momentum * DECAY;
         } else {

@@ -48,17 +48,10 @@ public class Client {
 
         GameObject floor = new GameObject(PrimitiveMeshShape.QUAD, ShaderType.DEFAULT, new Hitbox(HitboxType.AABB, 5.0), 0, 0);
         floor.setScale(10);
-        floor.setTextureKey("stone_rough_yellow");
+        floor.setTextureKey("stone_rough_purple_dark_no_highlights");
         floor.setRenderLayer((short) 0);
         floor.setSurface(true);
         SceneHandler.getInstance().addObject("floor", floor);
-
-        GameObject wall = new GameObject(PrimitiveMeshShape.QUAD, ShaderType.DEFAULT, new Hitbox(HitboxType.AABB, 0.5), 3, 0);
-        wall.setScale(1);
-        wall.setTextureKey("loosebrickwall");
-        wall.setRenderLayer((short) 1);
-        wall.setObstacle(true);
-        SceneHandler.getInstance().addObject("wall", wall);
 
         Camera.CAMERA.setLookAtTarget(player);
 
