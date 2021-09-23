@@ -3,7 +3,6 @@ package engine.service;
 import engine.handler.SceneHandler;
 import engine.object.GameObject;
 import engine.object.Player;
-import engine.service.util.AxisAlignedBoundingBox;
 import engine.service.util.CollisionUtil;
 import org.joml.Vector2d;
 
@@ -32,13 +31,24 @@ public class PhysicsService {
 
     private boolean checkCollisionAtNextPosition(Player player) {
         Vector2d nextPosition = getNextPosition(player);
-        List<GameObject> surfaces = SceneHandler.getInstance().getObjects().stream().filter(set -> set.object.isSurface()).map(set -> set.object).collect(Collectors.toList());
-        List<GameObject> obstacles = SceneHandler.getInstance().getObjects().stream().filter(set -> set.object.isObstacle()).map(set -> set.object).collect(Collectors.toList());
-        if (checkIfCollision(player, nextPosition, surfaces)) {
+        List<GameObject> surfaces = SceneHandler.getInstance().getObjects().stream().filter(GameObject::isSurface).collect(Collectors.toList());
+        List<GameObject> obstacles = SceneHandler.getInstance().getObjects().stream().filter(GameObject::isObstacle).collect(Collectors.toList());
+        if (checkIfInside(nextPosition, surfaces)) {
             return checkIfCollision(player, nextPosition, obstacles);
         } else {
             return true;
         }
+    }
+
+    private boolean checkIfInside(Vector2d nextPosition, List<GameObject> objects) {
+        boolean inside;
+        for (GameObject object : objects) {
+            inside = checkInside(nextPosition, object);
+            if (inside) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private boolean checkIfCollision(Player player, Vector2d nextPosition, List<GameObject> objects) {
@@ -57,28 +67,31 @@ public class PhysicsService {
             case AABB:
                 switch (object.getHitbox().getHitboxType()) {
                     case AABB:
-                        return CollisionUtil.checkCollisionAABBWithAABB(getAABBForObject(nextPosition, player), getAABBForObject(object.getPosition(), object));
+                        return CollisionUtil.checkCollisionAABBWithAABB(CollisionUtil.getAABBForObject(nextPosition, player), CollisionUtil.getAABBForObject(object.getPosition(), object));
                     case CIRCLE:
-                        return CollisionUtil.checkCollisionAABBWithCircle();
+                        return CollisionUtil.checkCollisionAABBWithCircle(CollisionUtil.getAABBForObject(nextPosition, player), CollisionUtil.getCircleHitboxForObject(object.getPosition(), object));
                 }
             case CIRCLE:
                 switch (object.getHitbox().getHitboxType()) {
                     case AABB:
-                        return CollisionUtil.checkCollisionAABBWithCircle();
+                        return CollisionUtil.checkCollisionAABBWithCircle(CollisionUtil.getAABBForObject(object.getPosition(), object), CollisionUtil.getCircleHitboxForObject(nextPosition, player));
                     case CIRCLE:
-                        return CollisionUtil.checkCollisionCircleWithCircle();
+                        return CollisionUtil.checkCollisionCircleWithCircle(CollisionUtil.getCircleHitboxForObject(nextPosition, player), CollisionUtil.getCircleHitboxForObject(object.getPosition(), object));
                 }
         }
         return false;
     }
 
-    private AxisAlignedBoundingBox getAABBForObject(Vector2d position, GameObject object) {
-        return new AxisAlignedBoundingBox(
-                position.x() - object.getHitbox().getSize(),
-                position.x() + object.getHitbox().getSize(),
-                position.y() - object.getHitbox().getSize(),
-                position.y() + object.getHitbox().getSize());
+    private boolean checkInside(Vector2d nextPosition, GameObject object) {
+        switch (object.getHitbox().getHitboxType()) {
+            case AABB:
+                return CollisionUtil.checkInsideAABB(nextPosition, CollisionUtil.getAABBForObject(object.getPosition(), object));
+            case CIRCLE:
+                return CollisionUtil.checkInsideCircle(nextPosition, CollisionUtil.getCircleHitboxForObject(object.getPosition(), object));
+        }
+        return false;
     }
+
 
     private Vector2d getNextPosition(Player player) {
         double x = player.getMomentumX();

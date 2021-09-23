@@ -6,21 +6,10 @@ import com.jogamp.newt.opengl.GLWindow;
 import com.jogamp.opengl.GLCapabilities;
 import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.util.FPSAnimator;
-import engine.enumeration.PrimitiveMeshShape;
-import engine.enumeration.ShaderType;
-import engine.handler.RenderHandler;
-import engine.handler.SceneHandler;
-import engine.object.Camera;
-import engine.object.GameObject;
-import engine.object.Player;
+
+import static engine.EngineConstants.*;
 
 public class Engine {
-
-    private static final String TITLE = "Dungeon";
-    private static final int WINDOW_WIDTH = 1280;
-    private static final int WINDOW_HEIGHT = 960;
-    private static final int FPS = 60;
-
     public void start() {
         setupDisplay();
     }
@@ -46,7 +35,7 @@ public class Engine {
             }
         });
 
-        window.setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
+        window.setSize((int) WINDOW_WIDTH, (int) WINDOW_HEIGHT);
         window.addGLEventListener(new Display());
         InputListener inputListener = new InputListener();
         window.addKeyListener(inputListener);

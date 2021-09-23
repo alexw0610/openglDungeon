@@ -1,6 +1,12 @@
 package engine;
 
 public class EngineConstants {
+
+    public static final String TITLE = "Dungeon";
+    public static final double WINDOW_WIDTH = 1280;
+    public static final double WINDOW_HEIGHT = 960;
+    public static final int FPS = 60;
+
     public static final double INERTIA = 0.00001;
     public static final double DECAY = 0.75;
     public static final double MAX_ZOOM_DISTANCE = 0.5;

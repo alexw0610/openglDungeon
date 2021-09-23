@@ -6,10 +6,11 @@ import engine.enumeration.PrimitiveMeshShape;
 import engine.enumeration.ShaderType;
 import engine.handler.SceneHandler;
 import engine.object.Camera;
-import engine.object.GameObject;
 import engine.object.Hitbox;
 import engine.object.Player;
 import engine.object.enums.HitboxType;
+import engine.scene.SceneGenerator;
+import engine.scene.SceneTileMap;
 import exception.UDPServerException;
 import org.apache.commons.lang3.StringUtils;
 import processor.CharacterUpdateSender;
@@ -41,19 +42,15 @@ public class Client {
         Engine engine = new Engine();
         engine.start();
 
-        Player player = new Player(PrimitiveMeshShape.QUAD, ShaderType.DEFAULT);
-        player.setHitbox(new Hitbox(HitboxType.AABB, 0.5));
+        Player player = new Player(PrimitiveMeshShape.TRIANGLE, ShaderType.DEFAULT);
+        player.setHitbox(new Hitbox(HitboxType.CIRCLE, 0.5));
         player.setRenderLayer((short) 2);
         SceneHandler.getInstance().setPlayer(player);
-
-        GameObject floor = new GameObject(PrimitiveMeshShape.QUAD, ShaderType.DEFAULT, new Hitbox(HitboxType.AABB, 5.0), 0, 0);
-        floor.setScale(10);
-        floor.setTextureKey("stone_rough_purple_dark_no_highlights");
-        floor.setRenderLayer((short) 0);
-        floor.setSurface(true);
-        SceneHandler.getInstance().addObject("floor", floor);
-
         Camera.CAMERA.setLookAtTarget(player);
+
+        SceneTileMap sceneTileMap = SceneGenerator.generateScene();
+        sceneTileMap.loadTiles();
+
 
         if (!Boolean.parseBoolean(applicationProperties.getProperty("offlineMode"))) {
             try {

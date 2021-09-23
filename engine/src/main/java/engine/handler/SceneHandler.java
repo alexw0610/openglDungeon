@@ -6,8 +6,10 @@ import engine.object.GameObject;
 import engine.object.Player;
 import engine.object.generic.KeyObjectSet;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 
 public class SceneHandler {
     private static final SceneHandler SCENE_HANDLER = new SceneHandler();
@@ -54,9 +56,11 @@ public class SceneHandler {
 
     public void addObject(String key, GameObject gameObject) {
         String renderableKey = RenderHandler.RENDER_HANDLER.addToRenderQueue(gameObject);
-        KeyObjectSet<String, GameObject> previousEntry = this.objects.put(key, new KeyObjectSet<>(renderableKey, gameObject));
-        if (previousEntry != null) {
-            RenderHandler.RENDER_HANDLER.removeFromRenderQueue(previousEntry.key);
+        synchronized (this.objects) {
+            KeyObjectSet<String, GameObject> previousEntry = this.objects.put(key, new KeyObjectSet<>(renderableKey, gameObject));
+            if (previousEntry != null) {
+                RenderHandler.RENDER_HANDLER.removeFromRenderQueue(previousEntry.key);
+            }
         }
     }
 
@@ -72,15 +76,21 @@ public class SceneHandler {
         return this.objects.get(key).object;
     }
 
+    public Collection<GameObject> getObjects() {
+        List<GameObject> gameObjects = new ArrayList<>();
+        synchronized (this.objects) {
+            for (KeyObjectSet<String, GameObject> set : this.objects.values()) {
+                gameObjects.add(set.object);
+            }
+        }
+        return gameObjects;
+    }
+
     public Player getPlayer() {
         if (this.player != null) {
             return this.player.object;
         }
         return null;
-    }
-
-    public Collection<KeyObjectSet<String, GameObject>> getObjects() {
-        return this.objects.values();
     }
 
     public void setPlayer(Player player) {

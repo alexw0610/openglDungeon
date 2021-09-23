@@ -11,9 +11,13 @@ import engine.handler.TextureHandler;
 import engine.object.Camera;
 import engine.object.Mesh;
 import engine.object.interfaces.Renderable;
+import org.joml.Vector2d;
 
 import java.nio.DoubleBuffer;
 import java.util.Arrays;
+
+import static engine.EngineConstants.WINDOW_HEIGHT;
+import static engine.EngineConstants.WINDOW_WIDTH;
 
 public class RenderService {
 
@@ -21,10 +25,22 @@ public class RenderService {
     private final MeshHandler meshHandler = MeshHandler.MESH_HANDLER;
     private final RenderHandler renderHandler = RenderHandler.RENDER_HANDLER;
     private final TextureHandler textureHandler = TextureHandler.TEXTURE_HANDLER;
-
     private final Camera camera = Camera.CAMERA;
 
+    private final int[] uniformBuffers;
+    private final DoubleBuffer uboDataBuffer;
+
     private long lastExecutionTimestamp = 0;
+
+    Vector2d aspectRatio;
+
+    public RenderService() {
+        this.uniformBuffers = new int[1];
+        this.uboDataBuffer = DoubleBuffer.allocate(10);
+        GL4 gl = GLContext.getCurrent().getGL().getGL4();
+        gl.glGenBuffers(1, uniformBuffers, 0);
+        this.aspectRatio = new Vector2d(0, WINDOW_WIDTH / WINDOW_HEIGHT);
+    }
 
     public void renderNextFrame() {
         clearCall();
@@ -88,19 +104,21 @@ public class RenderService {
         int[] uniformBuffers = new int[1];
         gl.glGenBuffers(1, uniformBuffers, 0);
 
-        DoubleBuffer buffer = DoubleBuffer.allocate(7);
+        this.uboDataBuffer.clear();
+        this.uboDataBuffer.put(0, camera.getPosition().x());
+        this.uboDataBuffer.put(1, camera.getPosition().y());
+        this.uboDataBuffer.put(2, camera.getPosition().z());
+        this.uboDataBuffer.put(3, 0);
+        this.uboDataBuffer.put(4, renderable.getPosition().x());
+        this.uboDataBuffer.put(5, renderable.getPosition().y());
+        this.uboDataBuffer.put(6, renderable.getScale());
+        this.uboDataBuffer.put(7, 0);
+        this.uboDataBuffer.put(8, this.aspectRatio.x());
+        this.uboDataBuffer.put(9, this.aspectRatio.y());
 
-        buffer.put(0, camera.getPosition().x());
-        buffer.put(1, camera.getPosition().y());
-        buffer.put(2, camera.getPosition().z());
-        buffer.put(3, 0);
-        buffer.put(4, renderable.getPosition().x());
-        buffer.put(5, renderable.getPosition().y());
-        buffer.put(6, renderable.getScale());
-
-        gl.glBindBuffer(gl.GL_UNIFORM_BUFFER, uniformBuffers[0]);
-        gl.glBufferData(gl.GL_UNIFORM_BUFFER, 8 * buffer.capacity(), buffer, gl.GL_DYNAMIC_DRAW);
+        gl.glBindBuffer(gl.GL_UNIFORM_BUFFER, this.uniformBuffers[0]);
+        gl.glBufferData(gl.GL_UNIFORM_BUFFER, 8 * this.uboDataBuffer.capacity(), uboDataBuffer, gl.GL_DYNAMIC_DRAW);
         gl.glBindBuffer(gl.GL_UNIFORM_BUFFER, 0);
-        gl.glBindBufferBase(gl.GL_UNIFORM_BUFFER, 0, uniformBuffers[0]);
+        gl.glBindBufferBase(gl.GL_UNIFORM_BUFFER, 0, this.uniformBuffers[0]);
     }
 }
