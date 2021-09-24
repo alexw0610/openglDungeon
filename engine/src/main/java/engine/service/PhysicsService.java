@@ -21,11 +21,11 @@ public class PhysicsService {
     private void applyPlayerPhysics(long delta) {
         Player player = SceneHandler.getInstance().getPlayer();
         if (player != null) {
-            if (!checkCollisionAtNextPosition(player)) {
-                applyPlayerMomentum(player);
-            } else {
-                zeroMomentum(player);
-            }
+            //    if (!checkCollisionAtNextPosition(player)) {
+            applyPlayerMomentum(player);
+            //   } else {
+            //      zeroMomentum(player);
+            //   }
         }
     }
 

@@ -45,12 +45,13 @@ public class Client {
         Player player = new Player(PrimitiveMeshShape.TRIANGLE, ShaderType.DEFAULT);
         player.setHitbox(new Hitbox(HitboxType.CIRCLE, 0.5));
         player.setRenderLayer((short) 2);
+        player.setPositionX(32);
+        player.setPositionY(32);
         SceneHandler.getInstance().setPlayer(player);
         Camera.CAMERA.setLookAtTarget(player);
 
         SceneTileMap sceneTileMap = SceneGenerator.generateScene();
         sceneTileMap.loadTiles();
-
 
         if (!Boolean.parseBoolean(applicationProperties.getProperty("offlineMode"))) {
             try {

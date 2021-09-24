@@ -44,16 +44,37 @@ public class RenderService {
 
     public void renderNextFrame() {
         clearCall();
-        Renderable[] renderables = renderHandler.getRenderables();
-        Arrays.sort(renderables);
-        for (Renderable renderable : renderables) {
-            this.render(renderable);
-        }
+        renderRenderables();
+        renderDebugMeshes();
         renderHandler.setCurrentFrameDeltaMs((System.nanoTime() - lastExecutionTimestamp) / 1000);
         lastExecutionTimestamp = System.nanoTime();
     }
 
+    private void renderDebugMeshes() {
+        GL4 gl = GLContext.getCurrent().getGL().getGL4();
+        Mesh[] meshes = renderHandler.getDebugMeshes();
+        updateUbo(0, 0, 1);
+        shaderHandler.bindShaderOfType(ShaderType.DEFAULT);
+        textureHandler.bindTextureWithKey(TextureHandler.DEFAULT_TEXTURE_KEY);
+        gl.glPolygonMode(gl.GL_FRONT_AND_BACK, gl.GL_LINE);
+        for (Mesh mesh : meshes) {
+            mesh.loadMesh();
+            drawCall(mesh, gl.GL_LINES);
+        }
+    }
+
+    private void renderRenderables() {
+        GL4 gl = GLContext.getCurrent().getGL().getGL4();
+        Renderable[] renderables = renderHandler.getRenderables();
+        Arrays.sort(renderables);
+        gl.glPolygonMode(gl.GL_FRONT_AND_BACK, gl.GL_FILL);
+        for (Renderable renderable : renderables) {
+            this.render(renderable);
+        }
+    }
+
     private void render(Renderable renderable) {
+        GL4 gl = GLContext.getCurrent().getGL().getGL4();
         if (renderable.getShaderType() != null) {
             shaderHandler.bindShaderOfType(renderable.getShaderType());
         } else {
@@ -69,23 +90,22 @@ public class RenderService {
         try {
             Mesh mesh = meshHandler.getMeshForKey(renderable.getPrimitiveMeshShape());
             updateUboForRenderable(renderable);
-            drawCall(mesh);
+            drawCall(mesh, gl.GL_TRIANGLES);
         } catch (MeshNotFoundException e) {
             System.err.println(e.getMessage());
         }
     }
 
-    private static void drawCall(Mesh mesh) {
+    private static void drawCall(Mesh mesh, int GL_RENDER_MODE) {
         GL4 gl = GLContext.getCurrent().getGL().getGL4();
         gl.glActiveTexture(gl.GL_TEXTURE0);
 
-        gl.glPolygonMode(gl.GL_FRONT_AND_BACK, gl.GL_FILL);
         gl.glBindVertexArray(mesh.getVaoId());
 
         gl.glEnableVertexAttribArray(0);
         gl.glEnableVertexAttribArray(1);
 
-        gl.glDrawElements(gl.GL_TRIANGLES, mesh.getIndices().length, gl.GL_UNSIGNED_INT, 0);
+        gl.glDrawElements(GL_RENDER_MODE, mesh.getIndices().length, gl.GL_UNSIGNED_INT, 0);
 
         gl.glDisableVertexAttribArray(0);
         gl.glDisableVertexAttribArray(1);
@@ -99,19 +119,20 @@ public class RenderService {
     }
 
     private void updateUboForRenderable(Renderable renderable) {
+        updateUbo(renderable.getPosition().x(), renderable.getPosition().y(), renderable.getScale());
+    }
+
+    private void updateUbo(double x, double y, double scale) {
         GL4 gl = GLContext.getCurrent().getGL().getGL4();
 
-        int[] uniformBuffers = new int[1];
-        gl.glGenBuffers(1, uniformBuffers, 0);
-
         this.uboDataBuffer.clear();
-        this.uboDataBuffer.put(0, camera.getPosition().x());
-        this.uboDataBuffer.put(1, camera.getPosition().y());
-        this.uboDataBuffer.put(2, camera.getPosition().z());
+        this.uboDataBuffer.put(0, this.camera.getPosition().x());
+        this.uboDataBuffer.put(1, this.camera.getPosition().y());
+        this.uboDataBuffer.put(2, this.camera.getPosition().z());
         this.uboDataBuffer.put(3, 0);
-        this.uboDataBuffer.put(4, renderable.getPosition().x());
-        this.uboDataBuffer.put(5, renderable.getPosition().y());
-        this.uboDataBuffer.put(6, renderable.getScale());
+        this.uboDataBuffer.put(4, x);
+        this.uboDataBuffer.put(5, y);
+        this.uboDataBuffer.put(6, scale);
         this.uboDataBuffer.put(7, 0);
         this.uboDataBuffer.put(8, this.aspectRatio.x());
         this.uboDataBuffer.put(9, this.aspectRatio.y());

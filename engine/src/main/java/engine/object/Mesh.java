@@ -17,6 +17,7 @@ public class Mesh extends Primitives {
     private int[] indices;
     private float[] texture;
 
+    private boolean isLoaded = false;
 
     public Mesh(float[] vertices, int[] indices, float[] textCoords) {
         this.vertices = vertices;
@@ -39,40 +40,43 @@ public class Mesh extends Primitives {
     }
 
     public void loadMesh() {
-        GL3 gl = GLContext.getCurrentGL().getGL3();
-        int[] vaoids = new int[1];
-        gl.glGenVertexArrays(1, vaoids, 0);
-        gl.glBindVertexArray(vaoids[0]);
+        if (!isLoaded) {
+            GL3 gl = GLContext.getCurrentGL().getGL3();
+            int[] vaoids = new int[1];
+            gl.glGenVertexArrays(1, vaoids, 0);
+            gl.glBindVertexArray(vaoids[0]);
 
-        int[] vboids = new int[4];
-        gl.glGenBuffers(4, vboids, 0);
-        vaoId = vaoids[0];
+            int[] vboids = new int[4];
+            gl.glGenBuffers(4, vboids, 0);
+            vaoId = vaoids[0];
 
-        int vertexvboId = vboids[0];
-        FloatBuffer verticesBuffer = FloatBuffer.allocate(vertices.length);
-        verticesBuffer.put(vertices);
-        verticesBuffer.flip();
-        gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vboids[0]);
-        gl.glBufferData(GL.GL_ARRAY_BUFFER, vertices.length * 4, verticesBuffer, GL.GL_STATIC_DRAW);
-        gl.glVertexAttribPointer(0, 3, GL.GL_FLOAT, false, 0, 0);
+            int vertexvboId = vboids[0];
+            FloatBuffer verticesBuffer = FloatBuffer.allocate(vertices.length);
+            verticesBuffer.put(vertices);
+            verticesBuffer.flip();
+            gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vboids[0]);
+            gl.glBufferData(GL.GL_ARRAY_BUFFER, vertices.length * 4, verticesBuffer, GL.GL_STATIC_DRAW);
+            gl.glVertexAttribPointer(0, 3, GL.GL_FLOAT, false, 0, 0);
 
-        int indicesVboId = vboids[1];
-        IntBuffer indicesBuffer = IntBuffer.allocate(indices.length);
-        indicesBuffer.put(indices);
-        indicesBuffer.flip();
-        gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, vboids[1]);
-        gl.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, indices.length * 4, indicesBuffer, GL.GL_STATIC_DRAW);
+            int indicesVboId = vboids[1];
+            IntBuffer indicesBuffer = IntBuffer.allocate(indices.length);
+            indicesBuffer.put(indices);
+            indicesBuffer.flip();
+            gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, vboids[1]);
+            gl.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, indices.length * 4, indicesBuffer, GL.GL_STATIC_DRAW);
 
-        int texturevboId = vboids[2];
-        FloatBuffer textureBuffer = FloatBuffer.allocate(texture.length);
-        textureBuffer.put(texture);
-        textureBuffer.flip();
-        gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vboids[2]);
-        gl.glBufferData(GL.GL_ARRAY_BUFFER, texture.length * 4, textureBuffer, GL.GL_STATIC_DRAW);
-        gl.glVertexAttribPointer(1, 2, GL.GL_FLOAT, false, 0, 0);
+            int texturevboId = vboids[2];
+            FloatBuffer textureBuffer = FloatBuffer.allocate(texture.length);
+            textureBuffer.put(texture);
+            textureBuffer.flip();
+            gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vboids[2]);
+            gl.glBufferData(GL.GL_ARRAY_BUFFER, texture.length * 4, textureBuffer, GL.GL_STATIC_DRAW);
+            gl.glVertexAttribPointer(1, 2, GL.GL_FLOAT, false, 0, 0);
 
-        gl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
-        gl.glBindVertexArray(0);
+            gl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+            gl.glBindVertexArray(0);
+            isLoaded = true;
+        }
     }
 
     public float[] getVertices() {
