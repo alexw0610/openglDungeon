@@ -19,6 +19,8 @@ public interface Renderable extends Comparable<Renderable> {
 
     short getRenderLayer();
 
+    double getTextureRotation();
+
     @Override
     int compareTo(Renderable other);
 }

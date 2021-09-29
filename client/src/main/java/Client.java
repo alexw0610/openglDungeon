@@ -6,6 +6,7 @@ import engine.enumeration.PrimitiveMeshShape;
 import engine.enumeration.ShaderType;
 import engine.handler.SceneHandler;
 import engine.object.Camera;
+import engine.object.GameObject;
 import engine.object.Hitbox;
 import engine.object.Player;
 import engine.object.enums.HitboxType;
@@ -13,6 +14,7 @@ import engine.scene.SceneGenerator;
 import engine.scene.SceneTileMap;
 import exception.UDPServerException;
 import org.apache.commons.lang3.StringUtils;
+import org.joml.Vector2i;
 import processor.CharacterUpdateSender;
 import processor.ServerUpdateProcessor;
 import udp.UpdateListener;
@@ -51,7 +53,19 @@ public class Client {
         Camera.CAMERA.setLookAtTarget(player);
 
         SceneTileMap sceneTileMap = SceneGenerator.generateScene();
+        Vector2i roomPos = sceneTileMap.getRoomPositions().get(0);
+        player.setPositionX(roomPos.x());
+        player.setPositionY(roomPos.y());
         sceneTileMap.loadTiles();
+        for (Vector2i roomPosition : sceneTileMap.getRoomPositions()) {
+            GameObject light = new GameObject(PrimitiveMeshShape.TRIANGLE);
+            light.setRenderLayer((short) 1);
+            light.setLightSource(true);
+            light.setPositionX(roomPosition.x());
+            light.setPositionY(roomPosition.y());
+            SceneHandler.getInstance().addObject(light);
+        }
+
 
         if (!Boolean.parseBoolean(applicationProperties.getProperty("offlineMode"))) {
             try {

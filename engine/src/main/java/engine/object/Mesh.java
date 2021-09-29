@@ -5,6 +5,7 @@ import com.jogamp.opengl.GL3;
 import com.jogamp.opengl.GLContext;
 import engine.enumeration.PrimitiveMeshShape;
 import engine.object.enums.Primitives;
+import org.joml.Vector3d;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -46,30 +47,27 @@ public class Mesh extends Primitives {
             gl.glGenVertexArrays(1, vaoids, 0);
             gl.glBindVertexArray(vaoids[0]);
 
-            int[] vboids = new int[4];
-            gl.glGenBuffers(4, vboids, 0);
+            int[] vboIds = new int[4];
+            gl.glGenBuffers(4, vboIds, 0);
             vaoId = vaoids[0];
 
-            int vertexvboId = vboids[0];
             FloatBuffer verticesBuffer = FloatBuffer.allocate(vertices.length);
             verticesBuffer.put(vertices);
             verticesBuffer.flip();
-            gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vboids[0]);
+            gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vboIds[0]);
             gl.glBufferData(GL.GL_ARRAY_BUFFER, vertices.length * 4, verticesBuffer, GL.GL_STATIC_DRAW);
             gl.glVertexAttribPointer(0, 3, GL.GL_FLOAT, false, 0, 0);
 
-            int indicesVboId = vboids[1];
             IntBuffer indicesBuffer = IntBuffer.allocate(indices.length);
             indicesBuffer.put(indices);
             indicesBuffer.flip();
-            gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, vboids[1]);
+            gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, vboIds[1]);
             gl.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, indices.length * 4, indicesBuffer, GL.GL_STATIC_DRAW);
 
-            int texturevboId = vboids[2];
             FloatBuffer textureBuffer = FloatBuffer.allocate(texture.length);
             textureBuffer.put(texture);
             textureBuffer.flip();
-            gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vboids[2]);
+            gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vboIds[2]);
             gl.glBufferData(GL.GL_ARRAY_BUFFER, texture.length * 4, textureBuffer, GL.GL_STATIC_DRAW);
             gl.glVertexAttribPointer(1, 2, GL.GL_FLOAT, false, 0, 0);
 
@@ -79,8 +77,26 @@ public class Mesh extends Primitives {
         }
     }
 
-    public float[] getVertices() {
-        return vertices;
+    public Vector3d[] getVertices() {
+        Vector3d[] verticesVectors = new Vector3d[this.vertices.length / 3];
+        for (int i = 0; i < this.vertices.length / 3; i++) {
+            verticesVectors[i] = new Vector3d(
+                    this.vertices[(i * 3)],
+                    this.vertices[(i * 3) + 1],
+                    this.vertices[(i * 3) + 2]);
+        }
+        return verticesVectors;
+    }
+
+    public Edge[] getEdges() {
+        Vector3d[] vertices = getVertices();
+        Edge[] edges = new Edge[this.indices.length];
+        for (int i = 0; i < this.indices.length / 3; i++) {
+            edges[(i * 3)] = new Edge(vertices[this.indices[(i * 3)]], vertices[this.indices[(i * 3) + 1]]);
+            edges[(i * 3) + 1] = new Edge(vertices[this.indices[(i * 3) + 1]], vertices[this.indices[(i * 3) + 2]]);
+            edges[(i * 3) + 2] = new Edge(vertices[this.indices[(i * 3) + 2]], vertices[this.indices[(i * 3)]]);
+        }
+        return edges;
     }
 
     public int[] getIndices() {
@@ -89,6 +105,13 @@ public class Mesh extends Primitives {
 
     public int getVaoId() {
         return vaoId;
+    }
+
+    public void unload() {
+        if (isLoaded) {
+            GL3 gl = GLContext.getCurrentGL().getGL3();
+            gl.glDeleteVertexArrays(1, new int[]{this.vaoId}, 0);
+        }
     }
 
 }

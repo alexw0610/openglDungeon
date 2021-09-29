@@ -15,16 +15,16 @@ public class TileRoom implements Comparable<TileRoom> {
     private final Vector2i roomBottomLeftTile;
     private final Tile[][] roomTiles;
 
-    public TileRoom(short roomWidth, short roomHeight, Vector2i roomBottomLeftTile, String textureKey) {
+    public TileRoom(short roomWidth, short roomHeight, Vector2i roomBottomLeftTile, String... textureKeys) {
         this.roomWidth = roomWidth;
         this.roomHeight = roomHeight;
         this.roomBottomLeftTile = roomBottomLeftTile;
         this.roomCenterTile = new Vector2i(roomBottomLeftTile.x() + (roomWidth / 2), roomBottomLeftTile.y() + (roomHeight / 2));
         this.roomTiles = new Tile[roomWidth][roomHeight];
-        fillRoomTiles(roomWidth, roomHeight, roomBottomLeftTile, textureKey);
+        fillRoomTiles(roomWidth, roomHeight, roomBottomLeftTile, textureKeys);
     }
 
-    private void fillRoomTiles(short roomWidth, short roomHeight, Vector2i roomTopLeftTile, String textureKey) {
+    private void fillRoomTiles(short roomWidth, short roomHeight, Vector2i roomTopLeftTile, String[] textureKeys) {
         for (short x = 0; x < roomWidth; x++) {
             for (short y = 0; y < roomHeight; y++) {
                 short sceneTilePositionX = (short) (x + (short) roomTopLeftTile.x());
@@ -34,7 +34,8 @@ public class TileRoom implements Comparable<TileRoom> {
                         new Hitbox(HitboxType.AABB, 0.5),
                         sceneTilePositionX,
                         sceneTilePositionY);
-                object.setTextureKey(textureKey);
+                int index = (int) (Math.random() * textureKeys.length);
+                object.setTextureKey(textureKeys[index]);
                 object.setSurface(true);
                 this.roomTiles[x][y] = new Tile(object, sceneTilePositionX, sceneTilePositionY);
             }

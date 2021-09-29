@@ -16,9 +16,12 @@ public class GameObject implements Renderable, Collidable {
     protected double positionX;
     protected double positionY;
     protected double scale;
+    protected double textureRotation;
     protected short renderLayer;
     private boolean obstacle;
     private boolean surface;
+    private boolean visibleFace;
+    private boolean lightSource;
 
     public GameObject() {
         this(PrimitiveMeshShape.QUAD);
@@ -46,6 +49,8 @@ public class GameObject implements Renderable, Collidable {
         this.obstacle = false;
         this.surface = false;
         this.hitbox = hitbox;
+        this.textureRotation = 0;
+        this.visibleFace = true;
     }
 
     @Override
@@ -79,6 +84,15 @@ public class GameObject implements Renderable, Collidable {
     @Override
     public short getRenderLayer() {
         return this.renderLayer;
+    }
+
+    @Override
+    public double getTextureRotation() {
+        return this.textureRotation;
+    }
+
+    public void setTextureRotation(double textureRotation) {
+        this.textureRotation = textureRotation;
     }
 
     public void setScale(double scale) {
@@ -123,6 +137,22 @@ public class GameObject implements Renderable, Collidable {
 
     public void setObstacle(boolean obstacle) {
         this.obstacle = obstacle;
+    }
+
+    public boolean isVisibleFace() {
+        return visibleFace;
+    }
+
+    public void setVisibleFace(boolean visibleFace) {
+        this.visibleFace = visibleFace;
+    }
+
+    public boolean isLightSource() {
+        return lightSource;
+    }
+
+    public void setLightSource(boolean lightSource) {
+        this.lightSource = lightSource;
     }
 
     @Override

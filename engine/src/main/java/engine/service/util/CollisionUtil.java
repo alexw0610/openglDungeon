@@ -16,7 +16,7 @@ public class CollisionUtil {
 
     public static boolean checkCollisionAABBWithCircle(AxisAlignedBoundingBox aabb, CircleHitBox circleHitBox) {
         double outerBoundingCircleRadius = (aabb.getLength() * 2) * Math.sqrt(2);
-        double innerBoundingCircleRadius = (aabb.getLength() * 2);
+        double innerBoundingCircleRadius = (aabb.getLength());
         Vector2d circleCenter = new Vector2d(circleHitBox.getX(), circleHitBox.getY());
         Vector2d nearestCirclePoint = circleCenter.add((circleCenter.min(aabb.getCenter()).normalize()).mul(circleHitBox.getSize()));
 

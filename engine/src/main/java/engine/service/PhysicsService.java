@@ -21,11 +21,11 @@ public class PhysicsService {
     private void applyPlayerPhysics(long delta) {
         Player player = SceneHandler.getInstance().getPlayer();
         if (player != null) {
-            //    if (!checkCollisionAtNextPosition(player)) {
-            applyPlayerMomentum(player);
-            //   } else {
-            //      zeroMomentum(player);
-            //   }
+            if (!checkCollisionAtNextPosition(player)) {
+                applyPlayerMomentum(player);
+            } else {
+                zeroMomentum(player);
+            }
         }
     }
 
@@ -92,7 +92,6 @@ public class PhysicsService {
         return false;
     }
 
-
     private Vector2d getNextPosition(Player player) {
         double x = player.getMomentumX();
         double newPosX = player.getPosition().x() + (x * INERTIA * player.getCharacterStats().getMovementSpeed());
@@ -120,10 +119,10 @@ public class PhysicsService {
     }
 
     private double decay(double momentum) {
-        if (Math.abs(momentum) > 0.001) {
-            return momentum * DECAY;
-        } else {
+        if (Math.abs(momentum) < 0.001) {
             return 0;
+        } else {
+            return momentum * DECAY;
         }
     }
 

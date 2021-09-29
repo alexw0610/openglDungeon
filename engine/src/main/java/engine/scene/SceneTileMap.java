@@ -7,11 +7,15 @@ import engine.object.GameObject;
 import engine.object.Hitbox;
 import engine.object.enums.HitboxType;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.joml.Vector2i;
+
+import java.util.List;
 
 public class SceneTileMap {
 
     private final short mapSize;
     private final Tile[][] tiles;
+    private List<Vector2i> roomPositions;
 
     public SceneTileMap(short mapSize) {
         this.mapSize = mapSize;
@@ -46,21 +50,57 @@ public class SceneTileMap {
         }
     }
 
+    //TODO: Improve this method. Accept sets (themes) of room textures.
     public void applyWalls(String textureKey) {
         for (short x = 0; x < this.mapSize; x++) {
             for (short y = 0; y < this.mapSize; y++) {
                 if (this.tiles[x][y] == null) {
-                    if (isSurface(x + 1, y) ||
-                            isSurface(x - 1, y) ||
-                            isSurface(x, y + 1) ||
-                            isSurface(x, y - 1)) {
-                        System.out.println("addedWalls");
+                    if (
+                        //isSurface(x + 1, y) ||
+                        //isSurface(x - 1, y) ||
+                        //isSurface(x, y + 1) ||
+                            isSurface(x, y - 1)
+                    ) {
                         GameObject object = new GameObject(PrimitiveMeshShape.QUAD,
                                 ShaderType.DEFAULT,
                                 new Hitbox(HitboxType.AABB, 0.5),
                                 x,
                                 y);
-                        object.setTextureKey(textureKey);
+                        object.setTextureKey("stone_clean_sunset_wall");
+                        object.setObstacle(true);
+                        object.setVisibleFace(true);
+                        this.tiles[x][y] = new Tile(object, x, y);
+                    } else if (isSurface(x - 1, y)) {
+                        GameObject object = new GameObject(PrimitiveMeshShape.QUAD,
+                                ShaderType.DEFAULT,
+                                new Hitbox(HitboxType.AABB, 0.5),
+                                x,
+                                y);
+                        object.setTextureKey("stone_clean_sunset_wall_right");
+                        object.setObstacle(true);
+                        object.setVisibleFace(false);
+                        this.tiles[x][y] = new Tile(object, x, y);
+                    } else if (isSurface(x + 1, y)) {
+                        GameObject object = new GameObject(PrimitiveMeshShape.QUAD,
+                                ShaderType.DEFAULT,
+                                new Hitbox(HitboxType.AABB, 0.5),
+                                x,
+                                y);
+                        object.setTextureKey("stone_clean_sunset_wall_right");
+                        object.setTextureRotation(180);
+                        object.setObstacle(true);
+                        object.setVisibleFace(false);
+                        this.tiles[x][y] = new Tile(object, x, y);
+                    } else if (isSurface(x, y + 1)) {
+                        GameObject object = new GameObject(PrimitiveMeshShape.QUAD,
+                                ShaderType.DEFAULT,
+                                new Hitbox(HitboxType.AABB, 0.5),
+                                x,
+                                y);
+                        object.setTextureKey("stone_clean_sunset_wall_right");
+                        object.setTextureRotation(270);
+                        object.setObstacle(true);
+                        object.setVisibleFace(false);
                         this.tiles[x][y] = new Tile(object, x, y);
                     }
                 }
@@ -77,4 +117,11 @@ public class SceneTileMap {
                 this.tiles[x][y].getObject().isSurface();
     }
 
+    public void setRoomPositions(List<Vector2i> roomPositions) {
+        this.roomPositions = roomPositions;
+    }
+
+    public List<Vector2i> getRoomPositions() {
+        return roomPositions;
+    }
 }

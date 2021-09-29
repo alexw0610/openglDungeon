@@ -13,6 +13,7 @@ public class RenderHandler {
     private long frameDelta = 0;
 
     private final HashMap<String, Renderable> renderables = new HashMap<>();
+    private final List<Mesh> ephemeralDebugMeshes = new ArrayList<>();
     private final List<Mesh> debugMeshes = new ArrayList<>();
 
     private RenderHandler() {
@@ -36,6 +37,15 @@ public class RenderHandler {
         return meshesArray;
     }
 
+    public Mesh[] getEphemeralDebugMeshes() {
+        Mesh[] meshesArray;
+        synchronized (ephemeralDebugMeshes) {
+            meshesArray = new Mesh[ephemeralDebugMeshes.size()];
+            ephemeralDebugMeshes.toArray(meshesArray);
+        }
+        return meshesArray;
+    }
+
     public String addToRenderQueue(Renderable renderable) {
         String key = generateUnusedRenderableKey();
         synchronized (renderables) {
@@ -50,6 +60,12 @@ public class RenderHandler {
         }
     }
 
+    public void addToEphemeralDebugMeshes(Mesh mesh) {
+        synchronized (ephemeralDebugMeshes) {
+            this.ephemeralDebugMeshes.add(mesh);
+        }
+    }
+
     public void removeFromRenderQueue(String renderableKey) {
         synchronized (renderables) {
             this.renderables.remove(renderableKey);
@@ -58,7 +74,19 @@ public class RenderHandler {
 
     public void clearDebugMeshes() {
         synchronized (debugMeshes) {
+            for (Mesh mesh : debugMeshes) {
+                mesh.unload();
+            }
             this.debugMeshes.clear();
+        }
+    }
+
+    public void clearEphemeralDebugMeshes() {
+        synchronized (ephemeralDebugMeshes) {
+            for (Mesh mesh : ephemeralDebugMeshes) {
+                mesh.unload();
+            }
+            this.ephemeralDebugMeshes.clear();
         }
     }
 

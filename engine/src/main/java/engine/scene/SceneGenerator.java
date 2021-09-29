@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 
 public class SceneGenerator {
 
-    private static final int MAP_SIZE = 128;
+    private static final int MAP_SIZE = 64;
     private static final int MAX_ROOM_SIDE_LENGTH = 16;
     private static final double MAX_ROOM_RATIO = 2;
     private static final double MAX_ROOM_SIZE = 128;
@@ -37,7 +37,8 @@ public class SceneGenerator {
         addToDebugMeshes(paths);
         mainRooms.forEach(sceneTileMap::applyTileRoom);
         corridors.forEach(sceneTileMap::applyTileRoom);
-        sceneTileMap.applyWalls("loosebrickwall");
+        sceneTileMap.setRoomPositions(mainRooms.stream().map(TileRoom::getRoomCenterTile).collect(Collectors.toList()));
+        sceneTileMap.applyWalls("stone_clean_sunset_wall");
         return sceneTileMap;
     }
 
@@ -52,7 +53,10 @@ public class SceneGenerator {
             TileRoom room = new TileRoom((short) (Math.random() * MAX_ROOM_SIDE_LENGTH),
                     (short) (Math.random() * MAX_ROOM_SIDE_LENGTH),
                     new Vector2i((int) (Math.random() * MAP_SIZE), (int) (Math.random() * MAP_SIZE)),
-                    "stone_rough_purple_dark_no_highlights");
+                    "stone_floor_plain_purple_debrie",
+                    "stone_floor_plain_purple",
+                    "stone_floor_plain_purple_debrie_small"
+            );
             if (isValidRoom(room)) {
                 rooms.add(room);
             }
@@ -66,13 +70,15 @@ public class SceneGenerator {
             int endX = vector2fToVector2i(getRightVertex(path)).x();
             int fixedY = vector2fToVector2i(getLeftVertex(path)).y();
             for (int x = 0; x < endX - startX; x++) {
-                corridors.add(new TileRoom(CORRIDOR_SIZE, CORRIDOR_SIZE, new Vector2i(startX + x, fixedY), "stone_rough_purple_dark_no_highlights"));
+                corridors.add(new TileRoom(CORRIDOR_SIZE, CORRIDOR_SIZE, new Vector2i(startX + x, fixedY), "stone_floor_plain_purple_debrie",
+                        "stone_floor_plain_purple"));
             }
             int startY = vector2fToVector2i(getBottomVertex(path)).y();
             int endY = vector2fToVector2i(getTopVertex(path)).y();
             int fixedX = vector2fToVector2i(getBottomVertex(path).equals(getLeftVertex(path)) ? getTopVertex(path) : getBottomVertex(path)).x();
             for (int y = 0; y < endY - startY; y++) {
-                corridors.add(new TileRoom(CORRIDOR_SIZE, CORRIDOR_SIZE, new Vector2i(fixedX, startY + y), "stone_rough_purple_dark_no_highlights"));
+                corridors.add(new TileRoom(CORRIDOR_SIZE, CORRIDOR_SIZE, new Vector2i(fixedX, startY + y), "stone_floor_plain_purple_debrie",
+                        "stone_floor_plain_purple"));
             }
         }
         return corridors;

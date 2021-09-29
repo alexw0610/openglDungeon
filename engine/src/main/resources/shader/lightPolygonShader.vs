@@ -3,10 +3,8 @@
 layout (location=0) in vec3 vertex;
 layout (location=1) in vec2 texture;
 
+out vec2 outLightPosition;
 out vec3 outVertex;
-out vec2 outTexture;
-out vec2 outViewPointPosition;
-out double outEngineTick;
 
 layout (std140, column_major) uniform UBO{
     uniform dvec3 cameraPosition;
@@ -20,28 +18,18 @@ layout (std140, column_major) uniform UBO{
 
 void main()
 {
-    outViewPointPosition = vec2(ubo.viewPointPosition);
-    outEngineTick = ubo.engineTick;
-
-    //Rotate the texture coordinates
-    vec2 rotatedTexture = vec2(
-        (texture.x * cos(radians(float(ubo.textureRotation)))) - (texture.y * sin(radians(float(ubo.textureRotation)))),
-        (texture.x * sin(radians(float(ubo.textureRotation)))) + (texture.y * cos(radians(float(ubo.textureRotation))))
-    );
-
-    //Scale the texture coordinates
-    outTexture = vec2(rotatedTexture.x * ubo.objectScale, rotatedTexture.y * ubo.objectScale);
+    outLightPosition = vec2(ubo.objectPosition.x,ubo.objectPosition.y);
 
     //Scale the object
     vec3 objectScaled = vec3(vertex.x * ubo.objectScale, vertex.y * ubo.objectScale, 1);
 
     //Translate the object
-    vec3 objectPositionTranslated = objectScaled + vec3(ubo.objectPosition.x,ubo.objectPosition.y,0);
+    //vec3 objectPositionTranslated = objectScaled + vec3(ubo.objectPosition.x,ubo.objectPosition.y,0);
 
-    outVertex = objectPositionTranslated;
+    outVertex = objectScaled;
 
     //Translate the object relative to camera
-    vec3 objectPositionCameraTranslated = objectPositionTranslated - vec3(ubo.cameraPosition.x, ubo.cameraPosition.y,0);
+    vec3 objectPositionCameraTranslated = objectScaled - vec3(ubo.cameraPosition.x, ubo.cameraPosition.y,0);
 
     //Scale the object to adjust for aspect ratio
     vec3 objectAspectScaled =  vec3(objectPositionCameraTranslated.x, objectPositionCameraTranslated.y * ubo.aspectRatio.y, objectPositionCameraTranslated.z);

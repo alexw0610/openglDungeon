@@ -5,6 +5,7 @@ import engine.object.Character;
 import engine.object.GameObject;
 import engine.object.Player;
 import engine.object.generic.KeyObjectSet;
+import org.apache.commons.lang3.RandomStringUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -62,6 +63,10 @@ public class SceneHandler {
                 RenderHandler.RENDER_HANDLER.removeFromRenderQueue(previousEntry.key);
             }
         }
+    }
+
+    public void addObject(GameObject gameObject) {
+        addObject(RandomStringUtils.randomAlphanumeric(16), gameObject);
     }
 
     public void removeObject(String key) {

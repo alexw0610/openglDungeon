@@ -1,7 +1,9 @@
 package engine.enumeration;
 
 public enum ShaderType {
-    DEFAULT("shader");
+    DEFAULT("shader"),
+    VIEW_POLYGON_SHADER("viewPolygonShader"),
+    LIGHT_POLYGON_SHADER("lightPolygonShader");
 
     public final String shaderKey;
 
@@ -9,7 +11,7 @@ public enum ShaderType {
         this.shaderKey = shaderKey;
     }
 
-    public String value(){
+    public String value() {
         return this.shaderKey;
     }
 }
