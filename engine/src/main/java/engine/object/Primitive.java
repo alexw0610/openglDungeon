@@ -1,6 +1,6 @@
-package engine.object.enums;
+package engine.object;
 
-public abstract class Primitives {
+public abstract class Primitive {
 
     public static final float[] TRIANGLE_VERTICES = {
             0.0f, 0.5f, -1.0f,

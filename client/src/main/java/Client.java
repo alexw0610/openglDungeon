@@ -2,19 +2,9 @@ import dto.ssl.AuthenticationRequest;
 import dto.ssl.GenericResponse;
 import dto.ssl.ReadyForReceivingRequest;
 import engine.Engine;
-import engine.enumeration.PrimitiveMeshShape;
-import engine.enumeration.ShaderType;
 import engine.handler.SceneHandler;
-import engine.object.Camera;
-import engine.object.GameObject;
-import engine.object.Hitbox;
-import engine.object.Player;
-import engine.object.enums.HitboxType;
-import engine.scene.SceneGenerator;
-import engine.scene.SceneTileMap;
 import exception.UDPServerException;
 import org.apache.commons.lang3.StringUtils;
-import org.joml.Vector2i;
 import processor.CharacterUpdateSender;
 import processor.ServerUpdateProcessor;
 import udp.UpdateListener;
@@ -44,27 +34,27 @@ public class Client {
         Engine engine = new Engine();
         engine.start();
 
-        Player player = new Player(PrimitiveMeshShape.TRIANGLE, ShaderType.DEFAULT);
+/*        Player player = new Player(PrimitiveMeshShape.TRIANGLE, ShaderType.DEFAULT);
         player.setHitbox(new Hitbox(HitboxType.CIRCLE, 0.5));
         player.setRenderLayer((short) 2);
-        player.setPositionX(32);
-        player.setPositionY(32);
-        SceneHandler.getInstance().setPlayer(player);
-        Camera.CAMERA.setLookAtTarget(player);
+        player.setPositionX(0);
+        player.setPositionY(0);
+        SceneHandler.getInstance().setPlayer(player);*/
+        //Camera.CAMERA.setLookAtTarget(player);
 
-        SceneTileMap sceneTileMap = SceneGenerator.generateScene();
-        Vector2i roomPos = sceneTileMap.getRoomPositions().get(0);
-        player.setPositionX(roomPos.x());
-        player.setPositionY(roomPos.y());
-        sceneTileMap.loadTiles();
-        for (Vector2i roomPosition : sceneTileMap.getRoomPositions()) {
+        //SceneTileMap sceneTileMap = SceneGenerator.generateScene();
+        //Vector2i roomPos = sceneTileMap.getRoomPositions().get(0);
+        //player.setPositionX(roomPos.x());
+        //player.setPositionY(roomPos.y());
+        //sceneTileMap.loadTiles();
+        /*for (Vector2i roomPosition : sceneTileMap.getRoomPositions()) {
             GameObject light = new GameObject(PrimitiveMeshShape.TRIANGLE);
             light.setRenderLayer((short) 1);
             light.setLightSource(true);
             light.setPositionX(roomPosition.x());
             light.setPositionY(roomPosition.y());
             SceneHandler.getInstance().addObject(light);
-        }
+        }*/
 
 
         if (!Boolean.parseBoolean(applicationProperties.getProperty("offlineMode"))) {

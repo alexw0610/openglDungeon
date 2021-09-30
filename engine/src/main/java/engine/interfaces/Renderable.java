@@ -1,8 +1,9 @@
-package engine.object.interfaces;
+package engine.interfaces;
 
 
-import engine.enumeration.PrimitiveMeshShape;
-import engine.enumeration.ShaderType;
+import engine.enums.PrimitiveMeshShape;
+import engine.enums.ShaderType;
+import engine.enums.TextureKey;
 import org.joml.Vector2d;
 
 public interface Renderable extends Comparable<Renderable> {
@@ -11,7 +12,7 @@ public interface Renderable extends Comparable<Renderable> {
 
     ShaderType getShaderType();
 
-    String getTextureKey();
+    TextureKey getTextureKey();
 
     Vector2d getPosition();
 

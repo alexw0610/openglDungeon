@@ -1,6 +1,6 @@
 package engine.handler;
 
-import engine.enumeration.ShaderType;
+import engine.enums.ShaderType;
 import engine.loader.ShaderLoader;
 import engine.object.Shader;
 

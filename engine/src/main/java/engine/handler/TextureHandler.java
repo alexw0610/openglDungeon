@@ -1,5 +1,6 @@
 package engine.handler;
 
+import engine.enums.TextureKey;
 import engine.loader.TextureLoader;
 import engine.object.Texture;
 
@@ -9,10 +10,9 @@ import java.util.Map;
 
 public class TextureHandler {
     public static final TextureHandler TEXTURE_HANDLER = new TextureHandler();
-    public static final String DEFAULT_TEXTURE_KEY = "DEFAULT";
     private static final TextureLoader TEXTURE_LOADER = new TextureLoader();
 
-    private final Map<String, Texture> loadedTextureMap = new HashMap<>();
+    private final Map<TextureKey, Texture> loadedTextureMap = new HashMap<>();
 
     private TextureHandler() {
         ByteBuffer defaultBuffer = ByteBuffer.allocate(4);
@@ -20,14 +20,14 @@ public class TextureHandler {
         defaultBuffer.flip();
         Texture defaultTexture = new Texture(1,1, defaultBuffer);
         defaultTexture.loadTexture();
-        loadedTextureMap.put(DEFAULT_TEXTURE_KEY, defaultTexture);
+        loadedTextureMap.put(TextureKey.DEFAULT, defaultTexture);
     }
 
-    public void bindTextureWithKey(String textureKey) {
+    public void bindTextureWithKey(TextureKey textureKey) {
         if (loadedTextureMap.containsKey(textureKey)) {
             loadedTextureMap.get(textureKey).bind();
         } else {
-            Texture texture = TEXTURE_LOADER.loadTexture(textureKey);
+            Texture texture = TEXTURE_LOADER.loadTexture(textureKey.value());
             texture.loadTexture();
             texture.bind();
             loadedTextureMap.put(textureKey, texture);

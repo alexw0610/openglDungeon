@@ -1,4 +1,4 @@
-package engine.object.enums;
+package engine.enums;
 
 public enum HitboxType {
     AABB,

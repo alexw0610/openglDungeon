@@ -1,11 +1,12 @@
 package engine.scene;
 
-import engine.enumeration.PrimitiveMeshShape;
-import engine.enumeration.ShaderType;
+import engine.enums.HitboxType;
+import engine.enums.PrimitiveMeshShape;
+import engine.enums.ShaderType;
+import engine.enums.TextureKey;
 import engine.handler.SceneHandler;
 import engine.object.GameObject;
 import engine.object.Hitbox;
-import engine.object.enums.HitboxType;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.joml.Vector2i;
 
@@ -66,7 +67,7 @@ public class SceneTileMap {
                                 new Hitbox(HitboxType.AABB, 0.5),
                                 x,
                                 y);
-                        object.setTextureKey("stone_clean_sunset_wall");
+                        object.setTextureKey(TextureKey.STONE_CLEAN_SUNSET_WALL);
                         object.setObstacle(true);
                         object.setVisibleFace(true);
                         this.tiles[x][y] = new Tile(object, x, y);
@@ -76,7 +77,7 @@ public class SceneTileMap {
                                 new Hitbox(HitboxType.AABB, 0.5),
                                 x,
                                 y);
-                        object.setTextureKey("stone_clean_sunset_wall_right");
+                        object.setTextureKey(TextureKey.STONE_CLEAN_SUNSET_WALL_RIGHT);
                         object.setObstacle(true);
                         object.setVisibleFace(false);
                         this.tiles[x][y] = new Tile(object, x, y);
@@ -86,7 +87,7 @@ public class SceneTileMap {
                                 new Hitbox(HitboxType.AABB, 0.5),
                                 x,
                                 y);
-                        object.setTextureKey("stone_clean_sunset_wall_right");
+                        object.setTextureKey(TextureKey.STONE_CLEAN_SUNSET_WALL_RIGHT);
                         object.setTextureRotation(180);
                         object.setObstacle(true);
                         object.setVisibleFace(false);
@@ -97,7 +98,7 @@ public class SceneTileMap {
                                 new Hitbox(HitboxType.AABB, 0.5),
                                 x,
                                 y);
-                        object.setTextureKey("stone_clean_sunset_wall_right");
+                        object.setTextureKey(TextureKey.STONE_CLEAN_SUNSET_WALL_RIGHT);
                         object.setTextureRotation(270);
                         object.setObstacle(true);
                         object.setVisibleFace(false);

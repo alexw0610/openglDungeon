@@ -5,9 +5,12 @@ import engine.handler.MeshHandler;
 import engine.object.Edge;
 import engine.object.GameObject;
 import engine.object.Mesh;
-import org.joml.*;
+import org.joml.Intersectiond;
+import org.joml.Vector2d;
+import org.joml.Vector2dc;
+import org.joml.Vector3d;
+import org.joml.primitives.Rayd;
 
-import java.lang.Math;
 import java.util.*;
 import java.util.stream.Collectors;
 

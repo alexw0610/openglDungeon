@@ -1,6 +1,6 @@
 package engine.object;
 
-import engine.object.enums.HitboxType;
+import engine.enums.HitboxType;
 
 public class Hitbox {
 

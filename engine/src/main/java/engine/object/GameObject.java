@@ -1,17 +1,18 @@
 package engine.object;
 
-import engine.enumeration.PrimitiveMeshShape;
-import engine.enumeration.ShaderType;
-import engine.object.enums.HitboxType;
-import engine.object.interfaces.Collidable;
-import engine.object.interfaces.Renderable;
+import engine.enums.HitboxType;
+import engine.enums.PrimitiveMeshShape;
+import engine.enums.ShaderType;
+import engine.enums.TextureKey;
+import engine.interfaces.Collidable;
+import engine.interfaces.Renderable;
 import org.joml.Vector2d;
 
 public class GameObject implements Renderable, Collidable {
 
     private final PrimitiveMeshShape primitiveMeshShape;
     private ShaderType shaderType;
-    private String textureKey;
+    private TextureKey textureKey;
     private Hitbox hitbox;
     protected double positionX;
     protected double positionY;
@@ -68,11 +69,11 @@ public class GameObject implements Renderable, Collidable {
     }
 
     @Override
-    public String getTextureKey() {
+    public TextureKey getTextureKey() {
         return this.textureKey;
     }
 
-    public void setTextureKey(String textureKey) {
+    public void setTextureKey(TextureKey textureKey) {
         this.textureKey = textureKey;
     }
 

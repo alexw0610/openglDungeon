@@ -19,7 +19,7 @@ public class CharacterUpdateSender implements Runnable {
 
     @Override
     public void run() {
-        //TODO Sheduled task executor
+        //TODO Scheduled task executor
         while (true) {
             PlayerUpdateDto playerUpdateDto = PlayerUpdateDto.builder()
                     .positionX(this.player.getPosition().x())

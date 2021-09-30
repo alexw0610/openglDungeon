@@ -1,6 +1,6 @@
 package engine.loader;
 
-import engine.enumeration.ShaderType;
+import engine.enums.ShaderType;
 import engine.object.Shader;
 
 import java.io.BufferedReader;

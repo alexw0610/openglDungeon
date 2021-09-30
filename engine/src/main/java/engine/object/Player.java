@@ -1,7 +1,7 @@
 package engine.object;
 
-import engine.enumeration.PrimitiveMeshShape;
-import engine.enumeration.ShaderType;
+import engine.enums.PrimitiveMeshShape;
+import engine.enums.ShaderType;
 
 public class Player extends Character {
 

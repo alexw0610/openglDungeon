@@ -2,13 +2,16 @@ package engine.service;
 
 import com.jogamp.opengl.GL4;
 import com.jogamp.opengl.GLContext;
-import engine.enumeration.ShaderType;
+import engine.component.RenderComponent;
+import engine.component.TransformationComponent;
+import engine.enums.ShaderType;
+import engine.enums.TextureKey;
 import engine.exception.MeshNotFoundException;
 import engine.handler.*;
+import engine.interfaces.Renderable;
 import engine.object.Camera;
 import engine.object.GameObject;
 import engine.object.Mesh;
-import engine.object.interfaces.Renderable;
 import org.joml.Vector2d;
 
 import java.nio.DoubleBuffer;
@@ -47,18 +50,48 @@ public class RenderService {
         gl.glGenBuffers(1, uniformBuffers, 0);
         this.frameBuffers = new int[2];
         this.renderedTextures = new int[2];
-        gl.glGenTextures(2, this.renderedTextures, 0);
-        gl.glGenFramebuffers(2, frameBuffers, 0);
+        //gl.glGenTextures(2, this.renderedTextures, 0);
+        //gl.glGenFramebuffers(2, frameBuffers, 0);
         this.aspectRatio = new Vector2d(0, WINDOW_WIDTH / WINDOW_HEIGHT);
-        linkTextureToFbo(this.frameBuffers[0], this.renderedTextures[0]);
-        linkTextureToFbo(this.frameBuffers[1], this.renderedTextures[1]);
-        gl.glEnable(gl.GL_BLEND);
-        gl.glBlendFunc(gl.GL_SRC_ALPHA, gl.GL_ONE_MINUS_SRC_ALPHA);
+        //linkTextureToFbo(this.frameBuffers[0], this.renderedTextures[0]);
+        //linkTextureToFbo(this.frameBuffers[1], this.renderedTextures[1]);
         gl.glClearColor(0, 0, 0, 1);
+        //gl.glEnable(gl.GL_BLEND);
+        //gl.glBlendFunc(gl.GL_SRC_ALPHA, gl.GL_ONE_MINUS_SRC_ALPHA);
+        //gl.glClearColor(0, 0, 0, 1);
+    }
+
+    public void renderComponent(RenderComponent renderComponent, TransformationComponent transformationComponent) {
+        GL4 gl = GLContext.getCurrent().getGL().getGL4();
+        gl.glBindFramebuffer(gl.GL_FRAMEBUFFER, 0);
+        clearCall(0);
+        if (renderComponent.getShaderType() != null) {
+            shaderHandler.bindShaderOfType(renderComponent.getShaderType());
+        } else {
+            shaderHandler.bindShaderOfType(ShaderType.DEFAULT);
+        }
+        gl.glActiveTexture(gl.GL_TEXTURE0);
+        if (renderComponent.getTextureKey() != null) {
+            textureHandler.bindTextureWithKey(renderComponent.getTextureKey());
+        } else {
+            textureHandler.bindTextureWithKey(TextureKey.DEFAULT);
+        }
+        gl.glActiveTexture(gl.GL_TEXTURE1);
+        gl.glBindTexture(gl.GL_TEXTURE_2D, this.renderedTextures[0]);
+
+        gl.glActiveTexture(gl.GL_TEXTURE2);
+        gl.glBindTexture(gl.GL_TEXTURE_2D, this.renderedTextures[1]);
+
+        updateUbo(transformationComponent.getPositionX(), transformationComponent.getPositionY(), transformationComponent.getScale(), 1);
+        renderComponent.getMesh().loadMesh();
+        drawCall(renderComponent.getMesh(), gl.GL_TRIANGLES);
+        //renderComponent.getMesh().unload();
+
     }
 
     public void renderNextFrame() {
         clearCall(0);
+        clearCall(frameBuffers[0]);
         List<GameObject> obstacles = SceneHandler.getInstance().getObjects().stream().filter(GameObject::isObstacle).collect(Collectors.toList());
         List<GameObject> lightSources = SceneHandler.getInstance().getObjects().stream().filter(GameObject::isLightSource).collect(Collectors.toList());
         Mesh playerLineOfSightPolygon = VisibilityPolygonFactory.generateVisibilityPolygon(
@@ -100,7 +133,7 @@ public class RenderService {
         GL4 gl = GLContext.getCurrent().getGL().getGL4();
         gl.glBindFramebuffer(gl.GL_FRAMEBUFFER, frameBuffer);
         shaderHandler.bindShaderOfType(shaderType);
-        textureHandler.bindTextureWithKey(TextureHandler.DEFAULT_TEXTURE_KEY);
+        textureHandler.bindTextureWithKey(TextureKey.DEFAULT);
         gl.glPolygonMode(gl.GL_FRONT_AND_BACK, gl.GL_FILL);
         mesh.loadMesh();
         drawCall(mesh, gl.GL_TRIANGLES);
@@ -112,7 +145,7 @@ public class RenderService {
         GL4 gl = GLContext.getCurrent().getGL().getGL4();
         updateUbo(0, 0, 1, 0);
         shaderHandler.bindShaderOfType(ShaderType.DEFAULT);
-        textureHandler.bindTextureWithKey(TextureHandler.DEFAULT_TEXTURE_KEY);
+        textureHandler.bindTextureWithKey(TextureKey.DEFAULT);
         gl.glPolygonMode(gl.GL_FRONT_AND_BACK, gl.GL_LINE);
         for (Mesh mesh : meshes) {
             mesh.loadMesh();
@@ -140,7 +173,7 @@ public class RenderService {
         if (renderable.getTextureKey() != null) {
             textureHandler.bindTextureWithKey(renderable.getTextureKey());
         } else {
-            textureHandler.bindTextureWithKey(TextureHandler.DEFAULT_TEXTURE_KEY);
+            textureHandler.bindTextureWithKey(TextureKey.DEFAULT);
         }
         gl.glActiveTexture(gl.GL_TEXTURE1);
         gl.glBindTexture(gl.GL_TEXTURE_2D, this.renderedTextures[0]);
@@ -157,7 +190,7 @@ public class RenderService {
         }
     }
 
-    private static void drawCall(Mesh mesh, int GL_RENDER_MODE) {
+    private void drawCall(Mesh mesh, int GL_RENDER_MODE) {
         GL4 gl = GLContext.getCurrent().getGL().getGL4();
         gl.glBindVertexArray(mesh.getVaoId());
         gl.glEnableVertexAttribArray(0);
@@ -168,11 +201,11 @@ public class RenderService {
         gl.glBindVertexArray(0);
     }
 
-    private static void clearCall(int framebuffer) {
+    public void clearCall(int framebuffer) {
         GL4 gl = GLContext.getCurrent().getGL().getGL4();
-        gl.glBindFramebuffer(gl.GL_FRAMEBUFFER, framebuffer);
+        //gl.glBindFramebuffer(gl.GL_FRAMEBUFFER, framebuffer);
         gl.glClear(gl.GL_COLOR_BUFFER_BIT);
-        gl.glBindFramebuffer(gl.GL_FRAMEBUFFER, 0);
+        //gl.glBindFramebuffer(gl.GL_FRAMEBUFFER, 0);
     }
 
     private void linkTextureToFbo(int frameBuffer, int renderedTexture) {
@@ -205,7 +238,7 @@ public class RenderService {
     private void updateUbo(double x, double y, double scale, double textureRotation) {
         GL4 gl = GLContext.getCurrent().getGL().getGL4();
 
-        Vector2d viewPointPosition = getPlayerPositionOrDefault(new Vector2d(0, 0));
+        Vector2d viewPointPosition = new Vector2d(0, 0);
 
         this.uboDataBuffer.clear();
         this.uboDataBuffer.put(0, this.camera.getPosition().x());

@@ -1,4 +1,4 @@
-package engine.object.interfaces;
+package engine.interfaces;
 
 import engine.object.Hitbox;
 

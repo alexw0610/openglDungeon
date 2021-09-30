@@ -1,4 +1,4 @@
-package engine.enumeration;
+package engine.enums;
 
 public enum ShaderType {
     DEFAULT("shader"),

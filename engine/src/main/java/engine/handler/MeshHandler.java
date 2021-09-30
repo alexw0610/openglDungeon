@@ -1,6 +1,6 @@
 package engine.handler;
 
-import engine.enumeration.PrimitiveMeshShape;
+import engine.enums.PrimitiveMeshShape;
 import engine.exception.MeshNotFoundException;
 import engine.object.Mesh;
 
@@ -12,7 +12,7 @@ import static engine.exception.EngineExceptionMessageTemplate.MESH_NOT_FOUND_EXC
 public class MeshHandler {
     public static final MeshHandler MESH_HANDLER = new MeshHandler();
 
-    private Map<PrimitiveMeshShape, Mesh> primitiveMeshShapes = new HashMap<>();
+    private final Map<PrimitiveMeshShape, Mesh> primitiveMeshShapes = new HashMap<>();
 
     private MeshHandler() {
         for (PrimitiveMeshShape primitiveMeshShape : PrimitiveMeshShape.values()) {

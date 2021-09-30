@@ -2,8 +2,8 @@ package processor;
 
 import dto.udp.CharacterListUpdateDto;
 import dto.udp.UpdateEncryptionWrapper;
-import engine.enumeration.PrimitiveMeshShape;
-import engine.enumeration.ShaderType;
+import engine.enums.PrimitiveMeshShape;
+import engine.enums.ShaderType;
 import engine.handler.SceneHandler;
 import engine.object.Character;
 import exception.EncryptionException;

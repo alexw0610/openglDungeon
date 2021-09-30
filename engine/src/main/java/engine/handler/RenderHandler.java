@@ -1,7 +1,7 @@
 package engine.handler;
 
+import engine.interfaces.Renderable;
 import engine.object.Mesh;
-import engine.object.interfaces.Renderable;
 import org.apache.commons.lang3.RandomStringUtils;
 
 import java.util.ArrayList;

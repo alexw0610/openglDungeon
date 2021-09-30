@@ -1,10 +1,11 @@
 package engine.scene;
 
-import engine.enumeration.PrimitiveMeshShape;
-import engine.enumeration.ShaderType;
+import engine.enums.HitboxType;
+import engine.enums.PrimitiveMeshShape;
+import engine.enums.ShaderType;
+import engine.enums.TextureKey;
 import engine.object.GameObject;
 import engine.object.Hitbox;
-import engine.object.enums.HitboxType;
 import org.joml.Vector2i;
 
 public class TileRoom implements Comparable<TileRoom> {
@@ -15,7 +16,7 @@ public class TileRoom implements Comparable<TileRoom> {
     private final Vector2i roomBottomLeftTile;
     private final Tile[][] roomTiles;
 
-    public TileRoom(short roomWidth, short roomHeight, Vector2i roomBottomLeftTile, String... textureKeys) {
+    public TileRoom(short roomWidth, short roomHeight, Vector2i roomBottomLeftTile, TextureKey... textureKeys) {
         this.roomWidth = roomWidth;
         this.roomHeight = roomHeight;
         this.roomBottomLeftTile = roomBottomLeftTile;
@@ -24,7 +25,7 @@ public class TileRoom implements Comparable<TileRoom> {
         fillRoomTiles(roomWidth, roomHeight, roomBottomLeftTile, textureKeys);
     }
 
-    private void fillRoomTiles(short roomWidth, short roomHeight, Vector2i roomTopLeftTile, String[] textureKeys) {
+    private void fillRoomTiles(short roomWidth, short roomHeight, Vector2i roomTopLeftTile, TextureKey[] textureKeys) {
         for (short x = 0; x < roomWidth; x++) {
             for (short y = 0; y < roomHeight; y++) {
                 short sceneTilePositionX = (short) (x + (short) roomTopLeftTile.x());

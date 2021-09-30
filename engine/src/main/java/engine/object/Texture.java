@@ -7,8 +7,8 @@ import java.nio.ByteBuffer;
 
 public class Texture {
 
-    private int width = 0;
-    private int height = 0;
+    private final int width;
+    private final int height;
     private final ByteBuffer textureBuffer;
     private int textureId;
 
