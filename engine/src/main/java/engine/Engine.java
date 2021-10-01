@@ -6,44 +6,48 @@ import com.jogamp.newt.opengl.GLWindow;
 import com.jogamp.opengl.GLCapabilities;
 import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.util.FPSAnimator;
+import engine.component.PhysicsComponent;
+import engine.component.PlayerComponent;
 import engine.component.RenderComponent;
 import engine.component.TransformationComponent;
-import engine.entity.Entity;
 import engine.entity.EntityBuilder;
 import engine.enums.PrimitiveMeshShape;
 import engine.enums.ShaderType;
 import engine.enums.TextureKey;
+import engine.handler.EntityHandler;
 import engine.object.Mesh;
+import engine.system.PlayerMovementInputSystem;
 import engine.system.RenderSystem;
 import engine.system.System;
 import engine.system.TransformationSystem;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static engine.EngineConstants.*;
 
 public class Engine {
-    private final List<Entity> entities = new ArrayList<>();
-    private final List<System> systems = new ArrayList<>();
+
+    private static final List<System> systems = new ArrayList<>();
+    public static double stepTimeDelta = 0;
 
     public void start() {
         setupDisplay();
     }
 
     public void init() {
-        systems.add(new RenderSystem());
-        systems.add(new TransformationSystem());
-        entities.add(EntityBuilder.builder()
+        systems.addAll(Arrays.asList(
+                new RenderSystem(),
+                new TransformationSystem(),
+                new PlayerMovementInputSystem()));
+
+        EntityHandler.getInstance().addObject(EntityBuilder.builder()
                 .withComponent(new RenderComponent(new Mesh(PrimitiveMeshShape.TRIANGLE), TextureKey.DEFAULT, ShaderType.DEFAULT))
                 .withComponent(new TransformationComponent())
-                .build());
-        entities.add(EntityBuilder.builder()
-                .withComponent(new RenderComponent(new Mesh(PrimitiveMeshShape.TRIANGLE), TextureKey.DEFAULT, ShaderType.DEFAULT))
-                .build());
-        entities.add(EntityBuilder.builder()
-                .withComponent(new TransformationComponent())
+                .withComponent(new PhysicsComponent())
+                .withComponent(new PlayerComponent())
                 .build());
     }
 
@@ -79,9 +83,14 @@ public class Engine {
     }
 
     public void step() {
-        for (System system : this.systems) {
-            system.processEntities(this.entities.stream().filter(system::isResponsibleFor).collect(Collectors.toList()));
-        }
+        double lastStepTime = java.lang.System.nanoTime();
+        systems.forEach(system -> system.processEntities(EntityHandler.getInstance()
+                .getAllObjects()
+                .stream()
+                .filter(system::isResponsibleFor)
+                .collect(Collectors.toList()))
+        );
+        stepTimeDelta = (java.lang.System.nanoTime() - lastStepTime) / 1000;
         //renderService.renderNextFrame();
         //keyHandler.processActiveKeys();
         //physicsService.doPhysics(RenderHandler.RENDER_HANDLER.getCurrentFrameDeltaMs());

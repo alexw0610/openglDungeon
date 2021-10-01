@@ -1,5 +1,6 @@
 package engine.system;
 
+import engine.component.PhysicsComponent;
 import engine.component.TransformationComponent;
 import engine.entity.Entity;
 
@@ -11,12 +12,17 @@ public class TransformationSystem implements System {
     public void processEntities(List<Entity> entities) {
         for (Entity entity : entities) {
             TransformationComponent transformationComponent = entity.getComponentOfType(TransformationComponent.class);
-            transformationComponent.setPositionX(transformationComponent.getPositionX() + 0.001);
+            PhysicsComponent physicsComponent = entity.getComponentOfType(PhysicsComponent.class);
+            double x = transformationComponent.getPositionX() + physicsComponent.getMomentumX();
+            double y = transformationComponent.getPositionY() + physicsComponent.getMomentumY();
+            transformationComponent.setPositionX(x);
+            transformationComponent.setPositionY(y);
         }
     }
 
     @Override
     public boolean isResponsibleFor(Entity entity) {
-        return entity.hasComponentOfType(TransformationComponent.class);
+        return entity.hasComponentOfType(TransformationComponent.class)
+                && entity.hasComponentOfType(PhysicsComponent.class);
     }
 }

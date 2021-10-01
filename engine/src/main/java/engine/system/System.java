@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface System {
 
-    void processEntities(List<Entity> components);
+    void processEntities(List<Entity> entities);
 
     boolean isResponsibleFor(Entity entity);
 }

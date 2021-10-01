@@ -2,44 +2,26 @@ package engine.entity;
 
 import engine.component.Component;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Entity {
 
-    private final List<Component> components = new ArrayList<>();
+    private final Map<Class, Component> components = new HashMap<>();
 
     public void addComponent(Component component) {
-        if (!hasComponentOfType(component.getClass())) {
-            this.components.add(component);
-        }
+        components.put(component.getClass(), component);
     }
 
-/*
     public void removeComponent(Class component) {
-        for (Component comp : this.components) {
-            if (component.isInstance(comp)) {
-                return true;
-            }
-        }
+        components.remove(component);
     }
-    */
 
     public boolean hasComponentOfType(Class component) {
-        for (Component comp : this.components) {
-            if (component.isInstance(comp)) {
-                return true;
-            }
-        }
-        return false;
+        return components.containsKey(component);
     }
 
-    public <T> T getComponentOfType(Class component) {
-        for (Component comp : this.components) {
-            if (component.isInstance(comp)) {
-                return (T) comp;
-            }
-        }
-        return null;
+    public <T> T getComponentOfType(Class<T> component) {
+        return (T) components.get(component);
     }
 }
