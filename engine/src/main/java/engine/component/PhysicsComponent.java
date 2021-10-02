@@ -1,12 +1,9 @@
 package engine.component;
 
-public class PhysicsComponent extends Component {
+public class PhysicsComponent implements Component {
 
     private double momentumX;
     private double momentumY;
-
-    public PhysicsComponent() {
-    }
 
     public double getMomentumX() {
         return momentumX;

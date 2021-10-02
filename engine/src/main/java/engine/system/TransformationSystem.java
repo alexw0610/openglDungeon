@@ -1,22 +1,100 @@
 package engine.system;
 
+import engine.component.CollisionComponent;
 import engine.component.PhysicsComponent;
+import engine.component.SurfaceComponent;
 import engine.component.TransformationComponent;
 import engine.entity.Entity;
+import engine.handler.EntityHandler;
+import engine.service.util.CollisionUtil;
+import org.joml.Vector2d;
 
 import java.util.List;
+
+import static engine.EngineConstants.DECAY;
 
 public class TransformationSystem implements System {
 
     @Override
-    public void processEntities(List<Entity> entities) {
-        for (Entity entity : entities) {
-            TransformationComponent transformationComponent = entity.getComponentOfType(TransformationComponent.class);
-            PhysicsComponent physicsComponent = entity.getComponentOfType(PhysicsComponent.class);
-            double x = transformationComponent.getPositionX() + physicsComponent.getMomentumX();
-            double y = transformationComponent.getPositionY() + physicsComponent.getMomentumY();
-            transformationComponent.setPositionX(x);
-            transformationComponent.setPositionY(y);
+    public void processEntity(Entity entity) {
+        TransformationComponent transformationComponent = entity.getComponentOfType(TransformationComponent.class);
+        PhysicsComponent physicsComponent = entity.getComponentOfType(PhysicsComponent.class);
+        if (entity.hasComponentOfType(CollisionComponent.class)) {
+            CollisionComponent collisionComponent = entity.getComponentOfType(CollisionComponent.class);
+            List<Entity> surfaces = EntityHandler.getInstance().getAllEntitiesWithComponents(TransformationComponent.class, SurfaceComponent.class);
+            List<Entity> obstacles = EntityHandler.getInstance().getAllEntitiesWithComponents(TransformationComponent.class, CollisionComponent.class);
+            surfaces.remove(entity);
+            obstacles.remove(entity);
+            if (isSurfaced(transformationComponent, physicsComponent, surfaces)) {
+                if (!isColliding(transformationComponent, physicsComponent, collisionComponent, obstacles)) {
+                    applyMomentum(transformationComponent, physicsComponent);
+                } else {
+                    deleteMomentum(physicsComponent);
+                }
+            } else {
+                deleteMomentum(physicsComponent);
+            }
+        } else {
+            applyMomentum(transformationComponent, physicsComponent);
+        }
+    }
+
+    private boolean isSurfaced(TransformationComponent transformationComponent, PhysicsComponent physicsComponent, List<Entity> surfaces) {
+        double x = transformationComponent.getPositionX() + physicsComponent.getMomentumX();
+        double y = transformationComponent.getPositionY() + physicsComponent.getMomentumY();
+        for (Entity entity : surfaces) {
+            TransformationComponent transformationComponentTarget = entity.getComponentOfType(TransformationComponent.class);
+            SurfaceComponent surfaceComponent = entity.getComponentOfType(SurfaceComponent.class);
+            boolean collision = CollisionUtil.checkInside(new Vector2d(x, y),
+                    surfaceComponent.getHitBox(),
+                    new Vector2d(transformationComponentTarget.getPositionX(), transformationComponentTarget.getPositionY()));
+            if (collision) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean isColliding(TransformationComponent transformationComponent, PhysicsComponent physicsComponent, CollisionComponent collisionComponent, List<Entity> obstacles) {
+        double x = transformationComponent.getPositionX() + physicsComponent.getMomentumX();
+        double y = transformationComponent.getPositionY() + physicsComponent.getMomentumY();
+        for (Entity entity : obstacles) {
+            TransformationComponent transformationComponentTarget = entity.getComponentOfType(TransformationComponent.class);
+            CollisionComponent collisionComponentTarget = entity.getComponentOfType(CollisionComponent.class);
+            double xTarget = transformationComponentTarget.getPositionX();
+            double yTarget = transformationComponentTarget.getPositionY();
+            boolean collision = CollisionUtil.checkCollision(new Vector2d(x, y), collisionComponent.getHitBox(), new Vector2d(xTarget, yTarget), collisionComponentTarget.getHitBox());
+            if (collision) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void applyMomentum(TransformationComponent transformationComponent, PhysicsComponent physicsComponent) {
+        double x = transformationComponent.getPositionX() + physicsComponent.getMomentumX();
+        double y = transformationComponent.getPositionY() + physicsComponent.getMomentumY();
+        transformationComponent.setPositionX(x);
+        transformationComponent.setPositionY(y);
+        decayMomentum(physicsComponent);
+    }
+
+    private void deleteMomentum(PhysicsComponent component) {
+        component.setMomentumX(0);
+        component.setMomentumY(0);
+    }
+
+    private void decayMomentum(PhysicsComponent component) {
+        component.setMomentumX(decay(component.getMomentumX()));
+        component.setMomentumY(decay(component.getMomentumY()));
+    }
+
+    private double decay(double momentum) {
+        java.lang.System.out.println(momentum);
+        if (Math.abs(momentum) < 0.000001) {
+            return 0;
+        } else {
+            return momentum * (DECAY);
         }
     }
 

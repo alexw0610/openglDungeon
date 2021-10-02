@@ -7,7 +7,6 @@
 
 in vec3 outVertex;
 in vec2 outTexture;
-in vec2 outViewPointPosition;
 
 flat in double outEngineTick;
 
@@ -40,5 +39,5 @@ void main(){
     //    }
     //}
     //fragColor = vec4(basePixel, 1);
-    fragColor = vec4(1,0,0,1);
+    fragColor = pixelColor;
 }

@@ -2,11 +2,9 @@ package engine.system;
 
 import engine.entity.Entity;
 
-import java.util.List;
-
 public interface System {
 
-    void processEntities(List<Entity> entities);
+    void processEntity(Entity entity);
 
     boolean isResponsibleFor(Entity entity);
 }

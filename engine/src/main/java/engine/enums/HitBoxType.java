@@ -1,6 +1,6 @@
 package engine.enums;
 
-public enum HitboxType {
+public enum HitBoxType {
     AABB,
     CIRCLE
 }

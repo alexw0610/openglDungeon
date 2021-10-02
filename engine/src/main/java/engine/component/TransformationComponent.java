@@ -1,16 +1,20 @@
 package engine.component;
 
-public class TransformationComponent extends Component {
+public class TransformationComponent implements Component {
 
     private double positionX;
     private double positionY;
-    private double scale;
 
     public TransformationComponent() {
         super();
         this.positionX = 0;
         this.positionY = 0;
-        this.scale = 1;
+    }
+
+    public TransformationComponent(double x, double y) {
+        super();
+        this.positionX = x;
+        this.positionY = y;
     }
 
     public double getPositionX() {
@@ -29,11 +33,4 @@ public class TransformationComponent extends Component {
         this.positionY = positionY;
     }
 
-    public double getScale() {
-        return scale;
-    }
-
-    public void setScale(double scale) {
-        this.scale = scale;
-    }
 }

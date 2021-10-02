@@ -1,12 +1,12 @@
 package engine.scene;
 
-import engine.enums.HitboxType;
+import engine.enums.HitBoxType;
 import engine.enums.PrimitiveMeshShape;
 import engine.enums.ShaderType;
 import engine.enums.TextureKey;
 import engine.handler.SceneHandler;
 import engine.object.GameObject;
-import engine.object.Hitbox;
+import engine.object.HitBox;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.joml.Vector2i;
 
@@ -64,7 +64,7 @@ public class SceneTileMap {
                     ) {
                         GameObject object = new GameObject(PrimitiveMeshShape.QUAD,
                                 ShaderType.DEFAULT,
-                                new Hitbox(HitboxType.AABB, 0.5),
+                                new HitBox(HitBoxType.AABB, 0.5),
                                 x,
                                 y);
                         object.setTextureKey(TextureKey.STONE_CLEAN_SUNSET_WALL);
@@ -74,7 +74,7 @@ public class SceneTileMap {
                     } else if (isSurface(x - 1, y)) {
                         GameObject object = new GameObject(PrimitiveMeshShape.QUAD,
                                 ShaderType.DEFAULT,
-                                new Hitbox(HitboxType.AABB, 0.5),
+                                new HitBox(HitBoxType.AABB, 0.5),
                                 x,
                                 y);
                         object.setTextureKey(TextureKey.STONE_CLEAN_SUNSET_WALL_RIGHT);
@@ -84,7 +84,7 @@ public class SceneTileMap {
                     } else if (isSurface(x + 1, y)) {
                         GameObject object = new GameObject(PrimitiveMeshShape.QUAD,
                                 ShaderType.DEFAULT,
-                                new Hitbox(HitboxType.AABB, 0.5),
+                                new HitBox(HitBoxType.AABB, 0.5),
                                 x,
                                 y);
                         object.setTextureKey(TextureKey.STONE_CLEAN_SUNSET_WALL_RIGHT);
@@ -95,7 +95,7 @@ public class SceneTileMap {
                     } else if (isSurface(x, y + 1)) {
                         GameObject object = new GameObject(PrimitiveMeshShape.QUAD,
                                 ShaderType.DEFAULT,
-                                new Hitbox(HitboxType.AABB, 0.5),
+                                new HitBox(HitBoxType.AABB, 0.5),
                                 x,
                                 y);
                         object.setTextureKey(TextureKey.STONE_CLEAN_SUNSET_WALL_RIGHT);

@@ -1,6 +1,6 @@
 package engine.interfaces;
 
-import engine.object.Hitbox;
+import engine.object.HitBox;
 
 public interface Collidable {
 
@@ -8,5 +8,5 @@ public interface Collidable {
 
     boolean isObstacle();
 
-    Hitbox getHitbox();
+    HitBox getHitbox();
 }

@@ -1,11 +1,11 @@
 package engine.scene;
 
-import engine.enums.HitboxType;
+import engine.enums.HitBoxType;
 import engine.enums.PrimitiveMeshShape;
 import engine.enums.ShaderType;
 import engine.enums.TextureKey;
 import engine.object.GameObject;
-import engine.object.Hitbox;
+import engine.object.HitBox;
 import org.joml.Vector2i;
 
 public class TileRoom implements Comparable<TileRoom> {
@@ -32,7 +32,7 @@ public class TileRoom implements Comparable<TileRoom> {
                 short sceneTilePositionY = (short) (y + (short) roomTopLeftTile.y());
                 GameObject object = new GameObject(PrimitiveMeshShape.QUAD,
                         ShaderType.DEFAULT,
-                        new Hitbox(HitboxType.AABB, 0.5),
+                        new HitBox(HitBoxType.AABB, 0.5),
                         sceneTilePositionX,
                         sceneTilePositionY);
                 int index = (int) (Math.random() * textureKeys.length);

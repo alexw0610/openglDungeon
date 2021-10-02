@@ -54,7 +54,7 @@ public class PhysicsService {
     private boolean checkIfCollision(Player player, Vector2d nextPosition, List<GameObject> objects) {
         boolean collision;
         for (GameObject object : objects) {
-            collision = checkCollsion(player, nextPosition, object);
+            collision = checkCollision(player, nextPosition, object);
             if (collision) {
                 return true;
             }
@@ -62,17 +62,17 @@ public class PhysicsService {
         return false;
     }
 
-    private boolean checkCollsion(Player player, Vector2d nextPosition, GameObject object) {
-        switch (player.getHitbox().getHitboxType()) {
+    private boolean checkCollision(Player player, Vector2d nextPosition, GameObject object) {
+        switch (player.getHitbox().getHitBoxType()) {
             case AABB:
-                switch (object.getHitbox().getHitboxType()) {
+                switch (object.getHitbox().getHitBoxType()) {
                     case AABB:
                         return CollisionUtil.checkCollisionAABBWithAABB(CollisionUtil.getAABBForObject(nextPosition, player), CollisionUtil.getAABBForObject(object.getPosition(), object));
                     case CIRCLE:
                         return CollisionUtil.checkCollisionAABBWithCircle(CollisionUtil.getAABBForObject(nextPosition, player), CollisionUtil.getCircleHitboxForObject(object.getPosition(), object));
                 }
             case CIRCLE:
-                switch (object.getHitbox().getHitboxType()) {
+                switch (object.getHitbox().getHitBoxType()) {
                     case AABB:
                         return CollisionUtil.checkCollisionAABBWithCircle(CollisionUtil.getAABBForObject(object.getPosition(), object), CollisionUtil.getCircleHitboxForObject(nextPosition, player));
                     case CIRCLE:
@@ -83,7 +83,7 @@ public class PhysicsService {
     }
 
     private boolean checkInside(Vector2d nextPosition, GameObject object) {
-        switch (object.getHitbox().getHitboxType()) {
+        switch (object.getHitbox().getHitBoxType()) {
             case AABB:
                 return CollisionUtil.checkInsideAABB(nextPosition, CollisionUtil.getAABBForObject(object.getPosition(), object));
             case CIRCLE:

@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class EntityHandler implements Handler<Entity> {
 
@@ -28,6 +29,18 @@ public class EntityHandler implements Handler<Entity> {
     @Override
     public List<Entity> getAllObjects() {
         return new ArrayList<>(this.objects.values());
+    }
+
+    public Entity getEntityWithComponent(Class component) {
+        return this.objects.values().stream().filter(entity -> entity.hasComponentOfType(component)).findAny().orElse(null);
+    }
+
+    public List<Entity> getAllEntitiesWithComponents(Class... components) {
+        List<Entity> entities = getAllObjects();
+        for (Class component : components) {
+            entities = entities.stream().filter(entity -> entity.hasComponentOfType(component)).collect(Collectors.toList());
+        }
+        return entities;
     }
 
     @Override

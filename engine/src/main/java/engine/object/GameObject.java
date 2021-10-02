@@ -1,6 +1,6 @@
 package engine.object;
 
-import engine.enums.HitboxType;
+import engine.enums.HitBoxType;
 import engine.enums.PrimitiveMeshShape;
 import engine.enums.ShaderType;
 import engine.enums.TextureKey;
@@ -13,7 +13,7 @@ public class GameObject implements Renderable, Collidable {
     private final PrimitiveMeshShape primitiveMeshShape;
     private ShaderType shaderType;
     private TextureKey textureKey;
-    private Hitbox hitbox;
+    private HitBox hitbox;
     protected double positionX;
     protected double positionY;
     protected double scale;
@@ -37,10 +37,10 @@ public class GameObject implements Renderable, Collidable {
     }
 
     public GameObject(PrimitiveMeshShape primitiveMeshShape, ShaderType shaderType, double positionX, double positionY) {
-        this(primitiveMeshShape, shaderType, new Hitbox(HitboxType.AABB, 0.5), 0, 0);
+        this(primitiveMeshShape, shaderType, new HitBox(HitBoxType.AABB, 0.5), 0, 0);
     }
 
-    public GameObject(PrimitiveMeshShape primitiveMeshShape, ShaderType shaderType, Hitbox hitbox, double positionX, double positionY) {
+    public GameObject(PrimitiveMeshShape primitiveMeshShape, ShaderType shaderType, HitBox hitbox, double positionX, double positionY) {
         this.primitiveMeshShape = primitiveMeshShape;
         this.shaderType = shaderType;
         this.positionX = positionX;
@@ -157,11 +157,11 @@ public class GameObject implements Renderable, Collidable {
     }
 
     @Override
-    public Hitbox getHitbox() {
+    public HitBox getHitbox() {
         return this.hitbox;
     }
 
-    public void setHitbox(Hitbox hitbox) {
+    public void setHitbox(HitBox hitbox) {
         this.hitbox = hitbox;
     }
 }

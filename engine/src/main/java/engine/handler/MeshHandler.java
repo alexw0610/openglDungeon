@@ -1,32 +1,39 @@
 package engine.handler;
 
 import engine.enums.PrimitiveMeshShape;
-import engine.exception.MeshNotFoundException;
 import engine.object.Mesh;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static engine.exception.EngineExceptionMessageTemplate.MESH_NOT_FOUND_EXCEPTION;
-
 public class MeshHandler {
-    public static final MeshHandler MESH_HANDLER = new MeshHandler();
-
-    private final Map<PrimitiveMeshShape, Mesh> primitiveMeshShapes = new HashMap<>();
+    private static final MeshHandler INSTANCE = new MeshHandler();
+    private final Map<String, Mesh> meshes = new HashMap<>();
 
     private MeshHandler() {
         for (PrimitiveMeshShape primitiveMeshShape : PrimitiveMeshShape.values()) {
-            primitiveMeshShapes.put(primitiveMeshShape, new Mesh(primitiveMeshShape));
+            meshes.put(primitiveMeshShape.getKey(), new Mesh(primitiveMeshShape));
         }
-        primitiveMeshShapes.forEach((primitiveMeshShape, mesh) -> mesh.loadMesh());
+        meshes.forEach((primitive, mesh) -> mesh.loadMesh());
     }
 
-    public Mesh getMeshForKey(PrimitiveMeshShape primitiveMeshShape) throws MeshNotFoundException {
-        if (primitiveMeshShapes.containsKey(primitiveMeshShape)) {
-            return primitiveMeshShapes.get(primitiveMeshShape);
-        } else {
-            throw new MeshNotFoundException(MESH_NOT_FOUND_EXCEPTION.msg, null, primitiveMeshShape.name());
+    public static MeshHandler getInstance() {
+        return INSTANCE;
+    }
+
+    public void addMesh(String key, Mesh mesh) {
+        Mesh prev = this.meshes.put(key, mesh);
+        mesh.loadMesh();
+        if (prev != null) {
+            prev.unload();
         }
     }
 
+    public Mesh getMeshForKey(String key) {
+        return meshes.get(key);
+    }
+
+    public Mesh getMeshForKey(PrimitiveMeshShape primitiveMeshShape) {
+        return meshes.get(primitiveMeshShape.getKey());
+    }
 }

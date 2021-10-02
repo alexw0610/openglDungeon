@@ -1,6 +1,5 @@
 package engine.service;
 
-import engine.exception.MeshNotFoundException;
 import engine.handler.MeshHandler;
 import engine.object.Edge;
 import engine.object.GameObject;
@@ -88,15 +87,11 @@ public class VisibilityPolygonFactory {
     private static List<Edge> getObjectEdges(Collection<GameObject> objects) {
         List<Edge> objectVertices = new ArrayList<>();
         for (GameObject object : objects) {
-            try {
-                Mesh mesh = MeshHandler.MESH_HANDLER.getMeshForKey(object.getPrimitiveMeshShape());
-                if (object.isVisibleFace()) {
-                    objectVertices.addAll(Collections.singletonList(convertEdgeToWorldSpace(mesh.getEdges()[0], object.getPosition())));
-                } else {
-                    objectVertices.addAll(Arrays.asList(convertEdgesToWorldSpace(mesh.getEdges(), object.getPosition())));
-                }
-            } catch (MeshNotFoundException e) {
-                System.err.println(e.getMessage());
+            Mesh mesh = MeshHandler.getInstance().getMeshForKey(object.getPrimitiveMeshShape());
+            if (object.isVisibleFace()) {
+                objectVertices.addAll(Collections.singletonList(convertEdgeToWorldSpace(mesh.getEdges()[0], object.getPosition())));
+            } else {
+                objectVertices.addAll(Arrays.asList(convertEdgesToWorldSpace(mesh.getEdges(), object.getPosition())));
             }
         }
         return objectVertices.stream().distinct().collect(Collectors.toList());

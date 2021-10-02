@@ -6,7 +6,6 @@ import engine.component.RenderComponent;
 import engine.component.TransformationComponent;
 import engine.enums.ShaderType;
 import engine.enums.TextureKey;
-import engine.exception.MeshNotFoundException;
 import engine.handler.*;
 import engine.interfaces.Renderable;
 import engine.object.Camera;
@@ -27,7 +26,7 @@ import static engine.EngineConstants.WINDOW_WIDTH;
 public class RenderService {
 
     private final ShaderHandler shaderHandler = ShaderHandler.SHADER_HANDLER;
-    private final MeshHandler meshHandler = MeshHandler.MESH_HANDLER;
+    private final MeshHandler meshHandler = MeshHandler.getInstance();
     private final RenderHandler renderHandler = RenderHandler.RENDER_HANDLER;
     private final TextureHandler textureHandler = TextureHandler.TEXTURE_HANDLER;
     private final Camera camera = Camera.CAMERA;
@@ -38,6 +37,10 @@ public class RenderService {
 
     private final DoubleBuffer uboDataBuffer;
 
+    public static double cameraPosX;
+    public static double cameraPosY;
+    public static double cameraPosZ;
+
     private long lastExecutionTimestamp = 0;
     private double renderTick = 0;
 
@@ -46,7 +49,7 @@ public class RenderService {
     public RenderService() {
         GL4 gl = GLContext.getCurrent().getGL().getGL4();
         this.uniformBuffers = new int[1];
-        this.uboDataBuffer = DoubleBuffer.allocate(16);
+        this.uboDataBuffer = DoubleBuffer.allocate(12);
         gl.glGenBuffers(1, uniformBuffers, 0);
         this.frameBuffers = new int[2];
         this.renderedTextures = new int[2];
@@ -59,12 +62,14 @@ public class RenderService {
         //gl.glEnable(gl.GL_BLEND);
         //gl.glBlendFunc(gl.GL_SRC_ALPHA, gl.GL_ONE_MINUS_SRC_ALPHA);
         //gl.glClearColor(0, 0, 0, 1);
+        RenderService.cameraPosX = 0;
+        RenderService.cameraPosY = 0;
+        RenderService.cameraPosZ = 0.25;
     }
 
     public void renderComponent(RenderComponent renderComponent, TransformationComponent transformationComponent) {
         GL4 gl = GLContext.getCurrent().getGL().getGL4();
         gl.glBindFramebuffer(gl.GL_FRAMEBUFFER, 0);
-        clearCall(0);
         if (renderComponent.getShaderType() != null) {
             shaderHandler.bindShaderOfType(renderComponent.getShaderType());
         } else {
@@ -82,11 +87,8 @@ public class RenderService {
         gl.glActiveTexture(gl.GL_TEXTURE2);
         gl.glBindTexture(gl.GL_TEXTURE_2D, this.renderedTextures[1]);
 
-        updateUbo(transformationComponent.getPositionX(), transformationComponent.getPositionY(), transformationComponent.getScale(), 1);
-        renderComponent.getMesh().loadMesh();
-        drawCall(renderComponent.getMesh(), gl.GL_TRIANGLES);
-        //renderComponent.getMesh().unload();
-
+        updateUbo(transformationComponent.getPositionX(), transformationComponent.getPositionY(), renderComponent.getScale(), renderComponent.getLayer(), 0);
+        drawCall(meshHandler.getMeshForKey(renderComponent.getMeshKey()), gl.GL_TRIANGLES);
     }
 
     public void renderNextFrame() {
@@ -124,7 +126,7 @@ public class RenderService {
     private void renderLineOfSightPolygonToTexture(int frameBuffer, Map<Vector2d, Mesh> meshes) {
         clearCall(frameBuffer);
         for (Vector2d key : meshes.keySet()) {
-            updateUbo(key.x(), key.y(), 1, 0);
+            updateUbo(key.x(), key.y(), 1, 1, 0);
             renderLineOfSightPolygonToTexture(frameBuffer, meshes.get(key), ShaderType.LIGHT_POLYGON_SHADER);
         }
     }
@@ -143,7 +145,7 @@ public class RenderService {
 
     private void renderDebugMeshes(Mesh[] meshes) {
         GL4 gl = GLContext.getCurrent().getGL().getGL4();
-        updateUbo(0, 0, 1, 0);
+        updateUbo(0, 0, 1, 1, 0);
         shaderHandler.bindShaderOfType(ShaderType.DEFAULT);
         textureHandler.bindTextureWithKey(TextureKey.DEFAULT);
         gl.glPolygonMode(gl.GL_FRONT_AND_BACK, gl.GL_LINE);
@@ -181,13 +183,10 @@ public class RenderService {
         gl.glActiveTexture(gl.GL_TEXTURE2);
         gl.glBindTexture(gl.GL_TEXTURE_2D, this.renderedTextures[1]);
 
-        try {
-            Mesh mesh = meshHandler.getMeshForKey(renderable.getPrimitiveMeshShape());
-            updateUboForRenderable(renderable);
-            drawCall(mesh, gl.GL_TRIANGLES);
-        } catch (MeshNotFoundException e) {
-            System.err.println(e.getMessage());
-        }
+        Mesh mesh = meshHandler.getMeshForKey(renderable.getPrimitiveMeshShape());
+        updateUboForRenderable(renderable);
+        drawCall(mesh, gl.GL_TRIANGLES);
+
     }
 
     private void drawCall(Mesh mesh, int GL_RENDER_MODE) {
@@ -201,7 +200,7 @@ public class RenderService {
         gl.glBindVertexArray(0);
     }
 
-    public void clearCall(int framebuffer) {
+    public static void clearCall(int framebuffer) {
         GL4 gl = GLContext.getCurrent().getGL().getGL4();
         //gl.glBindFramebuffer(gl.GL_FRAMEBUFFER, framebuffer);
         gl.glClear(gl.GL_COLOR_BUFFER_BIT);
@@ -232,30 +231,25 @@ public class RenderService {
     }
 
     private void updateUboForRenderable(Renderable renderable) {
-        updateUbo(renderable.getPosition().x(), renderable.getPosition().y(), renderable.getScale(), renderable.getTextureRotation());
+        updateUbo(renderable.getPosition().x(), renderable.getPosition().y(), renderable.getScale(), 1, renderable.getTextureRotation());
     }
 
-    private void updateUbo(double x, double y, double scale, double textureRotation) {
+    private void updateUbo(double x, double y, double scale, double layer, double textureRotation) {
         GL4 gl = GLContext.getCurrent().getGL().getGL4();
 
-        Vector2d viewPointPosition = new Vector2d(0, 0);
-
         this.uboDataBuffer.clear();
-        this.uboDataBuffer.put(0, this.camera.getPosition().x());
-        this.uboDataBuffer.put(1, this.camera.getPosition().y());
-        this.uboDataBuffer.put(2, this.camera.getPosition().z());
+        this.uboDataBuffer.put(0, RenderService.cameraPosX);
+        this.uboDataBuffer.put(1, RenderService.cameraPosY);
+        this.uboDataBuffer.put(2, RenderService.cameraPosZ);
         this.uboDataBuffer.put(3, 0);
         this.uboDataBuffer.put(4, x);
         this.uboDataBuffer.put(5, y);
-        this.uboDataBuffer.put(6, scale);
-        this.uboDataBuffer.put(7, 0);
+        this.uboDataBuffer.put(6, layer);
+        this.uboDataBuffer.put(7, scale);
         this.uboDataBuffer.put(8, this.aspectRatio.x());
         this.uboDataBuffer.put(9, this.aspectRatio.y());
         this.uboDataBuffer.put(10, textureRotation);
-        this.uboDataBuffer.put(11, 0);
-        this.uboDataBuffer.put(12, viewPointPosition.x());
-        this.uboDataBuffer.put(13, viewPointPosition.y());
-        this.uboDataBuffer.put(14, this.renderTick);
+        this.uboDataBuffer.put(11, this.renderTick);
 
         gl.glBindBuffer(gl.GL_UNIFORM_BUFFER, this.uniformBuffers[0]);
         gl.glBufferData(gl.GL_UNIFORM_BUFFER, 8L * this.uboDataBuffer.capacity(), uboDataBuffer, gl.GL_DYNAMIC_DRAW);

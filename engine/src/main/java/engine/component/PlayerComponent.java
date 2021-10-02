@@ -1,6 +1,6 @@
 package engine.component;
 
-public class PlayerComponent extends Component {
+public class PlayerComponent implements Component {
     private double movementSpeed = 0.1;
 
     public double getMovementSpeed() {
