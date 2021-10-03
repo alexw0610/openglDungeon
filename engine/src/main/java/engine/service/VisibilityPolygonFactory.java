@@ -1,8 +1,11 @@
 package engine.service;
 
+import engine.component.RenderComponent;
+import engine.component.TransformationComponent;
+import engine.component.tag.VisibleFaceTag;
+import engine.entity.Entity;
 import engine.handler.MeshHandler;
 import engine.object.Edge;
-import engine.object.GameObject;
 import engine.object.Mesh;
 import org.joml.Intersectiond;
 import org.joml.Vector2d;
@@ -17,10 +20,10 @@ public class VisibilityPolygonFactory {
 
     private static final double ONE_DEGREE_RADIAN = 0.008726646;
 
-    public static Mesh generateVisibilityPolygon(Collection<GameObject> objects, Vector2d viewPoint, double viewDistance) {
+    public static Mesh generateVisibilityPolygon(Collection<Entity> entities, Vector2d viewPoint, double viewDistance) {
         Vector3d origin = new Vector3d(viewPoint.x(), viewPoint.y(), -1);
-        List<GameObject> objectsInViewDistance = getObjectsInViewDistance(objects, viewPoint, viewDistance);
-        List<Edge> objectEdges = getObjectEdges(objectsInViewDistance);
+        List<Entity> entitiesInViewDistance = getEntitiesInViewDistance(entities, viewPoint, viewDistance);
+        List<Edge> objectEdges = getObjectEdges(entitiesInViewDistance);
         List<Vector3d> uniqueObjectVertices = getUniqueObjectVertices(objectEdges);
         uniqueObjectVertices.addAll(getFallbackViewingQuad(origin, viewDistance));
         List<Vector3d> visibilityPolygonVertices = new ArrayList<>();
@@ -28,14 +31,14 @@ public class VisibilityPolygonFactory {
             Vector3d dir = new Vector3d(vertex).sub(origin);
             Vector3d hitPoint = getIntersectionVertex(vertex.distance(origin), objectEdges, viewPoint, new Rayd(origin, dir.normalize()));
             visibilityPolygonVertices.add(hitPoint);
-            if (hitPoint.equals(vertex)) {
-                Vector3d dirRight = new Vector3d();
-                dir.rotateZ(ONE_DEGREE_RADIAN, dirRight);
-                visibilityPolygonVertices.add(getIntersectionVertex(viewDistance, objectEdges, viewPoint, new Rayd(origin, dirRight.normalize())));
-                Vector3d dirLeft = new Vector3d();
-                dir.rotateZ(-ONE_DEGREE_RADIAN, dirLeft);
-                visibilityPolygonVertices.add(getIntersectionVertex(viewDistance, objectEdges, viewPoint, new Rayd(origin, dirLeft.normalize())));
-            }
+            //if (hitPoint.equals(vertex)) {
+            Vector3d dirRight = new Vector3d();
+            dir.rotateZ(ONE_DEGREE_RADIAN, dirRight);
+            visibilityPolygonVertices.add(getIntersectionVertex(viewDistance, objectEdges, viewPoint, new Rayd(origin, dirRight.normalize())));
+            Vector3d dirLeft = new Vector3d();
+            dir.rotateZ(-ONE_DEGREE_RADIAN, dirLeft);
+            visibilityPolygonVertices.add(getIntersectionVertex(viewDistance, objectEdges, viewPoint, new Rayd(origin, dirLeft.normalize())));
+            //}
         }
         visibilityPolygonVertices = sortClockwise(visibilityPolygonVertices, viewPoint);
         return generateMesh(visibilityPolygonVertices, viewPoint);
@@ -65,14 +68,15 @@ public class VisibilityPolygonFactory {
                 new Vector3d(viewPoint).add(new Vector3d(-viewDistance, -viewDistance, 0)));
     }
 
-    private static List<GameObject> getObjectsInViewDistance(Collection<GameObject> objects, Vector2d viewPoint, double viewDistance) {
-        List<GameObject> objectsInViewDistance = new ArrayList<>();
-        for (GameObject object : objects) {
-            if (object.getPosition().distance(new Vector2d(viewPoint.x(), viewPoint.y())) < viewDistance) {
-                objectsInViewDistance.add(object);
+    private static List<Entity> getEntitiesInViewDistance(Collection<Entity> entities, Vector2d viewPoint, double viewDistance) {
+        List<Entity> entitiesInViewDistance = new ArrayList<>();
+        for (Entity entity : entities) {
+            TransformationComponent transformationComponent = entity.getComponentOfType(TransformationComponent.class);
+            if (transformationComponent.getPosition().distance(new Vector2d(viewPoint.x(), viewPoint.y())) < viewDistance) {
+                entitiesInViewDistance.add(entity);
             }
         }
-        return objectsInViewDistance;
+        return entitiesInViewDistance;
     }
 
     private static List<Vector3d> getUniqueObjectVertices(Collection<Edge> edges) {
@@ -84,17 +88,19 @@ public class VisibilityPolygonFactory {
         return objectVertices.stream().distinct().collect(Collectors.toList());
     }
 
-    private static List<Edge> getObjectEdges(Collection<GameObject> objects) {
-        List<Edge> objectVertices = new ArrayList<>();
-        for (GameObject object : objects) {
-            Mesh mesh = MeshHandler.getInstance().getMeshForKey(object.getPrimitiveMeshShape());
-            if (object.isVisibleFace()) {
-                objectVertices.addAll(Collections.singletonList(convertEdgeToWorldSpace(mesh.getEdges()[0], object.getPosition())));
+    private static List<Edge> getObjectEdges(Collection<Entity> entities) {
+        List<Edge> entityEdges = new ArrayList<>();
+        for (Entity entity : entities) {
+            TransformationComponent transformationComponent = entity.getComponentOfType(TransformationComponent.class);
+            RenderComponent renderComponent = entity.getComponentOfType(RenderComponent.class);
+            Mesh mesh = MeshHandler.getInstance().getMeshForKey(renderComponent.getMeshKey());
+            if (entity.hasComponentOfType(VisibleFaceTag.class)) {
+                entityEdges.addAll(Collections.singletonList(convertEdgeToWorldSpace(mesh.getEdges()[0], transformationComponent.getPosition())));
             } else {
-                objectVertices.addAll(Arrays.asList(convertEdgesToWorldSpace(mesh.getEdges(), object.getPosition())));
+                entityEdges.addAll(Arrays.asList(convertEdgesToWorldSpace(mesh.getEdges(), transformationComponent.getPosition())));
             }
         }
-        return objectVertices.stream().distinct().collect(Collectors.toList());
+        return entityEdges.stream().distinct().collect(Collectors.toList());
     }
 
     private static Edge[] convertEdgesToWorldSpace(Edge[] edges, Vector2d position) {

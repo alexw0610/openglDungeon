@@ -2,10 +2,14 @@ package processor;
 
 import dto.udp.CharacterListUpdateDto;
 import dto.udp.UpdateEncryptionWrapper;
+import engine.component.RenderComponent;
+import engine.component.TransformationComponent;
+import engine.entity.Entity;
+import engine.entity.EntityBuilder;
 import engine.enums.PrimitiveMeshShape;
 import engine.enums.ShaderType;
-import engine.handler.SceneHandler;
-import engine.object.Character;
+import engine.enums.TextureKey;
+import engine.handler.EntityHandler;
 import exception.EncryptionException;
 import security.EncryptionHandler;
 import util.SerializableUtil;
@@ -47,13 +51,16 @@ public class ServerUpdateProcessor implements Runnable {
     }
 
     private void addOrUpdateCharacter(CharacterListUpdateDto.CharacterUpdateDto characterUpdateDto) {
-        if (SceneHandler.getInstance().containsCharacter(String.valueOf(characterUpdateDto.getCharacterId()))) {
-            Character character = SceneHandler.getInstance().getCharacter(String.valueOf(characterUpdateDto.getCharacterId()));
-            character.setPositionX(characterUpdateDto.getPositionX());
-            character.setPositionY(characterUpdateDto.getPositionY());
+        if (EntityHandler.getInstance().getObject(String.valueOf(characterUpdateDto.getCharacterId())) == null) {
+            Entity entity = EntityBuilder.builder()
+                    .withComponent(new TransformationComponent(characterUpdateDto.getPositionX(), characterUpdateDto.getPositionY()))
+                    .withComponent(new RenderComponent(PrimitiveMeshShape.TRIANGLE, TextureKey.DEFAULT, ShaderType.DEFAULT, 1, 4))
+                    .build();
+            EntityHandler.getInstance().addObject(String.valueOf(characterUpdateDto.getCharacterId()), entity);
         } else {
-            Character character = new Character(PrimitiveMeshShape.QUAD, ShaderType.DEFAULT);
-            SceneHandler.getInstance().addCharacter(String.valueOf(characterUpdateDto.getCharacterId()), character);
+            Entity character = EntityHandler.getInstance().getObject(String.valueOf(characterUpdateDto.getCharacterId()));
+            character.getComponentOfType(TransformationComponent.class).setPositionX(characterUpdateDto.getPositionX());
+            character.getComponentOfType(TransformationComponent.class).setPositionY(characterUpdateDto.getPositionY());
         }
     }
 

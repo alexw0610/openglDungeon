@@ -6,5 +6,9 @@ public interface System {
 
     void processEntity(Entity entity);
 
-    boolean isResponsibleFor(Entity entity);
+    static boolean isResponsibleFor(Entity entity) {
+        return false;
+    }
+
+    ;
 }

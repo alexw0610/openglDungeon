@@ -8,9 +8,9 @@ import engine.handler.KeyHandler;
 
 import static engine.EngineConstants.INERTIA;
 
-public class PlayerMovementInputSystem implements System {
-    @Override
-    public void processEntity(Entity entity) {
+public class PlayerMovementInputSystem {
+
+    public static void processEntity(Entity entity) {
         PhysicsComponent physicsComponent = entity.getComponentOfType(PhysicsComponent.class);
         PlayerComponent playerComponent = entity.getComponentOfType(PlayerComponent.class);
         if (KeyHandler.getInstance().isKeyForActionPressed("movePlayerUp")) {
@@ -31,8 +31,7 @@ public class PlayerMovementInputSystem implements System {
         }
     }
 
-    @Override
-    public boolean isResponsibleFor(Entity entity) {
+    public static boolean isResponsibleFor(Entity entity) {
         return entity.hasComponentOfType(PlayerComponent.class)
                 && entity.hasComponentOfType(PhysicsComponent.class);
     }

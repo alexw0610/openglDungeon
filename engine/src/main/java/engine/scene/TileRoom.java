@@ -1,11 +1,16 @@
 package engine.scene;
 
+import engine.component.RenderComponent;
+import engine.component.SurfaceComponent;
+import engine.component.TransformationComponent;
+import engine.entity.Entity;
+import engine.entity.EntityBuilder;
 import engine.enums.HitBoxType;
 import engine.enums.PrimitiveMeshShape;
 import engine.enums.ShaderType;
 import engine.enums.TextureKey;
-import engine.object.GameObject;
 import engine.object.HitBox;
+import org.joml.Intersectiond;
 import org.joml.Vector2i;
 
 public class TileRoom implements Comparable<TileRoom> {
@@ -30,15 +35,13 @@ public class TileRoom implements Comparable<TileRoom> {
             for (short y = 0; y < roomHeight; y++) {
                 short sceneTilePositionX = (short) (x + (short) roomTopLeftTile.x());
                 short sceneTilePositionY = (short) (y + (short) roomTopLeftTile.y());
-                GameObject object = new GameObject(PrimitiveMeshShape.QUAD,
-                        ShaderType.DEFAULT,
-                        new HitBox(HitBoxType.AABB, 0.5),
-                        sceneTilePositionX,
-                        sceneTilePositionY);
                 int index = (int) (Math.random() * textureKeys.length);
-                object.setTextureKey(textureKeys[index]);
-                object.setSurface(true);
-                this.roomTiles[x][y] = new Tile(object, sceneTilePositionX, sceneTilePositionY);
+                Entity entity = EntityBuilder.builder()
+                        .withComponent(new RenderComponent(PrimitiveMeshShape.QUAD, textureKeys[index], ShaderType.DEFAULT, 1, 2))
+                        .withComponent(new TransformationComponent(sceneTilePositionX, sceneTilePositionY))
+                        .withComponent(new SurfaceComponent(new HitBox(HitBoxType.AABB, 1)))
+                        .build();
+                this.roomTiles[x][y] = new Tile(entity, sceneTilePositionX, sceneTilePositionY);
             }
         }
     }
@@ -70,5 +73,15 @@ public class TileRoom implements Comparable<TileRoom> {
     @Override
     public int compareTo(TileRoom that) {
         return Short.compare(this.getRoomSize(), that.getRoomSize());
+    }
+
+    public boolean intersectsRoom(TileRoom other) {
+        return Intersectiond.testAarAar(
+                other.getRoomBottomLeftTile().x(), other.getRoomBottomLeftTile().y(),
+                other.getRoomBottomLeftTile().x() + other.getRoomWidth(),
+                other.getRoomBottomLeftTile().y() + other.getRoomHeight(),
+                this.getRoomBottomLeftTile().x(), this.getRoomBottomLeftTile().y(),
+                this.getRoomBottomLeftTile().x() + this.getRoomWidth(),
+                this.getRoomBottomLeftTile().y() + this.getRoomHeight());
     }
 }

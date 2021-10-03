@@ -13,10 +13,9 @@ import java.util.List;
 
 import static engine.EngineConstants.DECAY;
 
-public class TransformationSystem implements System {
+public class TransformationSystem {
 
-    @Override
-    public void processEntity(Entity entity) {
+    public static void processEntity(Entity entity) {
         TransformationComponent transformationComponent = entity.getComponentOfType(TransformationComponent.class);
         PhysicsComponent physicsComponent = entity.getComponentOfType(PhysicsComponent.class);
         if (entity.hasComponentOfType(CollisionComponent.class)) {
@@ -39,7 +38,7 @@ public class TransformationSystem implements System {
         }
     }
 
-    private boolean isSurfaced(TransformationComponent transformationComponent, PhysicsComponent physicsComponent, List<Entity> surfaces) {
+    private static boolean isSurfaced(TransformationComponent transformationComponent, PhysicsComponent physicsComponent, List<Entity> surfaces) {
         double x = transformationComponent.getPositionX() + physicsComponent.getMomentumX();
         double y = transformationComponent.getPositionY() + physicsComponent.getMomentumY();
         for (Entity entity : surfaces) {
@@ -55,7 +54,7 @@ public class TransformationSystem implements System {
         return false;
     }
 
-    private boolean isColliding(TransformationComponent transformationComponent, PhysicsComponent physicsComponent, CollisionComponent collisionComponent, List<Entity> obstacles) {
+    private static boolean isColliding(TransformationComponent transformationComponent, PhysicsComponent physicsComponent, CollisionComponent collisionComponent, List<Entity> obstacles) {
         double x = transformationComponent.getPositionX() + physicsComponent.getMomentumX();
         double y = transformationComponent.getPositionY() + physicsComponent.getMomentumY();
         for (Entity entity : obstacles) {
@@ -71,7 +70,7 @@ public class TransformationSystem implements System {
         return false;
     }
 
-    private void applyMomentum(TransformationComponent transformationComponent, PhysicsComponent physicsComponent) {
+    private static void applyMomentum(TransformationComponent transformationComponent, PhysicsComponent physicsComponent) {
         double x = transformationComponent.getPositionX() + physicsComponent.getMomentumX();
         double y = transformationComponent.getPositionY() + physicsComponent.getMomentumY();
         transformationComponent.setPositionX(x);
@@ -79,18 +78,17 @@ public class TransformationSystem implements System {
         decayMomentum(physicsComponent);
     }
 
-    private void deleteMomentum(PhysicsComponent component) {
+    private static void deleteMomentum(PhysicsComponent component) {
         component.setMomentumX(0);
         component.setMomentumY(0);
     }
 
-    private void decayMomentum(PhysicsComponent component) {
+    private static void decayMomentum(PhysicsComponent component) {
         component.setMomentumX(decay(component.getMomentumX()));
         component.setMomentumY(decay(component.getMomentumY()));
     }
 
-    private double decay(double momentum) {
-        java.lang.System.out.println(momentum);
+    private static double decay(double momentum) {
         if (Math.abs(momentum) < 0.000001) {
             return 0;
         } else {
@@ -98,8 +96,7 @@ public class TransformationSystem implements System {
         }
     }
 
-    @Override
-    public boolean isResponsibleFor(Entity entity) {
+    public static boolean isResponsibleFor(Entity entity) {
         return entity.hasComponentOfType(TransformationComponent.class)
                 && entity.hasComponentOfType(PhysicsComponent.class);
     }

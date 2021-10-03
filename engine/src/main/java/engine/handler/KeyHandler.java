@@ -21,6 +21,9 @@ public class KeyHandler {
         actionToKeyMap.put("moveCameraDown", KeyEvent.VK_DOWN);
         actionToKeyMap.put("moveCameraRight", KeyEvent.VK_RIGHT);
         actionToKeyMap.put("moveCameraLeft", KeyEvent.VK_LEFT);
+
+        actionToKeyMap.put("zoomCameraIn", KeyEvent.VK_PAGE_DOWN);
+        actionToKeyMap.put("zoomCameraOut", KeyEvent.VK_PAGE_UP);
     }
 
     public static KeyHandler getInstance() {

@@ -1,5 +1,7 @@
 package engine.component;
 
+import org.joml.Vector2d;
+
 public class TransformationComponent implements Component {
 
     private double positionX;
@@ -15,6 +17,10 @@ public class TransformationComponent implements Component {
         super();
         this.positionX = x;
         this.positionY = y;
+    }
+
+    public Vector2d getPosition() {
+        return new Vector2d(positionX, positionY);
     }
 
     public double getPositionX() {

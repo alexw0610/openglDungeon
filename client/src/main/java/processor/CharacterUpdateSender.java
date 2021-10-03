@@ -1,17 +1,18 @@
 package processor;
 
 import dto.udp.PlayerUpdateDto;
-import engine.object.Player;
+import engine.component.TransformationComponent;
+import engine.entity.Entity;
 import exception.UDPServerException;
 import udp.UpdateSender;
 
 public class CharacterUpdateSender implements Runnable {
 
-    private final Player player;
+    private final Entity player;
     private final UpdateSender updateSender;
     private final int connectionId;
 
-    public CharacterUpdateSender(Player player, int connectionId, UpdateSender updateSender) {
+    public CharacterUpdateSender(Entity player, int connectionId, UpdateSender updateSender) {
         this.player = player;
         this.updateSender = updateSender;
         this.connectionId = connectionId;
@@ -22,8 +23,8 @@ public class CharacterUpdateSender implements Runnable {
         //TODO Scheduled task executor
         while (true) {
             PlayerUpdateDto playerUpdateDto = PlayerUpdateDto.builder()
-                    .positionX(this.player.getPosition().x())
-                    .positionY(this.player.getPosition().y())
+                    .positionX(this.player.getComponentOfType(TransformationComponent.class).getPositionX())
+                    .positionY(this.player.getComponentOfType(TransformationComponent.class).getPositionY())
                     .realmId(1)
                     .zoneId(1)
                     .characterId(1)

@@ -23,38 +23,52 @@ public class EntityHandler implements Handler<Entity> {
 
     @Override
     public Entity getObject(String key) {
-        return objects.get(key);
+        synchronized (this.objects) {
+            return objects.get(key);
+        }
     }
 
     @Override
     public List<Entity> getAllObjects() {
-        return new ArrayList<>(this.objects.values());
+        synchronized (this.objects) {
+            return new ArrayList<>(this.objects.values());
+        }
     }
 
     public Entity getEntityWithComponent(Class component) {
-        return this.objects.values().stream().filter(entity -> entity.hasComponentOfType(component)).findAny().orElse(null);
+        synchronized (this.objects) {
+            return this.objects.values().stream().filter(entity -> entity.hasComponentOfType(component)).findAny().orElse(null);
+        }
     }
 
     public List<Entity> getAllEntitiesWithComponents(Class... components) {
-        List<Entity> entities = getAllObjects();
-        for (Class component : components) {
-            entities = entities.stream().filter(entity -> entity.hasComponentOfType(component)).collect(Collectors.toList());
+        synchronized (this.objects) {
+            List<Entity> entities = getAllObjects();
+            for (Class component : components) {
+                entities = entities.stream().filter(entity -> entity.hasComponentOfType(component)).collect(Collectors.toList());
+            }
+            return entities;
         }
-        return entities;
     }
 
     @Override
     public void addObject(String key, Entity object) {
-        this.objects.put(key, object);
+        synchronized (this.objects) {
+            this.objects.put(key, object);
+        }
     }
 
     @Override
     public void addObject(Entity object) {
-        this.objects.put(RandomStringUtils.randomAlphanumeric(16), object);
+        synchronized (this.objects) {
+            this.objects.put(RandomStringUtils.randomAlphanumeric(16), object);
+        }
     }
 
     @Override
     public void removeObject(String key) {
-        this.objects.remove(key);
+        synchronized (this.objects) {
+            this.objects.remove(key);
+        }
     }
 }

@@ -5,26 +5,32 @@ layout (location=1) in vec2 texture;
 
 out vec2 outLightPosition;
 out vec3 outVertex;
+out double outLightStrength;
+out double outLightFallOff;
+out vec3 outLightColor;
 
 layout (std140, column_major) uniform UBO{
     uniform dvec3 cameraPosition;
-    uniform dvec2 objectPosition;
-    uniform double objectScale;
+    uniform dvec2 lightPosition;
+    uniform double layer;
     uniform dvec2 aspectRatio;
-    uniform double textureRotation;
-    uniform dvec2 viewPointPosition;
-    uniform double engineTick;
+    uniform double lightStrength;
+    uniform double lightFallOff;
+    uniform dvec3 lightColor;
 } ubo;
 
 void main()
 {
-    outLightPosition = vec2(ubo.objectPosition.x,ubo.objectPosition.y);
+    outLightPosition = vec2(ubo.lightPosition.x, ubo.lightPosition.y);
+    outLightStrength = ubo.lightStrength;
+    outLightFallOff = ubo.lightFallOff;
+    outLightColor = vec3(ubo.lightColor.r, ubo.lightColor.g, ubo.lightColor.b);
 
     //Scale the object
-    vec3 objectScaled = vec3(vertex.x * ubo.objectScale, vertex.y * ubo.objectScale, 1);
+    vec3 objectScaled = vec3(vertex.x, vertex.y, 1);
 
     //Translate the object
-    //vec3 objectPositionTranslated = objectScaled + vec3(ubo.objectPosition.x,ubo.objectPosition.y,0);
+    //vec3 objectPositionTranslated = objectScaled + vec3(0,0,0);
 
     outVertex = objectScaled;
 

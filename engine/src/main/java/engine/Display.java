@@ -11,7 +11,6 @@ public class Display implements GLEventListener {
     }
 
     public void init(GLAutoDrawable glAutoDrawable) {
-        engine.init();
     }
 
     public void dispose(GLAutoDrawable glAutoDrawable) {

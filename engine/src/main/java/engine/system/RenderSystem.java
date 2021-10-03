@@ -5,20 +5,18 @@ import engine.component.TransformationComponent;
 import engine.entity.Entity;
 import engine.service.RenderService;
 
-public class RenderSystem implements System {
+public class RenderSystem {
 
-    private final RenderService renderService = new RenderService();
+    private static final RenderService renderService = RenderService.getInstance();
 
-    @Override
-    public void processEntity(Entity entity) {
+    public static void processEntity(Entity entity) {
         RenderComponent renderComponent = entity.getComponentOfType(RenderComponent.class);
         TransformationComponent transformationComponent = entity.getComponentOfType(TransformationComponent.class);
-        this.renderService.renderComponent(renderComponent, transformationComponent);
+        renderService.renderComponent(renderComponent, transformationComponent);
 
     }
 
-    @Override
-    public boolean isResponsibleFor(Entity entity) {
+    public static boolean isResponsibleFor(Entity entity) {
         return entity.hasComponentOfType(RenderComponent.class)
                 && entity.hasComponentOfType(TransformationComponent.class);
     }

@@ -1,12 +1,8 @@
 package engine.scene;
 
 import engine.enums.TextureKey;
-import engine.handler.RenderHandler;
 import engine.scene.delauny.DelaunyEdge;
 import engine.scene.delauny.DelaunyTriangulator;
-import engine.service.util.AxisAlignedBoundingBox;
-import engine.service.util.CollisionUtil;
-import org.joml.Vector2d;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 
@@ -17,7 +13,7 @@ import java.util.stream.Collectors;
 
 public class SceneGenerator {
 
-    private static final int MAP_SIZE = 64;
+    private static final int MAP_SIZE = 32;
     private static final int MAX_ROOM_SIDE_LENGTH = 16;
     private static final double MAX_ROOM_RATIO = 2;
     private static final double MAX_ROOM_SIZE = 128;
@@ -35,7 +31,6 @@ public class SceneGenerator {
                 MAP_SIZE);
         paths = MinimumSpanningTree.getMinimumSpanningTreeEdges(paths);
         List<TileRoom> corridors = generateCorridors(paths);
-        addToDebugMeshes(paths);
         mainRooms.forEach(sceneTileMap::applyTileRoom);
         corridors.forEach(sceneTileMap::applyTileRoom);
         sceneTileMap.setRoomPositions(mainRooms.stream().map(TileRoom::getRoomCenterTile).collect(Collectors.toList()));
@@ -43,20 +38,23 @@ public class SceneGenerator {
         return sceneTileMap;
     }
 
-    private static void addToDebugMeshes(List<DelaunyEdge> paths) {
-        for (DelaunyEdge path : paths) {
-            RenderHandler.RENDER_HANDLER.addToDebugMeshes(path.toMesh());
-        }
-    }
-
     private static void generateRooms(List<TileRoom> rooms, int amount) {
         while (rooms.size() < amount) {
             TileRoom room = new TileRoom((short) (Math.random() * MAX_ROOM_SIDE_LENGTH),
                     (short) (Math.random() * MAX_ROOM_SIDE_LENGTH),
                     new Vector2i((int) (Math.random() * MAP_SIZE), (int) (Math.random() * MAP_SIZE)),
-                    TextureKey.STONE_FLOOR_PLAIN_PURPLE_DEBRIE,
-                    TextureKey.STONE_FLOOR_PLAIN_PURPLE,
-                    TextureKey.STONE_FLOOR_PLAIN_PURPLE_DEBRIE_SMALL
+                    TextureKey.FLOOR_RED_PLATES_DEBRIE_001,
+                    TextureKey.FLOOR_RED_PLATES_DEBRIE_001,
+                    TextureKey.FLOOR_RED_PLATES_DEBRIE_001,
+                    TextureKey.FLOOR_RED_PLATES_DEBRIE_001,
+                    TextureKey.FLOOR_RED_PLATES_DEBRIE_001,
+                    TextureKey.FLOOR_RED_PLATES_DEBRIE_002,
+                    TextureKey.FLOOR_RED_PLATES_DEBRIE_003,
+                    TextureKey.FLOOR_RED_PLATES_DEBRIE_004,
+                    TextureKey.FLOOR_RED_PLATES_DEBRIE_005,
+                    TextureKey.FLOOR_RED_PLATES_DEBRIE_006,
+                    TextureKey.FLOOR_RED_PLATES_DEBRIE_007
+
             );
             if (isValidRoom(room)) {
                 rooms.add(room);
@@ -71,15 +69,35 @@ public class SceneGenerator {
             int endX = vector2fToVector2i(getRightVertex(path)).x();
             int fixedY = vector2fToVector2i(getLeftVertex(path)).y();
             for (int x = 0; x < endX - startX; x++) {
-                corridors.add(new TileRoom(CORRIDOR_SIZE, CORRIDOR_SIZE, new Vector2i(startX + x, fixedY), TextureKey.STONE_FLOOR_PLAIN_PURPLE_DEBRIE,
-                        TextureKey.STONE_FLOOR_PLAIN_PURPLE));
+                corridors.add(new TileRoom(CORRIDOR_SIZE, CORRIDOR_SIZE, new Vector2i(startX + x, fixedY),
+                        TextureKey.FLOOR_RED_PLATES_DEBRIE_001,
+                        TextureKey.FLOOR_RED_PLATES_DEBRIE_001,
+                        TextureKey.FLOOR_RED_PLATES_DEBRIE_001,
+                        TextureKey.FLOOR_RED_PLATES_DEBRIE_001,
+                        TextureKey.FLOOR_RED_PLATES_DEBRIE_001,
+                        TextureKey.FLOOR_RED_PLATES_DEBRIE_002,
+                        TextureKey.FLOOR_RED_PLATES_DEBRIE_003,
+                        TextureKey.FLOOR_RED_PLATES_DEBRIE_004,
+                        TextureKey.FLOOR_RED_PLATES_DEBRIE_005,
+                        TextureKey.FLOOR_RED_PLATES_DEBRIE_006,
+                        TextureKey.FLOOR_RED_PLATES_DEBRIE_007));
             }
             int startY = vector2fToVector2i(getBottomVertex(path)).y();
             int endY = vector2fToVector2i(getTopVertex(path)).y();
             int fixedX = vector2fToVector2i(getBottomVertex(path).equals(getLeftVertex(path)) ? getTopVertex(path) : getBottomVertex(path)).x();
             for (int y = 0; y < endY - startY; y++) {
-                corridors.add(new TileRoom(CORRIDOR_SIZE, CORRIDOR_SIZE, new Vector2i(fixedX, startY + y), TextureKey.STONE_FLOOR_PLAIN_PURPLE_DEBRIE,
-                        TextureKey.STONE_FLOOR_PLAIN_PURPLE));
+                corridors.add(new TileRoom(CORRIDOR_SIZE, CORRIDOR_SIZE, new Vector2i(fixedX, startY + y),
+                        TextureKey.FLOOR_RED_PLATES_DEBRIE_001,
+                        TextureKey.FLOOR_RED_PLATES_DEBRIE_001,
+                        TextureKey.FLOOR_RED_PLATES_DEBRIE_001,
+                        TextureKey.FLOOR_RED_PLATES_DEBRIE_001,
+                        TextureKey.FLOOR_RED_PLATES_DEBRIE_001,
+                        TextureKey.FLOOR_RED_PLATES_DEBRIE_002,
+                        TextureKey.FLOOR_RED_PLATES_DEBRIE_003,
+                        TextureKey.FLOOR_RED_PLATES_DEBRIE_004,
+                        TextureKey.FLOOR_RED_PLATES_DEBRIE_005,
+                        TextureKey.FLOOR_RED_PLATES_DEBRIE_006,
+                        TextureKey.FLOOR_RED_PLATES_DEBRIE_007));
             }
         }
         return corridors;
@@ -135,16 +153,13 @@ public class SceneGenerator {
     }
 
     private static boolean isIntersectingAny(List<TileRoom> targets, TileRoom roomToTest) {
-        AxisAlignedBoundingBox targetAABB = getBoundingBox(roomToTest);
-        return targets.stream().anyMatch(room -> CollisionUtil.checkCollisionAABBWithAABB(targetAABB, getBoundingBox(room)));
+        for (TileRoom target : targets) {
+            boolean intersection = target.intersectsRoom(roomToTest);
+            if (intersection) {
+                return true;
+            }
+        }
+        return false;
     }
 
-    private static AxisAlignedBoundingBox getBoundingBox(TileRoom roomToTest) {
-        return new AxisAlignedBoundingBox(roomToTest.getRoomBottomLeftTile().x() - 1,
-                roomToTest.getRoomBottomLeftTile().x() + roomToTest.getRoomWidth() + 1,
-                roomToTest.getRoomBottomLeftTile().y() - 1,
-                roomToTest.getRoomBottomLeftTile().y() + roomToTest.getRoomWidth() + 1,
-                new Vector2d(roomToTest.getRoomCenterTile()),
-                roomToTest.getRoomWidth());
-    }
 }

@@ -31,10 +31,10 @@ void main()
     outTexture = vec2(rotatedTexture.x * ubo.objectScale, rotatedTexture.y * ubo.objectScale);
 
     //Scale the object
-    vec3 objectScaled = vec3(vertex.x * ubo.objectScale, vertex.y * ubo.objectScale, 1);
+    vec3 objectScaled = vec3(vertex.x * ubo.objectScale, vertex.y * ubo.objectScale, 0);
 
     //Translate the object
-    vec3 objectPositionTranslated = objectScaled + vec3(ubo.objectPosition.x, ubo.objectPosition.y, ubo.layer);
+    vec3 objectPositionTranslated = objectScaled + vec3(ubo.objectPosition.x, ubo.objectPosition.y, 1);
 
     outVertex = objectPositionTranslated;
 

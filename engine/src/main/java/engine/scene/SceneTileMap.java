@@ -1,11 +1,18 @@
 package engine.scene;
 
+import engine.component.CollisionComponent;
+import engine.component.RenderComponent;
+import engine.component.SurfaceComponent;
+import engine.component.TransformationComponent;
+import engine.component.tag.ShadowCastTag;
+import engine.component.tag.VisibleFaceTag;
+import engine.entity.Entity;
+import engine.entity.EntityBuilder;
 import engine.enums.HitBoxType;
 import engine.enums.PrimitiveMeshShape;
 import engine.enums.ShaderType;
 import engine.enums.TextureKey;
-import engine.handler.SceneHandler;
-import engine.object.GameObject;
+import engine.handler.EntityHandler;
 import engine.object.HitBox;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.joml.Vector2i;
@@ -33,7 +40,7 @@ public class SceneTileMap {
         for (short x = 0; x < this.mapSize; x++) {
             for (short y = 0; y < this.mapSize; y++) {
                 if (tiles[x][y] != null) {
-                    SceneHandler.getInstance().addObject(RandomStringUtils.randomAlphanumeric(8), tiles[x][y].getObject());
+                    EntityHandler.getInstance().addObject(RandomStringUtils.randomAlphanumeric(8), tiles[x][y].getEntity());
                 }
             }
         }
@@ -56,53 +63,59 @@ public class SceneTileMap {
         for (short x = 0; x < this.mapSize; x++) {
             for (short y = 0; y < this.mapSize; y++) {
                 if (this.tiles[x][y] == null) {
-                    if (
-                        //isSurface(x + 1, y) ||
-                        //isSurface(x - 1, y) ||
-                        //isSurface(x, y + 1) ||
-                            isSurface(x, y - 1)
-                    ) {
-                        GameObject object = new GameObject(PrimitiveMeshShape.QUAD,
-                                ShaderType.DEFAULT,
-                                new HitBox(HitBoxType.AABB, 0.5),
-                                x,
-                                y);
-                        object.setTextureKey(TextureKey.STONE_CLEAN_SUNSET_WALL);
-                        object.setObstacle(true);
-                        object.setVisibleFace(true);
-                        this.tiles[x][y] = new Tile(object, x, y);
+                    if (isSurface(x, y - 1)) {
+                        Entity entity = EntityBuilder.builder()
+                                .withComponent(new RenderComponent(PrimitiveMeshShape.QUAD, TextureKey.WALL_AQUA_BRICK, ShaderType.DEFAULT, 1, 3))
+                                .withComponent(new TransformationComponent(x, y))
+                                .withComponent(new CollisionComponent(new HitBox(HitBoxType.AABB, 0.5)))
+                                .withComponent(new VisibleFaceTag())
+                                .withComponent(new ShadowCastTag())
+                                .build();
+                        this.tiles[x][y] = new Tile(entity, x, y);
                     } else if (isSurface(x - 1, y)) {
-                        GameObject object = new GameObject(PrimitiveMeshShape.QUAD,
-                                ShaderType.DEFAULT,
-                                new HitBox(HitBoxType.AABB, 0.5),
-                                x,
-                                y);
-                        object.setTextureKey(TextureKey.STONE_CLEAN_SUNSET_WALL_RIGHT);
-                        object.setObstacle(true);
-                        object.setVisibleFace(false);
-                        this.tiles[x][y] = new Tile(object, x, y);
+                        if (isSurface(x + 1, y)) {
+                            Entity entity = EntityBuilder.builder()
+                                    .withComponent(new RenderComponent(PrimitiveMeshShape.QUAD, TextureKey.WALL_AQUA_BRICK_LEFT_RIGHT, ShaderType.DEFAULT, 1, 3))
+                                    .withComponent(new TransformationComponent(x, y))
+                                    .withComponent(new CollisionComponent(new HitBox(HitBoxType.AABB, 0.5)))
+                                    .withComponent(new ShadowCastTag())
+                                    .build();
+                            this.tiles[x][y] = new Tile(entity, x, y);
+                        } else {
+                            Entity entity = EntityBuilder.builder()
+                                    .withComponent(new RenderComponent(PrimitiveMeshShape.QUAD, TextureKey.WALL_AQUA_BRICK_RIGHT, ShaderType.DEFAULT, 1, 3))
+                                    .withComponent(new TransformationComponent(x, y))
+                                    .withComponent(new CollisionComponent(new HitBox(HitBoxType.AABB, 0.5)))
+                                    .withComponent(new ShadowCastTag())
+                                    .build();
+                            this.tiles[x][y] = new Tile(entity, x, y);
+                        }
                     } else if (isSurface(x + 1, y)) {
-                        GameObject object = new GameObject(PrimitiveMeshShape.QUAD,
-                                ShaderType.DEFAULT,
-                                new HitBox(HitBoxType.AABB, 0.5),
-                                x,
-                                y);
-                        object.setTextureKey(TextureKey.STONE_CLEAN_SUNSET_WALL_RIGHT);
-                        object.setTextureRotation(180);
-                        object.setObstacle(true);
-                        object.setVisibleFace(false);
-                        this.tiles[x][y] = new Tile(object, x, y);
+                        if (isSurface(x - 1, y)) {
+                            Entity entity = EntityBuilder.builder()
+                                    .withComponent(new RenderComponent(PrimitiveMeshShape.QUAD, TextureKey.WALL_AQUA_BRICK_LEFT_RIGHT, ShaderType.DEFAULT, 1, 3))
+                                    .withComponent(new TransformationComponent(x, y))
+                                    .withComponent(new CollisionComponent(new HitBox(HitBoxType.AABB, 0.5)))
+                                    .withComponent(new ShadowCastTag())
+                                    .build();
+                            this.tiles[x][y] = new Tile(entity, x, y);
+                        } else {
+                            Entity entity = EntityBuilder.builder()
+                                    .withComponent(new RenderComponent(PrimitiveMeshShape.QUAD, TextureKey.WALL_AQUA_BRICK_LEFT, ShaderType.DEFAULT, 1, 3))
+                                    .withComponent(new TransformationComponent(x, y))
+                                    .withComponent(new CollisionComponent(new HitBox(HitBoxType.AABB, 0.5)))
+                                    .withComponent(new ShadowCastTag())
+                                    .build();
+                            this.tiles[x][y] = new Tile(entity, x, y);
+                        }
                     } else if (isSurface(x, y + 1)) {
-                        GameObject object = new GameObject(PrimitiveMeshShape.QUAD,
-                                ShaderType.DEFAULT,
-                                new HitBox(HitBoxType.AABB, 0.5),
-                                x,
-                                y);
-                        object.setTextureKey(TextureKey.STONE_CLEAN_SUNSET_WALL_RIGHT);
-                        object.setTextureRotation(270);
-                        object.setObstacle(true);
-                        object.setVisibleFace(false);
-                        this.tiles[x][y] = new Tile(object, x, y);
+                        Entity entity = EntityBuilder.builder()
+                                .withComponent(new RenderComponent(PrimitiveMeshShape.QUAD, TextureKey.WALL_AQUA_BRICK_BOTTOM, ShaderType.DEFAULT, 1, 3))
+                                .withComponent(new TransformationComponent(x, y))
+                                .withComponent(new CollisionComponent(new HitBox(HitBoxType.AABB, 0.5)))
+                                .withComponent(new ShadowCastTag())
+                                .build();
+                        this.tiles[x][y] = new Tile(entity, x, y);
                     }
                 }
             }
@@ -115,7 +128,7 @@ public class SceneTileMap {
                 y < this.mapSize &&
                 y >= 0 &&
                 this.tiles[x][y] != null &&
-                this.tiles[x][y].getObject().isSurface();
+                this.tiles[x][y].getEntity().hasComponentOfType(SurfaceComponent.class);
     }
 
     public void setRoomPositions(List<Vector2i> roomPositions) {

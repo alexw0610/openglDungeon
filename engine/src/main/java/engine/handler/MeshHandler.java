@@ -5,6 +5,7 @@ import engine.object.Mesh;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class MeshHandler {
     private static final MeshHandler INSTANCE = new MeshHandler();
@@ -26,6 +27,19 @@ public class MeshHandler {
         mesh.loadMesh();
         if (prev != null) {
             prev.unload();
+        }
+    }
+
+    public void removeMesh(String key) {
+        if (this.meshes.containsKey(key)) {
+            this.meshes.get(key).unload();
+            this.meshes.remove(key);
+        }
+    }
+
+    public void removeMeshesWithPrefix(String prefix) {
+        for (String key : this.meshes.keySet().stream().filter(key -> key.startsWith(prefix)).collect(Collectors.toList())) {
+            removeMesh(key);
         }
     }
 

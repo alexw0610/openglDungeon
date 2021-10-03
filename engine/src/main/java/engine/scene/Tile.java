@@ -1,25 +1,25 @@
 package engine.scene;
 
-import engine.object.GameObject;
+import engine.entity.Entity;
 
 public class Tile {
 
-    private GameObject object;
+    private Entity entity;
     private short positionX;
     private short positionY;
 
-    public Tile(GameObject object, short positionX, short positionY) {
-        this.object = object;
+    public Tile(Entity object, short positionX, short positionY) {
+        this.entity = object;
         this.positionX = positionX;
         this.positionY = positionY;
     }
 
-    public GameObject getObject() {
-        return object;
+    public Entity getEntity() {
+        return entity;
     }
 
-    public void setObject(GameObject object) {
-        this.object = object;
+    public void setEntity(Entity entity) {
+        this.entity = entity;
     }
 
     public short getPositionX() {

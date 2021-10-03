@@ -2,9 +2,23 @@ import dto.ssl.AuthenticationRequest;
 import dto.ssl.GenericResponse;
 import dto.ssl.ReadyForReceivingRequest;
 import engine.Engine;
-import engine.handler.SceneHandler;
+import engine.component.*;
+import engine.component.tag.CameraTargetTag;
+import engine.component.tag.ViewSourceTag;
+import engine.entity.Entity;
+import engine.entity.EntityBuilder;
+import engine.enums.HitBoxType;
+import engine.enums.PrimitiveMeshShape;
+import engine.enums.ShaderType;
+import engine.enums.TextureKey;
+import engine.handler.EntityHandler;
+import engine.object.HitBox;
+import engine.scene.SceneGenerator;
+import engine.scene.SceneTileMap;
 import exception.UDPServerException;
 import org.apache.commons.lang3.StringUtils;
+import org.joml.Vector2i;
+import org.joml.Vector3d;
 import processor.CharacterUpdateSender;
 import processor.ServerUpdateProcessor;
 import udp.UpdateListener;
@@ -34,28 +48,37 @@ public class Client {
         Engine engine = new Engine();
         engine.start();
 
-/*        Player player = new Player(PrimitiveMeshShape.TRIANGLE, ShaderType.DEFAULT);
-        player.setHitbox(new Hitbox(HitboxType.CIRCLE, 0.5));
-        player.setRenderLayer((short) 2);
-        player.setPositionX(0);
-        player.setPositionY(0);
-        SceneHandler.getInstance().setPlayer(player);*/
-        //Camera.CAMERA.setLookAtTarget(player);
+        EntityHandler.getInstance().addObject(EntityBuilder.builder()
+                .withComponent(new RenderComponent(PrimitiveMeshShape.TRIANGLE, TextureKey.DEFAULT, ShaderType.DEFAULT, 1, 4))
+                .withComponent(new TransformationComponent())
+                .withComponent(new PhysicsComponent())
+                .withComponent(new PlayerComponent())
+                .withComponent(new CameraTargetTag())
+                .withComponent(new CollisionComponent(new HitBox(HitBoxType.CIRCLE, 0.5)))
+                .withComponent(new ViewSourceTag())
+                .build());
 
-        //SceneTileMap sceneTileMap = SceneGenerator.generateScene();
-        //Vector2i roomPos = sceneTileMap.getRoomPositions().get(0);
-        //player.setPositionX(roomPos.x());
-        //player.setPositionY(roomPos.y());
-        //sceneTileMap.loadTiles();
-        /*for (Vector2i roomPosition : sceneTileMap.getRoomPositions()) {
-            GameObject light = new GameObject(PrimitiveMeshShape.TRIANGLE);
-            light.setRenderLayer((short) 1);
-            light.setLightSource(true);
-            light.setPositionX(roomPosition.x());
-            light.setPositionY(roomPosition.y());
-            SceneHandler.getInstance().addObject(light);
-        }*/
+        EntityHandler.getInstance().addObject(EntityBuilder.builder()
+                .withComponent(new TransformationComponent())
+                .withComponent(new CameraComponent())
+                .build());
 
+        SceneTileMap sceneTileMap = SceneGenerator.generateScene();
+        Vector2i roomPos = sceneTileMap.getRoomPositions().get(0);
+        Entity player = EntityHandler.getInstance().getEntityWithComponent(PlayerComponent.class);
+        player.getComponentOfType(TransformationComponent.class).setPositionX(roomPos.x());
+        player.getComponentOfType(TransformationComponent.class).setPositionY(roomPos.y());
+        Entity camera = EntityHandler.getInstance().getEntityWithComponent(CameraComponent.class);
+        camera.getComponentOfType(TransformationComponent.class).setPositionX(roomPos.x());
+        camera.getComponentOfType(TransformationComponent.class).setPositionY(roomPos.y());
+        sceneTileMap.loadTiles();
+        for (Vector2i roomPosition : sceneTileMap.getRoomPositions()) {
+            EntityHandler.getInstance().addObject(EntityBuilder.builder()
+                    .withComponent(new TransformationComponent(roomPosition.x(), roomPosition.y()))
+                    .withComponent(new RenderComponent(PrimitiveMeshShape.QUAD, TextureKey.ASSET_FIRE_PLACE_01, ShaderType.DEFAULT, 1, 3))
+                    .withComponent(new LightSourceComponent(new Vector3d(Math.random(), Math.random(), Math.random()), 1, 0.01))
+                    .build());
+        }
 
         if (!Boolean.parseBoolean(applicationProperties.getProperty("offlineMode"))) {
             try {
@@ -78,7 +101,7 @@ public class Client {
         registerUdpListener(updateListener, sslServerConnection);
 
         UpdateSender updateSender = new UpdateSender(getInetAddressFromName(serverUdpUpdateHost), Integer.parseInt(serverUdpUpdatePort), encryptionKey);
-        CharacterUpdateSender characterUpdateSender = new CharacterUpdateSender(SceneHandler.getInstance().getPlayer(), connectionId, updateSender);
+        CharacterUpdateSender characterUpdateSender = new CharacterUpdateSender(EntityHandler.getInstance().getEntityWithComponent(PlayerComponent.class), connectionId, updateSender);
         new Thread(characterUpdateSender).start();
 
         ServerUpdateProcessor serverUpdateProcessor = new ServerUpdateProcessor(updateListener.receivedUpdates, encryptionKey, connectionId);
