@@ -59,7 +59,7 @@ public class SceneTileMap {
     }
 
     //TODO: Improve this method. Accept sets (themes) of room textures.
-    public void applyWalls(String textureKey) {
+    public void generateWalls() {
         for (short x = 0; x < this.mapSize; x++) {
             for (short y = 0; y < this.mapSize; y++) {
                 if (this.tiles[x][y] == null) {
@@ -72,45 +72,8 @@ public class SceneTileMap {
                                 .withComponent(new ShadowCastTag())
                                 .build();
                         this.tiles[x][y] = new Tile(entity, x, y);
-                    } else if (isSurface(x - 1, y)) {
-                        if (isSurface(x + 1, y)) {
-                            Entity entity = EntityBuilder.builder()
-                                    .withComponent(new RenderComponent(PrimitiveMeshShape.QUAD, TextureKey.WALL_AQUA_BRICK_LEFT_RIGHT, ShaderType.DEFAULT, 1, 3))
-                                    .withComponent(new TransformationComponent(x, y))
-                                    .withComponent(new CollisionComponent(new HitBox(HitBoxType.AABB, 0.5)))
-                                    .withComponent(new ShadowCastTag())
-                                    .build();
-                            this.tiles[x][y] = new Tile(entity, x, y);
-                        } else {
-                            Entity entity = EntityBuilder.builder()
-                                    .withComponent(new RenderComponent(PrimitiveMeshShape.QUAD, TextureKey.WALL_AQUA_BRICK_RIGHT, ShaderType.DEFAULT, 1, 3))
-                                    .withComponent(new TransformationComponent(x, y))
-                                    .withComponent(new CollisionComponent(new HitBox(HitBoxType.AABB, 0.5)))
-                                    .withComponent(new ShadowCastTag())
-                                    .build();
-                            this.tiles[x][y] = new Tile(entity, x, y);
-                        }
-                    } else if (isSurface(x + 1, y)) {
-                        if (isSurface(x - 1, y)) {
-                            Entity entity = EntityBuilder.builder()
-                                    .withComponent(new RenderComponent(PrimitiveMeshShape.QUAD, TextureKey.WALL_AQUA_BRICK_LEFT_RIGHT, ShaderType.DEFAULT, 1, 3))
-                                    .withComponent(new TransformationComponent(x, y))
-                                    .withComponent(new CollisionComponent(new HitBox(HitBoxType.AABB, 0.5)))
-                                    .withComponent(new ShadowCastTag())
-                                    .build();
-                            this.tiles[x][y] = new Tile(entity, x, y);
-                        } else {
-                            Entity entity = EntityBuilder.builder()
-                                    .withComponent(new RenderComponent(PrimitiveMeshShape.QUAD, TextureKey.WALL_AQUA_BRICK_LEFT, ShaderType.DEFAULT, 1, 3))
-                                    .withComponent(new TransformationComponent(x, y))
-                                    .withComponent(new CollisionComponent(new HitBox(HitBoxType.AABB, 0.5)))
-                                    .withComponent(new ShadowCastTag())
-                                    .build();
-                            this.tiles[x][y] = new Tile(entity, x, y);
-                        }
-                    } else if (isSurface(x, y + 1)) {
+                    } else if (isAdjacentToSurface(x, y)) {
                         Entity entity = EntityBuilder.builder()
-                                .withComponent(new RenderComponent(PrimitiveMeshShape.QUAD, TextureKey.WALL_AQUA_BRICK_BOTTOM, ShaderType.DEFAULT, 1, 3))
                                 .withComponent(new TransformationComponent(x, y))
                                 .withComponent(new CollisionComponent(new HitBox(HitBoxType.AABB, 0.5)))
                                 .withComponent(new ShadowCastTag())
@@ -120,6 +83,12 @@ public class SceneTileMap {
                 }
             }
         }
+    }
+
+    private boolean isAdjacentToSurface(short x, short y) {
+        return isSurface(x - 1, y - 1) || isSurface(x, y - 1) || isSurface(x + 1, y - 1) ||
+                isSurface(x - 1, y) || isSurface(x, y) || isSurface(x + 1, y) ||
+                isSurface(x - 1, y + 1) || isSurface(x, y + 1) || isSurface(x + 1, y + 1);
     }
 
     private boolean isSurface(int x, int y) {

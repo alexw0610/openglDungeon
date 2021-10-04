@@ -90,6 +90,7 @@ public class Engine {
         long stepTime = java.lang.System.nanoTime();
         stepTimeDelta = (stepTime - lastStepTime) / 1000;
         lastStepTime = stepTime;
+        RenderService.renderTick += stepTimeDelta;
     }
 
 }

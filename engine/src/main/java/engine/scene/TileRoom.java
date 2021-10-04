@@ -9,6 +9,7 @@ import engine.enums.HitBoxType;
 import engine.enums.PrimitiveMeshShape;
 import engine.enums.ShaderType;
 import engine.enums.TextureKey;
+import engine.handler.TextureHandler;
 import engine.object.HitBox;
 import org.joml.Intersectiond;
 import org.joml.Vector2i;
@@ -21,26 +22,28 @@ public class TileRoom implements Comparable<TileRoom> {
     private final Vector2i roomBottomLeftTile;
     private final Tile[][] roomTiles;
 
-    public TileRoom(short roomWidth, short roomHeight, Vector2i roomBottomLeftTile, TextureKey... textureKeys) {
+    public TileRoom(short roomWidth, short roomHeight, Vector2i roomBottomLeftTile, TextureKey textureKey) {
         this.roomWidth = roomWidth;
         this.roomHeight = roomHeight;
         this.roomBottomLeftTile = roomBottomLeftTile;
         this.roomCenterTile = new Vector2i(roomBottomLeftTile.x() + (roomWidth / 2), roomBottomLeftTile.y() + (roomHeight / 2));
         this.roomTiles = new Tile[roomWidth][roomHeight];
-        fillRoomTiles(roomWidth, roomHeight, roomBottomLeftTile, textureKeys);
+        fillRoomTiles(roomWidth, roomHeight, roomBottomLeftTile, textureKey);
     }
 
-    private void fillRoomTiles(short roomWidth, short roomHeight, Vector2i roomTopLeftTile, TextureKey[] textureKeys) {
+    private void fillRoomTiles(short roomWidth, short roomHeight, Vector2i roomTopLeftTile, TextureKey textureKey) {
         for (short x = 0; x < roomWidth; x++) {
             for (short y = 0; y < roomHeight; y++) {
                 short sceneTilePositionX = (short) (x + (short) roomTopLeftTile.x());
                 short sceneTilePositionY = (short) (y + (short) roomTopLeftTile.y());
-                int index = (int) (Math.random() * textureKeys.length);
+                Vector2i tileMapDimensions = TextureHandler.TEXTURE_HANDLER.getTileMapDimensions(textureKey);
                 Entity entity = EntityBuilder.builder()
-                        .withComponent(new RenderComponent(PrimitiveMeshShape.QUAD, textureKeys[index], ShaderType.DEFAULT, 1, 2))
+                        .withComponent(new RenderComponent(PrimitiveMeshShape.QUAD, textureKey, ShaderType.DEFAULT, 1, 2))
                         .withComponent(new TransformationComponent(sceneTilePositionX, sceneTilePositionY))
                         .withComponent(new SurfaceComponent(new HitBox(HitBoxType.AABB, 1)))
                         .build();
+                entity.getComponentOfType(RenderComponent.class).setTextureOffSetX(Math.floor(Math.pow(Math.random(), 3) * tileMapDimensions.x()));
+                entity.getComponentOfType(RenderComponent.class).setTextureOffSetY(Math.floor(Math.pow(Math.random(), 3) * tileMapDimensions.y()));
                 this.roomTiles[x][y] = new Tile(entity, sceneTilePositionX, sceneTilePositionY);
             }
         }

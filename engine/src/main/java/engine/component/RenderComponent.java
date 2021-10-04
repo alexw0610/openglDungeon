@@ -11,6 +11,10 @@ public class RenderComponent implements Component {
     private final ShaderType shaderType;
     private final double scale;
     private final int layer;
+    private boolean shadeless;
+    private boolean alwaysVisible;
+    private double textureOffSetX;
+    private double textureOffSetY;
 
     public RenderComponent(PrimitiveMeshShape primitive, TextureKey textureKey, ShaderType shaderType, double scale, int layer) {
         super();
@@ -19,15 +23,10 @@ public class RenderComponent implements Component {
         this.shaderType = shaderType;
         this.scale = scale;
         this.layer = layer;
-    }
-
-    public RenderComponent(String meshKey, TextureKey textureKey, ShaderType shaderType, double scale, int layer) {
-        super();
-        this.meshKey = meshKey;
-        this.textureKey = textureKey;
-        this.shaderType = shaderType;
-        this.scale = scale;
-        this.layer = layer;
+        this.shadeless = false;
+        this.alwaysVisible = false;
+        this.textureOffSetX = 0;
+        this.textureOffSetY = 0;
     }
 
     public String getMeshKey() {
@@ -48,5 +47,37 @@ public class RenderComponent implements Component {
 
     public int getLayer() {
         return layer;
+    }
+
+    public double getTextureOffSetX() {
+        return textureOffSetX;
+    }
+
+    public void setTextureOffSetX(double textureOffSetX) {
+        this.textureOffSetX = textureOffSetX;
+    }
+
+    public double getTextureOffSetY() {
+        return textureOffSetY;
+    }
+
+    public void setTextureOffSetY(double textureOffSetY) {
+        this.textureOffSetY = textureOffSetY;
+    }
+
+    public boolean isShadeless() {
+        return shadeless;
+    }
+
+    public void setShadeless(boolean shadeless) {
+        this.shadeless = shadeless;
+    }
+
+    public boolean isAlwaysVisible() {
+        return alwaysVisible;
+    }
+
+    public void setAlwaysVisible(boolean alwaysVisible) {
+        this.alwaysVisible = alwaysVisible;
     }
 }

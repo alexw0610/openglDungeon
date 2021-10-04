@@ -5,12 +5,15 @@ layout (location=1) in vec2 texture;
 
 layout (std140, column_major) uniform UBO{
     uniform dvec3 cameraPosition;
-    uniform dvec2 objectPosition;
-    uniform double layer;
     uniform double objectScale;
+    uniform dvec2 objectPosition;
+    uniform double textureOffSetX;
+    uniform double textureOffSetY;
     uniform dvec2 aspectRatio;
     uniform double textureRotation;
     uniform double engineTick;
+    uniform double alwaysVisible;
+    uniform double shadeless;
 } ubo;
 
 void main()

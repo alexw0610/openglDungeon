@@ -1,6 +1,7 @@
 package engine.object;
 
 import engine.enums.HitBoxType;
+import org.joml.Vector3d;
 
 public class HitBox {
 
@@ -23,5 +24,14 @@ public class HitBox {
 
     public double getSize() {
         return size;
+    }
+
+    public Edge[] getHitboxEdges() {
+        return new Edge[]{
+                new Edge(new Vector3d(-size, size, 0), new Vector3d(size, size, 0)),
+                new Edge(new Vector3d(size, size, 0), new Vector3d(size, -size, 0)),
+                new Edge(new Vector3d(size, -size, 0), new Vector3d(-size, -size, 0)),
+                new Edge(new Vector3d(-size, -size, 0), new Vector3d(-size, size, 0))
+        };
     }
 }

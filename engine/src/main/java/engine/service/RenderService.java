@@ -38,7 +38,7 @@ public class RenderService {
     public static double cameraPosY;
     public static double cameraPosZ;
 
-    private double renderTick = 0;
+    public static double renderTick = 0;
 
     Vector2d aspectRatio;
 
@@ -52,7 +52,7 @@ public class RenderService {
     private RenderService() {
         GL4 gl = GLContext.getCurrent().getGL().getGL4();
         this.uniformBuffers = new int[2];
-        this.uboDataBuffer = DoubleBuffer.allocate(12);
+        this.uboDataBuffer = DoubleBuffer.allocate(14);
         this.lightUboDataBuffer = DoubleBuffer.allocate(16);
         gl.glGenBuffers(2, uniformBuffers, 0);
         this.frameBuffers = new int[2];
@@ -93,7 +93,9 @@ public class RenderService {
         gl.glActiveTexture(gl.GL_TEXTURE2);
         gl.glBindTexture(gl.GL_TEXTURE_2D, this.renderedTextures[1]);
 
-        updateUbo(transformationComponent.getPositionX(), transformationComponent.getPositionY(), renderComponent.getScale(), 1, 0);
+        updateUbo(transformationComponent.getPositionX(), transformationComponent.getPositionY(),
+                renderComponent.getScale(), renderComponent.getTextureOffSetX(), renderComponent.getTextureOffSetX(), 0,
+                renderComponent.isAlwaysVisible(), renderComponent.isShadeless());
         drawCall(meshHandler.getMeshForKey(renderComponent.getMeshKey()), gl.GL_TRIANGLES);
     }
 
@@ -106,7 +108,7 @@ public class RenderService {
         shaderHandler.bindShaderOfType(ShaderType.VIEW_POLYGON_SHADER);
         textureHandler.bindTextureWithKey(TextureKey.DEFAULT);
         gl.glPolygonMode(gl.GL_FRONT_AND_BACK, gl.GL_FILL);
-        updateUbo(0, 0, 1, 1, 0);
+        updateUbo(0, 0, 1, 1, 0, 0, false, false);
         drawCall(mesh, gl.GL_TRIANGLES);
     }
 
@@ -134,22 +136,24 @@ public class RenderService {
         gl.glBindVertexArray(0);
     }
 
-    private void updateUbo(double x, double y, double scale, double layer, double textureRotation) {
+    private void updateUbo(double x, double y, double scale, double textureOffSetX, double textureOffSetY, double textureRotation, boolean alwaysVisible, boolean shadeless) {
         GL4 gl = GLContext.getCurrent().getGL().getGL4();
 
         this.uboDataBuffer.clear();
         this.uboDataBuffer.put(0, RenderService.cameraPosX);
         this.uboDataBuffer.put(1, RenderService.cameraPosY);
         this.uboDataBuffer.put(2, RenderService.cameraPosZ);
-        this.uboDataBuffer.put(3, 0);
+        this.uboDataBuffer.put(3, scale);
         this.uboDataBuffer.put(4, x);
         this.uboDataBuffer.put(5, y);
-        this.uboDataBuffer.put(6, layer);
-        this.uboDataBuffer.put(7, scale);
+        this.uboDataBuffer.put(6, textureOffSetX);
+        this.uboDataBuffer.put(7, textureOffSetY);
         this.uboDataBuffer.put(8, this.aspectRatio.x());
         this.uboDataBuffer.put(9, this.aspectRatio.y());
         this.uboDataBuffer.put(10, textureRotation);
-        this.uboDataBuffer.put(11, this.renderTick);
+        this.uboDataBuffer.put(11, renderTick);
+        this.uboDataBuffer.put(12, alwaysVisible ? 1 : 0);
+        this.uboDataBuffer.put(13, shadeless ? 1 : 0);
 
         gl.glBindBuffer(gl.GL_UNIFORM_BUFFER, this.uniformBuffers[0]);
         gl.glBufferData(gl.GL_UNIFORM_BUFFER, 8L * this.uboDataBuffer.capacity(), uboDataBuffer, gl.GL_DYNAMIC_DRAW);
@@ -157,17 +161,17 @@ public class RenderService {
         gl.glBindBufferBase(gl.GL_UNIFORM_BUFFER, 0, this.uniformBuffers[0]);
     }
 
-    private void updateLightUbo(double x, double y, double layer, double lightStrength, double lightFallOff, Vector3d lightColor) {
+    private void updateLightUbo(double x, double y, double textureOffSet, double lightStrength, double lightFallOff, Vector3d lightColor) {
         GL4 gl = GLContext.getCurrent().getGL().getGL4();
 
         this.lightUboDataBuffer.clear();
         this.lightUboDataBuffer.put(0, RenderService.cameraPosX);
         this.lightUboDataBuffer.put(1, RenderService.cameraPosY);
         this.lightUboDataBuffer.put(2, RenderService.cameraPosZ);
-        this.lightUboDataBuffer.put(3, 0);
+        this.lightUboDataBuffer.put(3, renderTick);
         this.lightUboDataBuffer.put(4, x);
         this.lightUboDataBuffer.put(5, y);
-        this.lightUboDataBuffer.put(6, layer);
+        this.lightUboDataBuffer.put(6, textureOffSet);
         this.lightUboDataBuffer.put(7, 0);
         this.lightUboDataBuffer.put(8, this.aspectRatio.x());
         this.lightUboDataBuffer.put(9, this.aspectRatio.y());
@@ -195,6 +199,8 @@ public class RenderService {
         // Poor filtering. Needed !
         gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MAG_FILTER, gl.GL_NEAREST);
         gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MIN_FILTER, gl.GL_NEAREST);
+        gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_WRAP_T, gl.GL_CLAMP_TO_EDGE);
+        gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_WRAP_S, gl.GL_CLAMP_TO_EDGE);
         // Set "renderedTexture" as our colour attachement #0
         gl.glFramebufferTexture(gl.GL_FRAMEBUFFER, gl.GL_COLOR_ATTACHMENT0, renderedTexture, 0);
         // Set the list of draw buffers.

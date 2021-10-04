@@ -68,16 +68,21 @@ public class Client {
         Entity player = EntityHandler.getInstance().getEntityWithComponent(PlayerComponent.class);
         player.getComponentOfType(TransformationComponent.class).setPositionX(roomPos.x());
         player.getComponentOfType(TransformationComponent.class).setPositionY(roomPos.y());
+        player.getComponentOfType(RenderComponent.class).setShadeless(true);
+
         Entity camera = EntityHandler.getInstance().getEntityWithComponent(CameraComponent.class);
         camera.getComponentOfType(TransformationComponent.class).setPositionX(roomPos.x());
         camera.getComponentOfType(TransformationComponent.class).setPositionY(roomPos.y());
         sceneTileMap.loadTiles();
+
         for (Vector2i roomPosition : sceneTileMap.getRoomPositions()) {
-            EntityHandler.getInstance().addObject(EntityBuilder.builder()
+            Entity entity = EntityBuilder.builder()
                     .withComponent(new TransformationComponent(roomPosition.x(), roomPosition.y()))
-                    .withComponent(new RenderComponent(PrimitiveMeshShape.QUAD, TextureKey.ASSET_FIRE_PLACE_01, ShaderType.DEFAULT, 1, 3))
+                    .withComponent(new RenderComponent(PrimitiveMeshShape.QUAD, TextureKey.LANTERN_HANGING, ShaderType.DEFAULT, 1, 5))
                     .withComponent(new LightSourceComponent(new Vector3d(Math.random(), Math.random(), Math.random()), 1, 0.01))
-                    .build());
+                    .build();
+            entity.getComponentOfType(RenderComponent.class).setShadeless(true);
+            EntityHandler.getInstance().addObject(entity);
         }
 
         if (!Boolean.parseBoolean(applicationProperties.getProperty("offlineMode"))) {
@@ -88,7 +93,6 @@ public class Client {
                 System.exit(1);
             }
         }
-
     }
 
     private static void establishServerConnection() throws UDPServerException {

@@ -8,9 +8,11 @@ out vec3 outVertex;
 out double outLightStrength;
 out double outLightFallOff;
 out vec3 outLightColor;
+out double outEngineTick;
 
 layout (std140, column_major) uniform UBO{
     uniform dvec3 cameraPosition;
+    uniform double engineTick;
     uniform dvec2 lightPosition;
     uniform double layer;
     uniform dvec2 aspectRatio;
@@ -25,7 +27,7 @@ void main()
     outLightStrength = ubo.lightStrength;
     outLightFallOff = ubo.lightFallOff;
     outLightColor = vec3(ubo.lightColor.r, ubo.lightColor.g, ubo.lightColor.b);
-
+    outEngineTick = ubo.engineTick;
     //Scale the object
     vec3 objectScaled = vec3(vertex.x, vertex.y, 1);
 

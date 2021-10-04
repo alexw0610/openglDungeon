@@ -1,10 +1,9 @@
 package engine.service;
 
-import engine.component.RenderComponent;
+import engine.component.CollisionComponent;
 import engine.component.TransformationComponent;
 import engine.component.tag.VisibleFaceTag;
 import engine.entity.Entity;
-import engine.handler.MeshHandler;
 import engine.object.Edge;
 import engine.object.Mesh;
 import org.joml.Intersectiond;
@@ -31,14 +30,12 @@ public class VisibilityPolygonFactory {
             Vector3d dir = new Vector3d(vertex).sub(origin);
             Vector3d hitPoint = getIntersectionVertex(vertex.distance(origin), objectEdges, viewPoint, new Rayd(origin, dir.normalize()));
             visibilityPolygonVertices.add(hitPoint);
-            //if (hitPoint.equals(vertex)) {
             Vector3d dirRight = new Vector3d();
             dir.rotateZ(ONE_DEGREE_RADIAN, dirRight);
             visibilityPolygonVertices.add(getIntersectionVertex(viewDistance, objectEdges, viewPoint, new Rayd(origin, dirRight.normalize())));
             Vector3d dirLeft = new Vector3d();
             dir.rotateZ(-ONE_DEGREE_RADIAN, dirLeft);
             visibilityPolygonVertices.add(getIntersectionVertex(viewDistance, objectEdges, viewPoint, new Rayd(origin, dirLeft.normalize())));
-            //}
         }
         visibilityPolygonVertices = sortClockwise(visibilityPolygonVertices, viewPoint);
         return generateMesh(visibilityPolygonVertices, viewPoint);
@@ -92,12 +89,11 @@ public class VisibilityPolygonFactory {
         List<Edge> entityEdges = new ArrayList<>();
         for (Entity entity : entities) {
             TransformationComponent transformationComponent = entity.getComponentOfType(TransformationComponent.class);
-            RenderComponent renderComponent = entity.getComponentOfType(RenderComponent.class);
-            Mesh mesh = MeshHandler.getInstance().getMeshForKey(renderComponent.getMeshKey());
+            CollisionComponent collisionComponent = entity.getComponentOfType(CollisionComponent.class);
             if (entity.hasComponentOfType(VisibleFaceTag.class)) {
-                entityEdges.addAll(Collections.singletonList(convertEdgeToWorldSpace(mesh.getEdges()[0], transformationComponent.getPosition())));
+                entityEdges.addAll(Collections.singletonList(convertEdgeToWorldSpace(collisionComponent.getHitBox().getHitboxEdges()[0], transformationComponent.getPosition())));
             } else {
-                entityEdges.addAll(Arrays.asList(convertEdgesToWorldSpace(mesh.getEdges(), transformationComponent.getPosition())));
+                entityEdges.addAll(Arrays.asList(convertEdgesToWorldSpace(collisionComponent.getHitBox().getHitboxEdges(), transformationComponent.getPosition())));
             }
         }
         return entityEdges.stream().distinct().collect(Collectors.toList());
