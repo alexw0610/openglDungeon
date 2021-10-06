@@ -1,5 +1,6 @@
 package engine.system;
 
+import engine.component.AnimationComponent;
 import engine.component.RenderComponent;
 import engine.component.TransformationComponent;
 import engine.entity.Entity;
@@ -12,6 +13,11 @@ public class RenderSystem {
     public static void processEntity(Entity entity) {
         RenderComponent renderComponent = entity.getComponentOfType(RenderComponent.class);
         TransformationComponent transformationComponent = entity.getComponentOfType(TransformationComponent.class);
+        if (entity.hasComponentOfType(AnimationComponent.class)) {
+            AnimationComponent animationComponent = entity.getComponentOfType(AnimationComponent.class);
+            renderComponent.setTextureOffSetX(animationComponent.getAnimationFrame());
+            renderComponent.setTextureOffSetY(animationComponent.getAnimationRow());
+        }
         renderService.renderComponent(renderComponent, transformationComponent);
 
     }

@@ -5,9 +5,12 @@ import com.jogamp.newt.event.KeyListener;
 import com.jogamp.newt.event.MouseEvent;
 import com.jogamp.newt.event.MouseListener;
 import engine.handler.KeyHandler;
+import engine.handler.MouseHandler;
 
 public class InputListener implements KeyListener, MouseListener {
     private static final KeyHandler keyHandler = KeyHandler.getInstance();
+    private static final MouseHandler mouseHandler = MouseHandler.getInstance();
+
 
     @Override
     public void keyPressed(KeyEvent keyEvent) {
@@ -21,6 +24,7 @@ public class InputListener implements KeyListener, MouseListener {
 
     @Override
     public void mouseClicked(MouseEvent e) {
+        mouseHandler.setKeyClicked(e);
     }
 
     @Override
@@ -33,14 +37,17 @@ public class InputListener implements KeyListener, MouseListener {
 
     @Override
     public void mousePressed(MouseEvent e) {
+        mouseHandler.setKeyPressed(e);
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
+        mouseHandler.setKeyReleased(e);
     }
 
     @Override
     public void mouseMoved(MouseEvent e) {
+        mouseHandler.updateMouseEvent(e);
     }
 
     @Override

@@ -80,6 +80,7 @@ public class Client {
                     .withComponent(new TransformationComponent(roomPosition.x(), roomPosition.y()))
                     .withComponent(new RenderComponent(PrimitiveMeshShape.QUAD, TextureKey.LANTERN_HANGING, ShaderType.DEFAULT, 1, 5))
                     .withComponent(new LightSourceComponent(new Vector3d(Math.random(), Math.random(), Math.random()), 1, 0.01))
+                    .withComponent(new AnimationComponent(0.01))
                     .build();
             entity.getComponentOfType(RenderComponent.class).setShadeless(true);
             EntityHandler.getInstance().addObject(entity);

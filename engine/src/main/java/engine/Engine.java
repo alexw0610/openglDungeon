@@ -63,11 +63,17 @@ public class Engine {
             if (PlayerMovementInputSystem.isResponsibleFor(entity)) {
                 PlayerMovementInputSystem.processEntity(entity);
             }
+            if (ProjectileSystem.isResponsibleFor(entity)) {
+                ProjectileSystem.processEntity(entity);
+            }
             if (TransformationSystem.isResponsibleFor(entity)) {
                 TransformationSystem.processEntity(entity);
             }
             if (CameraSystem.isResponsibleFor(entity)) {
                 CameraSystem.processEntity(entity);
+            }
+            if (AnimationSystem.isResponsibleFor(entity)) {
+                AnimationSystem.processEntity(entity);
             }
         }
         //Pre Rendering

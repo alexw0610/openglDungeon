@@ -4,6 +4,7 @@ public enum TextureKey {
     FLOOR_RED_PLATES_DEBRIS("floor_red_plates_debris"),
     WALL_AQUA_BRICK("wall_aqua_brick"),
     LANTERN_HANGING("lantern_hanging"),
+    ORB_AQUA("orb_aqua"),
     DEFAULT("default");
 
     public final String fileName;
