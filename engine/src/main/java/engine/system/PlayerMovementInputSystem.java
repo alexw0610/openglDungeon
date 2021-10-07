@@ -5,12 +5,14 @@ import engine.Engine;
 import engine.component.*;
 import engine.entity.Entity;
 import engine.entity.EntityBuilder;
+import engine.enums.HitBoxType;
 import engine.enums.PrimitiveMeshShape;
 import engine.enums.ShaderType;
 import engine.enums.TextureKey;
 import engine.handler.EntityHandler;
 import engine.handler.KeyHandler;
 import engine.handler.MouseHandler;
+import engine.object.HitBox;
 import org.joml.Vector2d;
 import org.joml.Vector3d;
 
@@ -47,12 +49,21 @@ public class PlayerMovementInputSystem {
                         .withComponent(new TransformationComponent(transformationComponent.getPositionX(), transformationComponent.getPositionY()))
                         .withComponent(new RenderComponent(PrimitiveMeshShape.QUAD, TextureKey.ORB_AQUA, ShaderType.DEFAULT, 1, 5))
                         .withComponent(new AnimationComponent(0.01))
-                        .withComponent(new PhysicsComponent())
-                        .withComponent(new ProjectileComponent(projectileDirection.normalize(), 0.02))
+                        .withComponent(new ProjectileComponent(projectileDirection.normalize(), 0.05))
                         .withComponent(new LightSourceComponent(new Vector3d(Math.random(), Math.random(), Math.random()), 1, 0.01))
+                        .withComponent(new DestructionComponent(5000))
+                        .withComponent(new CollisionComponent(new HitBox(HitBoxType.CIRCLE, 0.2)))
                         .build();
                 orb.getComponentOfType(RenderComponent.class).setShadeless(true);
                 orb.getComponentOfType(RenderComponent.class).setAlwaysVisible(true);
+                orb.getComponentOfType(CollisionComponent.class).setOnCollisionFunction((self, collider) -> {
+                    self.addComponent(new DestructionComponent(0));
+                    EntityHandler.getInstance().addObject(EntityBuilder.builder()
+                            .withComponent(new TransformationComponent(self.getComponentOfType(TransformationComponent.class).getPositionX(), self.getComponentOfType(TransformationComponent.class).getPositionY()))
+                            .withComponent(new DestructionComponent(200))
+                            .withComponent(new ParticleComponent(TextureKey.ORB_AQUA, 300, 3, 0.75))
+                            .build());
+                });
                 EntityHandler.getInstance().addObject(orb);
             }
 

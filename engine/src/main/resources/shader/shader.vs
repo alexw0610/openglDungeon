@@ -35,13 +35,12 @@ void main()
     shadeless = ubo.shadeless;
 
     //Rotate the texture coordinates
+    vec2 textureCentered = vec2(textureIn.x-0.5, textureIn.y-0.5);
     vec2 rotatedTexture = vec2(
-        (textureIn.x * cos(radians(float(ubo.textureRotation)))) - (textureIn.y * sin(radians(float(ubo.textureRotation)))),
-        (textureIn.x * sin(radians(float(ubo.textureRotation)))) + (textureIn.y * cos(radians(float(ubo.textureRotation))))
+        (textureCentered.x * cos(radians(float(ubo.textureRotation)))) - (textureCentered.y * sin(radians(float(ubo.textureRotation)))),
+        (textureCentered.x * sin(radians(float(ubo.textureRotation)))) + (textureCentered.y * cos(radians(float(ubo.textureRotation))))
     );
-
-    //Scale the texture coordinates
-    textureUv = vec2(rotatedTexture.x * ubo.objectScale, rotatedTexture.y * ubo.objectScale);
+    textureUv = vec2(rotatedTexture.x+0.5,rotatedTexture.y+0.5);
 
     //Scale the object
     vec3 objectScaled = vec3(vertexIn.x * ubo.objectScale, vertexIn.y * ubo.objectScale, 0);

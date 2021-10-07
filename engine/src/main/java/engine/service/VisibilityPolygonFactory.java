@@ -90,9 +90,9 @@ public class VisibilityPolygonFactory {
         for (Entity entity : entities) {
             TransformationComponent transformationComponent = entity.getComponentOfType(TransformationComponent.class);
             CollisionComponent collisionComponent = entity.getComponentOfType(CollisionComponent.class);
-            if (entity.hasComponentOfType(VisibleFaceTag.class)) {
+            if (entity.hasComponentOfType(CollisionComponent.class) && entity.hasComponentOfType(VisibleFaceTag.class)) {
                 entityEdges.addAll(Collections.singletonList(convertEdgeToWorldSpace(collisionComponent.getHitBox().getHitboxEdges()[0], transformationComponent.getPosition())));
-            } else {
+            } else if (entity.hasComponentOfType(CollisionComponent.class)) {
                 entityEdges.addAll(Arrays.asList(convertEdgesToWorldSpace(collisionComponent.getHitBox().getHitboxEdges(), transformationComponent.getPosition())));
             }
         }

@@ -5,6 +5,7 @@ import engine.component.RenderComponent;
 import engine.component.SurfaceComponent;
 import engine.component.TransformationComponent;
 import engine.component.tag.ShadowCastTag;
+import engine.component.tag.ViewBlockingTag;
 import engine.component.tag.VisibleFaceTag;
 import engine.entity.Entity;
 import engine.entity.EntityBuilder;
@@ -70,6 +71,7 @@ public class SceneTileMap {
                                 .withComponent(new CollisionComponent(new HitBox(HitBoxType.AABB, 0.5)))
                                 .withComponent(new VisibleFaceTag())
                                 .withComponent(new ShadowCastTag())
+                                .withComponent(new ViewBlockingTag())
                                 .build();
                         this.tiles[x][y] = new Tile(entity, x, y);
                     } else if (isAdjacentToSurface(x, y)) {
@@ -77,6 +79,7 @@ public class SceneTileMap {
                                 .withComponent(new TransformationComponent(x, y))
                                 .withComponent(new CollisionComponent(new HitBox(HitBoxType.AABB, 0.5)))
                                 .withComponent(new ShadowCastTag())
+                                .withComponent(new ViewBlockingTag())
                                 .build();
                         this.tiles[x][y] = new Tile(entity, x, y);
                     }

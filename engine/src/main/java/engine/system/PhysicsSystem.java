@@ -13,7 +13,7 @@ import java.util.List;
 
 import static engine.EngineConstants.DECAY;
 
-public class TransformationSystem {
+public class PhysicsSystem {
 
     public static void processEntity(Entity entity) {
         TransformationComponent transformationComponent = entity.getComponentOfType(TransformationComponent.class);

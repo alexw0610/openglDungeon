@@ -1,7 +1,7 @@
 package engine.system;
 
-import engine.component.CollisionComponent;
 import engine.component.TransformationComponent;
+import engine.component.tag.ViewBlockingTag;
 import engine.component.tag.ViewSourceTag;
 import engine.entity.Entity;
 import engine.handler.EntityHandler;
@@ -19,7 +19,7 @@ public class ViewSourceSystem {
 
     public static void processEntity(Entity entity) {
         TransformationComponent transformationComponent = entity.getComponentOfType(TransformationComponent.class);
-        List<Entity> entities = EntityHandler.getInstance().getAllEntitiesWithComponents(TransformationComponent.class, CollisionComponent.class);
+        List<Entity> entities = EntityHandler.getInstance().getAllEntitiesWithComponents(TransformationComponent.class, ViewBlockingTag.class);
         entities.remove(entity);
         Mesh mesh = VisibilityPolygonFactory.generateVisibilityPolygon(entities, transformationComponent.getPosition(), 20);
         MeshHandler.getInstance().addMesh(VIEW_POLYGON_KEY, mesh);

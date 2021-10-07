@@ -54,6 +54,7 @@ public class EntityHandler implements Handler<Entity> {
     @Override
     public void addObject(String key, Entity object) {
         synchronized (this.objects) {
+            object.setEntityId(key);
             this.objects.put(key, object);
         }
     }
@@ -61,7 +62,9 @@ public class EntityHandler implements Handler<Entity> {
     @Override
     public void addObject(Entity object) {
         synchronized (this.objects) {
-            this.objects.put(RandomStringUtils.randomAlphanumeric(16), object);
+            String key = RandomStringUtils.randomAlphanumeric(16);
+            object.setEntityId(key);
+            this.objects.put(key, object);
         }
     }
 

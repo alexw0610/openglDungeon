@@ -66,14 +66,23 @@ public class Engine {
             if (ProjectileSystem.isResponsibleFor(entity)) {
                 ProjectileSystem.processEntity(entity);
             }
-            if (TransformationSystem.isResponsibleFor(entity)) {
-                TransformationSystem.processEntity(entity);
+            if (PhysicsSystem.isResponsibleFor(entity)) {
+                PhysicsSystem.processEntity(entity);
             }
             if (CameraSystem.isResponsibleFor(entity)) {
                 CameraSystem.processEntity(entity);
             }
             if (AnimationSystem.isResponsibleFor(entity)) {
                 AnimationSystem.processEntity(entity);
+            }
+            if (ParticleSystem.isResponsibleFor(entity)) {
+                ParticleSystem.processEntity(entity);
+            }
+            if (CollisionSystem.isResponsibleFor(entity)) {
+                CollisionSystem.processEntity(entity);
+            }
+            if (DestructionSystem.isResponsibleFor(entity)) {
+                DestructionSystem.processEntity(entity);
             }
         }
         //Pre Rendering

@@ -94,7 +94,7 @@ public class RenderService {
         gl.glBindTexture(gl.GL_TEXTURE_2D, this.renderedTextures[1]);
 
         updateUbo(transformationComponent.getPositionX(), transformationComponent.getPositionY(),
-                renderComponent.getScale(), renderComponent.getTextureOffSetX(), renderComponent.getTextureOffSetY(), 0,
+                renderComponent.getScale(), renderComponent.getTextureOffSetX(), renderComponent.getTextureOffSetY(), renderComponent.getTextureRotation(),
                 renderComponent.isAlwaysVisible(), renderComponent.isShadeless());
         drawCall(meshHandler.getMeshForKey(renderComponent.getMeshKey()), gl.GL_TRIANGLES);
     }

@@ -15,6 +15,7 @@ public class RenderComponent implements Component {
     private boolean alwaysVisible;
     private double textureOffSetX;
     private double textureOffSetY;
+    private double textureRotation;
 
     public RenderComponent(PrimitiveMeshShape primitive, TextureKey textureKey, ShaderType shaderType, double scale, int layer) {
         super();
@@ -27,6 +28,7 @@ public class RenderComponent implements Component {
         this.alwaysVisible = false;
         this.textureOffSetX = 0;
         this.textureOffSetY = 0;
+        this.textureRotation = 0;
     }
 
     public String getMeshKey() {
@@ -79,5 +81,13 @@ public class RenderComponent implements Component {
 
     public void setAlwaysVisible(boolean alwaysVisible) {
         this.alwaysVisible = alwaysVisible;
+    }
+
+    public double getTextureRotation() {
+        return textureRotation;
+    }
+
+    public void setTextureRotation(double textureRotation) {
+        this.textureRotation = textureRotation;
     }
 }
