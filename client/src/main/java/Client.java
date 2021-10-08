@@ -18,7 +18,6 @@ import engine.service.SceneGenerator;
 import exception.UDPServerException;
 import org.apache.commons.lang3.StringUtils;
 import org.joml.Vector2i;
-import org.joml.Vector3d;
 import processor.CharacterUpdateSender;
 import processor.ServerUpdateProcessor;
 import udp.UpdateListener;
@@ -64,6 +63,8 @@ public class Client {
                 .buildAndInstantiate();
 
         SceneTileMap sceneTileMap = SceneGenerator.generateScene();
+        sceneTileMap.loadTiles();
+
         Vector2i roomPos = sceneTileMap.getRoomPositions().get(0);
         Entity player = EntityHandler.getInstance().getEntityWithComponent(PlayerComponent.class);
         player.getComponentOfType(TransformationComponent.class).setPositionX(roomPos.x());
@@ -73,17 +74,7 @@ public class Client {
         Entity camera = EntityHandler.getInstance().getEntityWithComponent(CameraComponent.class);
         camera.getComponentOfType(TransformationComponent.class).setPositionX(roomPos.x());
         camera.getComponentOfType(TransformationComponent.class).setPositionY(roomPos.y());
-        sceneTileMap.loadTiles();
 
-        for (Vector2i roomPosition : sceneTileMap.getRoomPositions()) {
-            Entity entity = EntityBuilder.builder()
-                    .withComponent(new TransformationComponent(roomPosition.x(), roomPosition.y()))
-                    .withComponent(new RenderComponent(PrimitiveMeshShape.QUAD, TextureKey.LANTERN_HANGING, ShaderType.DEFAULT, 1, 5))
-                    .withComponent(new LightSourceComponent(new Vector3d(Math.random(), Math.random(), Math.random()), 1, 0.01))
-                    .withComponent(new AnimationComponent(0.01))
-                    .buildAndInstantiate();
-            entity.getComponentOfType(RenderComponent.class).setShadeless(true);
-        }
 
         if (!Boolean.parseBoolean(applicationProperties.getProperty("offlineMode"))) {
             try {

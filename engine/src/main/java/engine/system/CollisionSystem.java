@@ -1,6 +1,7 @@
 package engine.system;
 
 import engine.component.CollisionComponent;
+import engine.component.CreatedByComponent;
 import engine.component.TransformationComponent;
 import engine.entity.Entity;
 import engine.handler.EntityHandler;
@@ -14,15 +15,18 @@ public class CollisionSystem {
     public static void processEntity(Entity entity) {
         TransformationComponent transformationComponent = entity.getComponentOfType(TransformationComponent.class);
         CollisionComponent collisionComponent = entity.getComponentOfType(CollisionComponent.class);
+        CreatedByComponent createdByComponent = entity.getComponentOfType(CreatedByComponent.class);
         if (collisionComponent.getOnCollisionFunction() != null) {
             List<Entity> obstacles = EntityHandler.getInstance().getAllEntitiesWithComponents(TransformationComponent.class, CollisionComponent.class);
             obstacles.remove(entity);
+            if (entity.hasComponentOfType(CreatedByComponent.class)) {
+                obstacles.remove(createdByComponent.getCreatorEntity());
+            }
             List<Entity> collisions = getCollisions(transformationComponent, collisionComponent, obstacles);
             for (Entity collision : collisions) {
                 collisionComponent.getOnCollisionFunction().run(entity, collision);
             }
         }
-
     }
 
     private static List<Entity> getCollisions(TransformationComponent transformationComponent, CollisionComponent collisionComponent, List<Entity> obstacles) {

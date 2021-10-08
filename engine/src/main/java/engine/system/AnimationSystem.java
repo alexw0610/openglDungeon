@@ -2,12 +2,20 @@ package engine.system;
 
 import engine.component.AnimationComponent;
 import engine.entity.Entity;
-import engine.service.RenderService;
 
 public class AnimationSystem {
     public static void processEntity(Entity entity) {
         AnimationComponent animationComponent = entity.getComponentOfType(AnimationComponent.class);
-        animationComponent.setAnimationFrame(RenderService.renderTick / 1000 * animationComponent.getAnimationSpeed());
+        if (((java.lang.System.nanoTime() / 1000000.0) - animationComponent.getAnimationUpdatedLast()) > animationComponent.getAnimationSpeed()) {
+            if (animationComponent.isAnimationContinuous() || (!animationComponent.isAnimationFinished())) {
+                animationComponent.setAnimationUpdatedLast(java.lang.System.nanoTime() / 1000000.0);
+                animationComponent.setAnimationFrame(animationComponent.getAnimationFrame() + 1);
+                if (animationComponent.getAnimationFrame() >= animationComponent.getAnimationLength()) {
+                    animationComponent.setAnimationFinished(true);
+                }
+            }
+
+        }
     }
 
     public static boolean isResponsibleFor(Entity entity) {

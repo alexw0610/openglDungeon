@@ -63,12 +63,6 @@ public class Engine {
             if (PlayerMovementInputSystem.isResponsibleFor(entity)) {
                 PlayerMovementInputSystem.processEntity(entity);
             }
-            if (ProjectileSystem.isResponsibleFor(entity)) {
-                ProjectileSystem.processEntity(entity);
-            }
-            if (PhysicsSystem.isResponsibleFor(entity)) {
-                PhysicsSystem.processEntity(entity);
-            }
             if (CameraSystem.isResponsibleFor(entity)) {
                 CameraSystem.processEntity(entity);
             }
@@ -81,6 +75,18 @@ public class Engine {
             if (CollisionSystem.isResponsibleFor(entity)) {
                 CollisionSystem.processEntity(entity);
             }
+        }
+        //Movement Logic
+        for (Entity entity : EntityHandler.getInstance().getAllObjects()) {
+            if (ProjectileSystem.isResponsibleFor(entity)) {
+                ProjectileSystem.processEntity(entity);
+            }
+            if (PhysicsSystem.isResponsibleFor(entity)) {
+                PhysicsSystem.processEntity(entity);
+            }
+        }
+        //Post Game Logic
+        for (Entity entity : EntityHandler.getInstance().getAllObjects()) {
             if (DestructionSystem.isResponsibleFor(entity)) {
                 DestructionSystem.processEntity(entity);
             }

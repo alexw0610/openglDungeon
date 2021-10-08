@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 
 public class SceneGenerator {
 
-    private static final int MAP_SIZE = 32;
+    private static final int MAP_SIZE = 64;
     private static final int MAX_ROOM_SIDE_LENGTH = 16;
     private static final double MAX_ROOM_RATIO = 2;
     private static final double MAX_ROOM_SIZE = 128;

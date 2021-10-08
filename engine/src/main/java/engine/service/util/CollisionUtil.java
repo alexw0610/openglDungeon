@@ -3,7 +3,6 @@ package engine.service.util;
 import engine.object.HitBox;
 import org.joml.Intersectiond;
 import org.joml.Vector2d;
-import org.joml.Vector3d;
 
 public class CollisionUtil {
 
@@ -45,8 +44,8 @@ public class CollisionUtil {
                         Vector2d maxB = new Vector2d(positionB.x() + hitBoxB.getSize(), positionB.y() + hitBoxB.getSize());
                         return Intersectiond.testAarCircle(minB, maxB, positionA, Math.pow(hitBoxA.getSize(), 2));
                     case CIRCLE:
-                        return Intersectiond.intersectCircleCircle(positionA, Math.pow(hitBoxA.getSize(), 2),
-                                positionA, Math.pow(hitBoxA.getSize(), 2), new Vector3d());
+                        return Intersectiond.testCircleCircle(positionA.x(), positionA.y(), hitBoxA.getSize(),
+                                positionB.x(), positionB.y(), hitBoxB.getSize());
                     default:
                         return false;
                 }

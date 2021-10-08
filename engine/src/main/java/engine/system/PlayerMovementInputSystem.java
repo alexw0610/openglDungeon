@@ -48,11 +48,12 @@ public class PlayerMovementInputSystem {
                         .withComponent(new TransformationComponent(transformationComponent.getPositionX(), transformationComponent.getPositionY()))
                         .withComponent(new RenderComponent(PrimitiveMeshShape.QUAD, TextureKey.ORB_AQUA, ShaderType.DEFAULT, 1, 5))
                         .withComponent(new AnimationComponent(0.01))
-                        .withComponent(new ProjectileComponent(projectileDirection.normalize(), 0.05))
+                        .withComponent(new ProjectileComponent(projectileDirection.normalize(), 0.1))
                         .withComponent(new LightSourceComponent(new Vector3d(Math.random(), Math.random(), Math.random()), 1, 0.01))
                         .withComponent(new DestructionComponent(5000))
-                        .withComponent(new CollisionComponent(new HitBox(HitBoxType.CIRCLE, 0.2)))
+                        .withComponent(new CollisionComponent(new HitBox(HitBoxType.CIRCLE, 0.5), false))
                         .withComponent(new ParticleComponent(TextureKey.ORB_AQUA, 100, 2, 0.50, 500, () -> new Vector2d(0.5 - Math.random(), 0.5 - Math.random())))
+                        .withComponent(new CreatedByComponent(entity))
                         .buildAndInstantiate();
                 orb.getComponentOfType(RenderComponent.class).setShadeless(true);
                 orb.getComponentOfType(RenderComponent.class).setAlwaysVisible(true);

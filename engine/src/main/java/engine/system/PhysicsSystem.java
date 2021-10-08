@@ -10,6 +10,7 @@ import engine.service.util.CollisionUtil;
 import org.joml.Vector2d;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static engine.EngineConstants.DECAY;
 
@@ -22,6 +23,7 @@ public class PhysicsSystem {
             CollisionComponent collisionComponent = entity.getComponentOfType(CollisionComponent.class);
             List<Entity> surfaces = EntityHandler.getInstance().getAllEntitiesWithComponents(TransformationComponent.class, SurfaceComponent.class);
             List<Entity> obstacles = EntityHandler.getInstance().getAllEntitiesWithComponents(TransformationComponent.class, CollisionComponent.class);
+            obstacles = obstacles.stream().distinct().filter(e -> e.getComponentOfType(CollisionComponent.class).isObstructsMovement()).collect(Collectors.toList());
             surfaces.remove(entity);
             obstacles.remove(entity);
             if (isSurfaced(transformationComponent, physicsComponent, surfaces)) {

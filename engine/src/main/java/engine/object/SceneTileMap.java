@@ -24,6 +24,7 @@ public class SceneTileMap {
     private final short mapSize;
     private final Tile[][] tiles;
     private List<Vector2i> roomPositions;
+    private List<Entity> roomEntities;
 
     public SceneTileMap(short mapSize) {
         this.mapSize = mapSize;
@@ -47,6 +48,7 @@ public class SceneTileMap {
     }
 
     public void applyTileRoom(TileRoom room) {
+        room.getRoomEntities().forEach(entity -> EntityHandler.getInstance().addObject(entity));
         for (short x = 0; x < room.getRoomWidth(); x++) {
             for (short y = 0; y < room.getRoomHeight(); y++) {
                 int sceneTilePositionX = x + room.getRoomBottomLeftTile().x();
