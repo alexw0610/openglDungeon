@@ -13,9 +13,10 @@ import engine.enums.ShaderType;
 import engine.enums.TextureKey;
 import engine.handler.EntityHandler;
 import engine.object.HitBox;
-import engine.object.SceneTileMap;
-import engine.service.SceneGenerator;
+import engine.object.Room;
+import engine.service.DungeonGenerator;
 import exception.UDPServerException;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.joml.Vector2i;
 import processor.CharacterUpdateSender;
@@ -27,6 +28,7 @@ import util.ParameterUtil;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.List;
 import java.util.Map;
 
 public class Client {
@@ -62,18 +64,17 @@ public class Client {
                 .withComponent(new CameraComponent())
                 .buildAndInstantiate();
 
-        SceneTileMap sceneTileMap = SceneGenerator.generateScene();
-        sceneTileMap.loadTiles();
+        List<Room> dungeonRooms = DungeonGenerator.generate(Double.parseDouble(RandomStringUtils.randomNumeric(8)));
+        Vector2i startPosition = dungeonRooms.get(0).getRoomPosition();
 
-        Vector2i roomPos = sceneTileMap.getRoomPositions().get(0);
         Entity player = EntityHandler.getInstance().getEntityWithComponent(PlayerComponent.class);
-        player.getComponentOfType(TransformationComponent.class).setPositionX(roomPos.x());
-        player.getComponentOfType(TransformationComponent.class).setPositionY(roomPos.y());
+        player.getComponentOfType(TransformationComponent.class).setPositionX(startPosition.x());
+        player.getComponentOfType(TransformationComponent.class).setPositionY(startPosition.y());
         player.getComponentOfType(RenderComponent.class).setShadeless(true);
 
         Entity camera = EntityHandler.getInstance().getEntityWithComponent(CameraComponent.class);
-        camera.getComponentOfType(TransformationComponent.class).setPositionX(roomPos.x());
-        camera.getComponentOfType(TransformationComponent.class).setPositionY(roomPos.y());
+        camera.getComponentOfType(TransformationComponent.class).setPositionX(startPosition.x());
+        camera.getComponentOfType(TransformationComponent.class).setPositionY(startPosition.y());
 
 
         if (!Boolean.parseBoolean(applicationProperties.getProperty("offlineMode"))) {

@@ -51,7 +51,7 @@ public class PlayerMovementInputSystem {
                         .withComponent(new ProjectileComponent(projectileDirection.normalize(), 0.1))
                         .withComponent(new LightSourceComponent(new Vector3d(Math.random(), Math.random(), Math.random()), 1, 0.01))
                         .withComponent(new DestructionComponent(5000))
-                        .withComponent(new CollisionComponent(new HitBox(HitBoxType.CIRCLE, 0.5), false))
+                        .withComponent(new CollisionComponent(new HitBox(HitBoxType.CIRCLE, 0.2), false))
                         .withComponent(new ParticleComponent(TextureKey.ORB_AQUA, 100, 2, 0.50, 500, () -> new Vector2d(0.5 - Math.random(), 0.5 - Math.random())))
                         .withComponent(new CreatedByComponent(entity))
                         .buildAndInstantiate();

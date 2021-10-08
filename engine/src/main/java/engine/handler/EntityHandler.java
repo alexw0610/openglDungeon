@@ -74,4 +74,10 @@ public class EntityHandler implements Handler<Entity> {
             this.objects.remove(key);
         }
     }
+
+    public void removeObjectsWithPrefix(String prefix) {
+        for (String key : this.objects.keySet().stream().filter(key -> key.startsWith(prefix)).collect(Collectors.toList())) {
+            removeObject(key);
+        }
+    }
 }
