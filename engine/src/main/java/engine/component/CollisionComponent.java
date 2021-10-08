@@ -1,7 +1,7 @@
 package engine.component;
 
+import engine.component.lambda.OnCollisionFunction;
 import engine.object.HitBox;
-import engine.object.OnCollisionFunction;
 
 public class CollisionComponent implements Component {
 

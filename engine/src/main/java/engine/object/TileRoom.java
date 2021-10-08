@@ -1,4 +1,4 @@
-package engine.scene;
+package engine.object;
 
 import engine.component.RenderComponent;
 import engine.component.SurfaceComponent;
@@ -10,7 +10,6 @@ import engine.enums.PrimitiveMeshShape;
 import engine.enums.ShaderType;
 import engine.enums.TextureKey;
 import engine.handler.TextureHandler;
-import engine.object.HitBox;
 import org.joml.Intersectiond;
 import org.joml.Vector2i;
 

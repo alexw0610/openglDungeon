@@ -10,7 +10,6 @@ public class DestructionSystem {
         DestructionComponent destructionComponent = entity.getComponentOfType(DestructionComponent.class);
         if (destructionComponent.getTimer() <= 0) {
             EntityHandler.getInstance().removeObject(entity.getEntityId());
-            java.lang.System.out.println("removed entity");
         } else {
             destructionComponent.setTimer(destructionComponent.getTimer() - Engine.stepTimeDelta / 1000);
         }

@@ -1,29 +1,29 @@
 package engine.object;
 
-import org.joml.Vector3d;
+import org.joml.Vector2d;
 
 import java.util.Objects;
 
 public class Edge {
-    private final Vector3d a;
-    private final Vector3d b;
+    private final Vector2d a;
+    private final Vector2d b;
 
-    public Edge(Vector3d a, Vector3d b) {
+    public Edge(Vector2d a, Vector2d b) {
         this.a = a;
         this.b = b;
     }
 
-    public Vector3d getA() {
+    public Vector2d getA() {
         return a;
     }
 
-    public Vector3d getB() {
+    public Vector2d getB() {
         return b;
     }
 
     public Mesh toMesh() {
-        float[] vertices = new float[]{(float) a.x(), (float) a.y(), (float) a.z(),
-                (float) b.x(), (float) b.y(), (float) b.z()};
+        float[] vertices = new float[]{(float) a.x(), (float) a.y(), (float) 0,
+                (float) b.x(), (float) b.y(), (float) 0};
         int[] indices = new int[]{0, 1};
         return new Mesh(vertices, indices, vertices);
     }

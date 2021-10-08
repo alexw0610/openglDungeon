@@ -9,7 +9,6 @@ import engine.enums.HitBoxType;
 import engine.enums.PrimitiveMeshShape;
 import engine.enums.ShaderType;
 import engine.enums.TextureKey;
-import engine.handler.EntityHandler;
 import engine.handler.KeyHandler;
 import engine.handler.MouseHandler;
 import engine.object.HitBox;
@@ -53,18 +52,11 @@ public class PlayerMovementInputSystem {
                         .withComponent(new LightSourceComponent(new Vector3d(Math.random(), Math.random(), Math.random()), 1, 0.01))
                         .withComponent(new DestructionComponent(5000))
                         .withComponent(new CollisionComponent(new HitBox(HitBoxType.CIRCLE, 0.2)))
-                        .build();
+                        .withComponent(new ParticleComponent(TextureKey.ORB_AQUA, 100, 2, 0.50, 500, () -> new Vector2d(0.5 - Math.random(), 0.5 - Math.random())))
+                        .buildAndInstantiate();
                 orb.getComponentOfType(RenderComponent.class).setShadeless(true);
                 orb.getComponentOfType(RenderComponent.class).setAlwaysVisible(true);
-                orb.getComponentOfType(CollisionComponent.class).setOnCollisionFunction((self, collider) -> {
-                    self.addComponent(new DestructionComponent(0));
-                    EntityHandler.getInstance().addObject(EntityBuilder.builder()
-                            .withComponent(new TransformationComponent(self.getComponentOfType(TransformationComponent.class).getPositionX(), self.getComponentOfType(TransformationComponent.class).getPositionY()))
-                            .withComponent(new DestructionComponent(200))
-                            .withComponent(new ParticleComponent(TextureKey.ORB_AQUA, 300, 3, 0.75))
-                            .build());
-                });
-                EntityHandler.getInstance().addObject(orb);
+                orb.getComponentOfType(CollisionComponent.class).setOnCollisionFunction((self, collider) -> self.addComponent(new DestructionComponent(0)));
             }
 
         }

@@ -1,4 +1,4 @@
-package engine.scene;
+package engine.object;
 
 import engine.component.CollisionComponent;
 import engine.component.RenderComponent;
@@ -14,7 +14,6 @@ import engine.enums.PrimitiveMeshShape;
 import engine.enums.ShaderType;
 import engine.enums.TextureKey;
 import engine.handler.EntityHandler;
-import engine.object.HitBox;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.joml.Vector2i;
 
@@ -69,17 +68,17 @@ public class SceneTileMap {
                                 .withComponent(new RenderComponent(PrimitiveMeshShape.QUAD, TextureKey.WALL_AQUA_BRICK, ShaderType.DEFAULT, 1, 3))
                                 .withComponent(new TransformationComponent(x, y))
                                 .withComponent(new CollisionComponent(new HitBox(HitBoxType.AABB, 0.5)))
-                                .withComponent(new VisibleFaceTag())
-                                .withComponent(new ShadowCastTag())
-                                .withComponent(new ViewBlockingTag())
+                                .withTag(VisibleFaceTag.class)
+                                .withTag(ShadowCastTag.class)
+                                .withTag(ViewBlockingTag.class)
                                 .build();
                         this.tiles[x][y] = new Tile(entity, x, y);
                     } else if (isAdjacentToSurface(x, y)) {
                         Entity entity = EntityBuilder.builder()
                                 .withComponent(new TransformationComponent(x, y))
                                 .withComponent(new CollisionComponent(new HitBox(HitBoxType.AABB, 0.5)))
-                                .withComponent(new ShadowCastTag())
-                                .withComponent(new ViewBlockingTag())
+                                .withTag(ShadowCastTag.class)
+                                .withTag(ViewBlockingTag.class)
                                 .build();
                         this.tiles[x][y] = new Tile(entity, x, y);
                     }

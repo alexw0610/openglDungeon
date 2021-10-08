@@ -10,7 +10,7 @@ public class ProjectileSystem {
         ProjectileComponent projectileComponent = entity.getComponentOfType(ProjectileComponent.class);
         TransformationComponent transformationComponent = entity.getComponentOfType(TransformationComponent.class);
         Vector2d trajectory = new Vector2d();
-        projectileComponent.getDirection().mul(projectileComponent.getVelocity(), trajectory);
+        projectileComponent.getDirection().normalize().mul(projectileComponent.getVelocity(), trajectory);
         transformationComponent.setPositionX(transformationComponent.getPositionX() + trajectory.x());
         transformationComponent.setPositionY(transformationComponent.getPositionY() + trajectory.y());
     }

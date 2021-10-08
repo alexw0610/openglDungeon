@@ -13,8 +13,8 @@ import engine.enums.ShaderType;
 import engine.enums.TextureKey;
 import engine.handler.EntityHandler;
 import engine.object.HitBox;
-import engine.scene.SceneGenerator;
-import engine.scene.SceneTileMap;
+import engine.object.SceneTileMap;
+import engine.service.SceneGenerator;
 import exception.UDPServerException;
 import org.apache.commons.lang3.StringUtils;
 import org.joml.Vector2i;
@@ -48,20 +48,20 @@ public class Client {
         Engine engine = new Engine();
         engine.start();
 
-        EntityHandler.getInstance().addObject(EntityBuilder.builder()
+        EntityBuilder.builder()
                 .withComponent(new RenderComponent(PrimitiveMeshShape.TRIANGLE, TextureKey.DEFAULT, ShaderType.DEFAULT, 1, 4))
                 .withComponent(new TransformationComponent())
                 .withComponent(new PhysicsComponent())
                 .withComponent(new PlayerComponent())
-                .withComponent(new CameraTargetTag())
                 .withComponent(new CollisionComponent(new HitBox(HitBoxType.CIRCLE, 0.5)))
-                .withComponent(new ViewSourceTag())
-                .build());
+                .withTag(CameraTargetTag.class)
+                .withTag(ViewSourceTag.class)
+                .buildAndInstantiate();
 
-        EntityHandler.getInstance().addObject(EntityBuilder.builder()
+        EntityBuilder.builder()
                 .withComponent(new TransformationComponent())
                 .withComponent(new CameraComponent())
-                .build());
+                .buildAndInstantiate();
 
         SceneTileMap sceneTileMap = SceneGenerator.generateScene();
         Vector2i roomPos = sceneTileMap.getRoomPositions().get(0);
@@ -81,9 +81,8 @@ public class Client {
                     .withComponent(new RenderComponent(PrimitiveMeshShape.QUAD, TextureKey.LANTERN_HANGING, ShaderType.DEFAULT, 1, 5))
                     .withComponent(new LightSourceComponent(new Vector3d(Math.random(), Math.random(), Math.random()), 1, 0.01))
                     .withComponent(new AnimationComponent(0.01))
-                    .build();
+                    .buildAndInstantiate();
             entity.getComponentOfType(RenderComponent.class).setShadeless(true);
-            EntityHandler.getInstance().addObject(entity);
         }
 
         if (!Boolean.parseBoolean(applicationProperties.getProperty("offlineMode"))) {

@@ -1,5 +1,6 @@
 package engine.component;
 
+import engine.component.lambda.Vector2dFunction;
 import engine.enums.TextureKey;
 
 public class ParticleComponent implements Component {
@@ -7,14 +8,18 @@ public class ParticleComponent implements Component {
     private double particleFrequency;
     private double particleAmount;
     private double particleSize;
+    private double particleLifeTime;
+    private Vector2dFunction particleDirection;
 
     private double emittedLast;
 
-    public ParticleComponent(TextureKey particleTexture, double particleFrequency, double particleAmount, double particleSize) {
+    public ParticleComponent(TextureKey particleTexture, double particleFrequency, double particleAmount, double particleSize, double particleLifeTime, Vector2dFunction particleDirection) {
         this.particleTexture = particleTexture;
         this.particleFrequency = particleFrequency;
         this.particleAmount = particleAmount;
         this.particleSize = particleSize;
+        this.particleLifeTime = particleLifeTime;
+        this.particleDirection = particleDirection;
     }
 
     public TextureKey getParticleTexture() {
@@ -47,6 +52,22 @@ public class ParticleComponent implements Component {
 
     public void setParticleFrequency(double particleFrequency) {
         this.particleFrequency = particleFrequency;
+    }
+
+    public double getParticleLifeTime() {
+        return particleLifeTime;
+    }
+
+    public void setParticleLifeTime(double particleLifeTime) {
+        this.particleLifeTime = particleLifeTime;
+    }
+
+    public Vector2dFunction getParticleDirection() {
+        return particleDirection;
+    }
+
+    public void setParticleDirection(Vector2dFunction particleDirection) {
+        this.particleDirection = particleDirection;
     }
 
     public double getEmittedLast() {

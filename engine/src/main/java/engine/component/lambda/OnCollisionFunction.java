@@ -1,4 +1,4 @@
-package engine.object;
+package engine.component.lambda;
 
 import engine.entity.Entity;
 

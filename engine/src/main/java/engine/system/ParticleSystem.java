@@ -5,8 +5,6 @@ import engine.entity.Entity;
 import engine.entity.EntityBuilder;
 import engine.enums.PrimitiveMeshShape;
 import engine.enums.ShaderType;
-import engine.handler.EntityHandler;
-import org.joml.Vector2d;
 
 public class ParticleSystem {
     public static void processEntity(Entity entity) {
@@ -19,13 +17,12 @@ public class ParticleSystem {
                         .withComponent(new TransformationComponent(transformationComponent.getPositionX(), transformationComponent.getPositionY()))
                         .withComponent(new RenderComponent(PrimitiveMeshShape.QUAD, particleComponent.getParticleTexture(), ShaderType.DEFAULT, particleComponent.getParticleSize(), 5))
                         .withComponent(new AnimationComponent(0.01))
-                        .withComponent(new DestructionComponent(200))
-                        .withComponent(new ProjectileComponent(new Vector2d(0.5 - Math.random(), 0.5 - Math.random()), 0.05))
-                        .build();
+                        .withComponent(new DestructionComponent(particleComponent.getParticleLifeTime()))
+                        .withComponent(new ProjectileComponent(particleComponent.getParticleDirection().getVector(), 0.05))
+                        .buildAndInstantiate();
                 particle.getComponentOfType(RenderComponent.class).setShadeless(true);
                 particle.getComponentOfType(RenderComponent.class).setAlwaysVisible(true);
                 particle.getComponentOfType(RenderComponent.class).setTextureRotation(Math.random() * 180);
-                EntityHandler.getInstance().addObject(particle);
             }
         }
     }

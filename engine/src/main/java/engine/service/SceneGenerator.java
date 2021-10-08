@@ -1,9 +1,12 @@
-package engine.scene;
+package engine.service;
 
 import engine.enums.TextureKey;
-import engine.scene.delauny.DelaunyEdge;
-import engine.scene.delauny.DelaunyTriangulator;
-import org.joml.Vector2f;
+import engine.object.Edge;
+import engine.object.SceneTileMap;
+import engine.object.TileRoom;
+import engine.service.util.MinimumSpanningTree;
+import engine.service.util.Triangulator;
+import org.joml.Vector2d;
 import org.joml.Vector2i;
 
 import java.util.ArrayList;
@@ -26,8 +29,8 @@ public class SceneGenerator {
         List<TileRoom> rooms = new ArrayList<>();
         generateRooms(rooms, MAX_ROOM_AMOUNT);
         List<TileRoom> mainRooms = getBiggestRoomsNotIntersecting(rooms, 8);
-        List<DelaunyEdge> paths = DelaunyTriangulator.generateDelaunyGraph(
-                mainRooms.stream().map(room -> new Vector2f(room.getRoomCenterTile())).collect(Collectors.toList()),
+        List<Edge> paths = Triangulator.triangulateVectorField(
+                mainRooms.stream().map(room -> new Vector2d(room.getRoomCenterTile())).collect(Collectors.toList()),
                 MAP_SIZE);
         paths = MinimumSpanningTree.getMinimumSpanningTreeEdges(paths);
         List<TileRoom> corridors = generateCorridors(paths);
@@ -51,19 +54,19 @@ public class SceneGenerator {
         }
     }
 
-    private static List<TileRoom> generateCorridors(List<DelaunyEdge> paths) {
+    private static List<TileRoom> generateCorridors(List<Edge> paths) {
         List<TileRoom> corridors = new ArrayList<>();
-        for (DelaunyEdge path : paths) {
-            int startX = vector2fToVector2i(getLeftVertex(path)).x();
-            int endX = vector2fToVector2i(getRightVertex(path)).x();
-            int fixedY = vector2fToVector2i(getLeftVertex(path)).y();
+        for (Edge path : paths) {
+            int startX = Vector2dToVector2i(getLeftVertex(path)).x();
+            int endX = Vector2dToVector2i(getRightVertex(path)).x();
+            int fixedY = Vector2dToVector2i(getLeftVertex(path)).y();
             for (int x = 0; x < endX - startX; x++) {
                 corridors.add(new TileRoom(CORRIDOR_SIZE, CORRIDOR_SIZE, new Vector2i(startX + x, fixedY),
                         TextureKey.FLOOR_RED_PLATES_DEBRIS));
             }
-            int startY = vector2fToVector2i(getBottomVertex(path)).y();
-            int endY = vector2fToVector2i(getTopVertex(path)).y();
-            int fixedX = vector2fToVector2i(getBottomVertex(path).equals(getLeftVertex(path)) ? getTopVertex(path) : getBottomVertex(path)).x();
+            int startY = Vector2dToVector2i(getBottomVertex(path)).y();
+            int endY = Vector2dToVector2i(getTopVertex(path)).y();
+            int fixedX = Vector2dToVector2i(getBottomVertex(path).equals(getLeftVertex(path)) ? getTopVertex(path) : getBottomVertex(path)).x();
             for (int y = 0; y < endY - startY; y++) {
                 corridors.add(new TileRoom(CORRIDOR_SIZE, CORRIDOR_SIZE, new Vector2i(fixedX, startY + y),
                         TextureKey.FLOOR_RED_PLATES_DEBRIS));
@@ -72,23 +75,23 @@ public class SceneGenerator {
         return corridors;
     }
 
-    private static Vector2f getLeftVertex(DelaunyEdge path) {
-        return path.getVertexA().x() < path.getVertexB().x() ? path.getVertexA() : path.getVertexB();
+    private static Vector2d getLeftVertex(Edge path) {
+        return path.getA().x() < path.getB().x() ? path.getA() : path.getB();
     }
 
-    private static Vector2f getRightVertex(DelaunyEdge path) {
-        return path.getVertexA().x() > path.getVertexB().x() ? path.getVertexA() : path.getVertexB();
+    private static Vector2d getRightVertex(Edge path) {
+        return path.getA().x() > path.getB().x() ? path.getA() : path.getB();
     }
 
-    private static Vector2f getBottomVertex(DelaunyEdge path) {
-        return path.getVertexA().y() < path.getVertexB().y() ? path.getVertexA() : path.getVertexB();
+    private static Vector2d getBottomVertex(Edge path) {
+        return path.getA().y() < path.getB().y() ? path.getA() : path.getB();
     }
 
-    private static Vector2f getTopVertex(DelaunyEdge path) {
-        return path.getVertexA().y() > path.getVertexB().y() ? path.getVertexA() : path.getVertexB();
+    private static Vector2d getTopVertex(Edge path) {
+        return path.getA().y() > path.getB().y() ? path.getA() : path.getB();
     }
 
-    private static Vector2i vector2fToVector2i(Vector2f from) {
+    private static Vector2i Vector2dToVector2i(Vector2d from) {
         return new Vector2i((short) from.x(), (short) from.y());
     }
 

@@ -4,7 +4,7 @@ import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL3;
 import com.jogamp.opengl.GLContext;
 import engine.enums.PrimitiveMeshShape;
-import org.joml.Vector3d;
+import org.joml.Vector2d;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -76,19 +76,18 @@ public class Mesh {
         }
     }
 
-    public Vector3d[] getVertices() {
-        Vector3d[] verticesVectors = new Vector3d[this.vertices.length / 3];
+    public Vector2d[] getVertices() {
+        Vector2d[] verticesVectors = new Vector2d[this.vertices.length / 3];
         for (int i = 0; i < this.vertices.length / 3; i++) {
-            verticesVectors[i] = new Vector3d(
+            verticesVectors[i] = new Vector2d(
                     this.vertices[(i * 3)],
-                    this.vertices[(i * 3) + 1],
-                    this.vertices[(i * 3) + 2]);
+                    this.vertices[(i * 3) + 1]);
         }
         return verticesVectors;
     }
 
     public Edge[] getEdges() {
-        Vector3d[] vertices = getVertices();
+        Vector2d[] vertices = getVertices();
         Edge[] edges = new Edge[this.indices.length];
         for (int i = 0; i < this.indices.length / 3; i++) {
             edges[(i * 3)] = new Edge(vertices[this.indices[(i * 3)]], vertices[this.indices[(i * 3) + 1]]);
