@@ -7,6 +7,7 @@ public class AnimationComponent implements Component {
     private double animationFrame;
     private boolean animationContinuous;
     private double animationLength;
+    private boolean isMovementDriven;
 
     private boolean animationFinished;
     private double animationUpdatedLast;
@@ -18,6 +19,7 @@ public class AnimationComponent implements Component {
         this.animationRow = 1;
         this.animationFrame = 1;
         this.animationLength = 0;
+        this.isMovementDriven = false;
     }
 
     public AnimationComponent(double animationSpeed, boolean animationContinuous, double animationLength) {
@@ -27,6 +29,7 @@ public class AnimationComponent implements Component {
         this.animationRow = 1;
         this.animationFrame = 1;
         this.animationLength = animationLength;
+        this.isMovementDriven = false;
     }
 
     public double getAnimationSpeed() {
@@ -83,5 +86,13 @@ public class AnimationComponent implements Component {
 
     public void setAnimationLength(double animationLength) {
         this.animationLength = animationLength;
+    }
+
+    public boolean isMovementDriven() {
+        return isMovementDriven;
+    }
+
+    public void setMovementDriven(boolean movementDriven) {
+        isMovementDriven = movementDriven;
     }
 }

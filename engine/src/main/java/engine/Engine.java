@@ -6,14 +6,18 @@ import com.jogamp.newt.opengl.GLWindow;
 import com.jogamp.opengl.GLCapabilities;
 import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.util.FPSAnimator;
+import engine.component.CameraComponent;
 import engine.component.RenderComponent;
+import engine.component.TransformationComponent;
 import engine.entity.Entity;
 import engine.handler.EntityHandler;
 import engine.handler.MeshHandler;
 import engine.service.RenderService;
 import engine.system.*;
+import org.joml.Vector2d;
 
 import java.util.Comparator;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static engine.EngineConstants.*;
@@ -22,6 +26,8 @@ public class Engine {
 
     public static double stepTimeDelta = 0;
     private static double lastStepTime = 0;
+    private double lastPerformanceAudit = 0;
+    private double fpsCount = 0;
 
     public void start() {
         setupDisplay();
@@ -59,9 +65,13 @@ public class Engine {
         RenderService.getInstance().clearCall();
         MeshHandler.getInstance().removeMeshesWithPrefix(LightSourceSystem.LIGHT_POLYGON_KEY_PREFIX);
         //Game logic
-        for (Entity entity : EntityHandler.getInstance().getAllObjects()) {
+        List<Entity> entities = EntityHandler.getInstance().getAllObjects();
+        for (Entity entity : entities) {
             if (PlayerMovementInputSystem.isResponsibleFor(entity)) {
                 PlayerMovementInputSystem.processEntity(entity);
+            }
+            if (AISystem.isResponsibleFor(entity)) {
+                AISystem.processEntity(entity);
             }
             if (CameraSystem.isResponsibleFor(entity)) {
                 CameraSystem.processEntity(entity);
@@ -77,7 +87,7 @@ public class Engine {
             }
         }
         //Movement Logic
-        for (Entity entity : EntityHandler.getInstance().getAllObjects()) {
+        for (Entity entity : entities) {
             if (ProjectileSystem.isResponsibleFor(entity)) {
                 ProjectileSystem.processEntity(entity);
             }
@@ -86,13 +96,18 @@ public class Engine {
             }
         }
         //Post Game Logic
-        for (Entity entity : EntityHandler.getInstance().getAllObjects()) {
+        for (Entity entity : entities) {
             if (DestructionSystem.isResponsibleFor(entity)) {
                 DestructionSystem.processEntity(entity);
             }
         }
+        Vector2d cameraPosition = EntityHandler.getInstance().getEntityWithComponent(CameraComponent.class).getComponentOfType(TransformationComponent.class).getPosition();
+        List<Entity> entitiesToRender = EntityHandler.getInstance().getAllEntitiesWithComponents(RenderComponent.class).stream()
+                .filter(e -> e.getComponentOfType(TransformationComponent.class).getPosition().distance(cameraPosition) < EngineConstants.RENDER_DISTANCE)
+                .sorted(Comparator.comparingInt(e -> e.getComponentOfType(RenderComponent.class).getLayer()))
+                .collect(Collectors.toList());
         //Pre Rendering
-        for (Entity entity : EntityHandler.getInstance().getAllObjects()) {
+        for (Entity entity : entitiesToRender) {
             if (ViewSourceSystem.isResponsibleFor(entity)) {
                 ViewSourceSystem.processEntity(entity);
             }
@@ -101,9 +116,7 @@ public class Engine {
             }
         }
         //Rendering
-        for (Entity entity : EntityHandler.getInstance().getAllEntitiesWithComponents(RenderComponent.class).stream()
-                .sorted(Comparator.comparingInt(e -> e.getComponentOfType(RenderComponent.class).getLayer()))
-                .collect(Collectors.toList())) {
+        for (Entity entity : entitiesToRender) {
             if (RenderSystem.isResponsibleFor(entity)) {
                 RenderSystem.processEntity(entity);
             }
@@ -112,6 +125,31 @@ public class Engine {
         stepTimeDelta = (stepTime - lastStepTime) / 1000;
         lastStepTime = stepTime;
         RenderService.renderTick += stepTimeDelta;
+        fpsCount++;
+        printPerformanceAudit();
     }
 
+    private void printPerformanceAudit() {
+        if ((System.nanoTime() / 1000000.0) - lastPerformanceAudit > 5000) {
+            System.out.println("Performance Audit:");
+            System.out.printf(" Frame delta (ms): %s%n" +
+                            " Fps (calc): %s%n" +
+                            " Fps (cnt): %s%n" +
+                            " Entities: %s%n" +
+                            "  Entities rendered: %s%n" +
+                            "  Lights rendered: %s%n" +
+                            "  View maps rendered: %s%n" +
+                            "----------------- %n",
+                    stepTimeDelta / 1000,
+                    (1000 / (stepTimeDelta / 1000)),
+                    fpsCount / 5,
+                    EntityHandler.getInstance().getEntityCount(),
+                    RenderService.entitiesRendered,
+                    RenderService.lightsRendered,
+                    RenderService.viewMapsRendered
+            );
+            lastPerformanceAudit = (System.nanoTime() / 1000000.0);
+            fpsCount = 0;
+        }
+    }
 }

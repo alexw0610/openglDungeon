@@ -18,7 +18,7 @@ public class ParticleSystem {
                         .withComponent(new RenderComponent(PrimitiveMeshShape.QUAD, particleComponent.getParticleTexture(), ShaderType.DEFAULT, particleComponent.getParticleSize(), 5))
                         .withComponent(new AnimationComponent(0.01))
                         .withComponent(new DestructionComponent(particleComponent.getParticleLifeTime()))
-                        .withComponent(new ProjectileComponent(particleComponent.getParticleDirection().getVector(), 0.05))
+                        .withComponent(new ProjectileComponent(particleComponent.getParticleDirection().getVector(), particleComponent.getParticleVelocity()))
                         .buildAndInstantiate();
                 particle.getComponentOfType(RenderComponent.class).setShadeless(true);
                 particle.getComponentOfType(RenderComponent.class).setAlwaysVisible(true);

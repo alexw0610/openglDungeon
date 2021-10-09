@@ -10,7 +10,7 @@ out double outLightFallOff;
 out vec3 outLightColor;
 out double outEngineTick;
 
-layout (std140, column_major) uniform UBO{
+layout (std140, column_major, binding = 1) uniform UBO{
     uniform dvec3 cameraPosition;
     uniform double engineTick;
     uniform dvec2 lightPosition;

@@ -67,6 +67,7 @@ public class Client {
         List<Room> dungeonRooms = DungeonGenerator.generate(Double.parseDouble(RandomStringUtils.randomNumeric(8)));
         Vector2i startPosition = dungeonRooms.get(0).getRoomPosition();
 
+
         Entity player = EntityHandler.getInstance().getEntityWithComponent(PlayerComponent.class);
         player.getComponentOfType(TransformationComponent.class).setPositionX(startPosition.x());
         player.getComponentOfType(TransformationComponent.class).setPositionY(startPosition.y());
@@ -76,7 +77,16 @@ public class Client {
         camera.getComponentOfType(TransformationComponent.class).setPositionX(startPosition.x());
         camera.getComponentOfType(TransformationComponent.class).setPositionY(startPosition.y());
 
-
+        Entity monk = EntityBuilder.builder()
+                .withComponent(new RenderComponent(PrimitiveMeshShape.QUAD, TextureKey.ENEMY_MONK, ShaderType.DEFAULT, 1.5, 4))
+                .withComponent(new TransformationComponent(dungeonRooms.get(1).getRoomPosition().x(), dungeonRooms.get(1).getRoomPosition().y()))
+                .withComponent(new AnimationComponent(100))
+                //.withComponent(new CollisionComponent(new HitBox(HitBoxType.CIRCLE, 0.25)))
+                .withComponent(new PhysicsComponent())
+                .withComponent(new AIComponent())
+                .build();
+        monk.getComponentOfType(AnimationComponent.class).setMovementDriven(true);
+        EntityHandler.getInstance().addObject(monk);
         if (!Boolean.parseBoolean(applicationProperties.getProperty("offlineMode"))) {
             try {
                 establishServerConnection();

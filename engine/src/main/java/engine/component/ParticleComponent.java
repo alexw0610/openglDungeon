@@ -9,17 +9,19 @@ public class ParticleComponent implements Component {
     private double particleAmount;
     private double particleSize;
     private double particleLifeTime;
+    private double particleVelocity;
     private Vector2dFunction particleDirection;
 
     private double emittedLast;
 
-    public ParticleComponent(TextureKey particleTexture, double particleFrequency, double particleAmount, double particleSize, double particleLifeTime, Vector2dFunction particleDirection) {
+    public ParticleComponent(TextureKey particleTexture, double particleFrequency, double particleAmount, double particleSize, double particleLifeTime, Vector2dFunction particleDirection, double particleVelocity) {
         this.particleTexture = particleTexture;
         this.particleFrequency = particleFrequency;
         this.particleAmount = particleAmount;
         this.particleSize = particleSize;
         this.particleLifeTime = particleLifeTime;
         this.particleDirection = particleDirection;
+        this.particleVelocity = particleVelocity;
     }
 
     public TextureKey getParticleTexture() {
@@ -68,6 +70,14 @@ public class ParticleComponent implements Component {
 
     public void setParticleDirection(Vector2dFunction particleDirection) {
         this.particleDirection = particleDirection;
+    }
+
+    public double getParticleVelocity() {
+        return particleVelocity;
+    }
+
+    public void setParticleVelocity(double particleVelocity) {
+        this.particleVelocity = particleVelocity;
     }
 
     public double getEmittedLast() {

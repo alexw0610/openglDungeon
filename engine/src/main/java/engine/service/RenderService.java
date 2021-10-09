@@ -5,6 +5,7 @@ import com.jogamp.opengl.GL4;
 import com.jogamp.opengl.GLContext;
 import engine.component.RenderComponent;
 import engine.component.TransformationComponent;
+import engine.enums.RenderMode;
 import engine.enums.ShaderType;
 import engine.enums.TextureKey;
 import engine.handler.MeshHandler;
@@ -14,6 +15,7 @@ import engine.object.Mesh;
 import org.joml.Vector2d;
 import org.joml.Vector3d;
 
+import java.nio.ByteBuffer;
 import java.nio.DoubleBuffer;
 
 import static engine.EngineConstants.WINDOW_HEIGHT;
@@ -40,7 +42,14 @@ public class RenderService {
 
     public static double renderTick = 0;
 
+    public static double entitiesRendered = 0;
+    public static double lightsRendered = 0;
+    public static double viewMapsRendered = 0;
+
+
     Vector2d aspectRatio;
+
+    private RenderMode activeRenderMode = RenderMode.INITIAL;
 
     public static RenderService getInstance() {
         if (INSTANCE == null) {
@@ -68,61 +77,85 @@ public class RenderService {
         RenderService.cameraPosX = 0;
         RenderService.cameraPosY = 0;
         RenderService.cameraPosZ = 0.25;
+        gl.glBindBuffer(gl.GL_UNIFORM_BUFFER, this.uniformBuffers[0]);
+        gl.glBufferData(gl.GL_UNIFORM_BUFFER, 8L * this.uboDataBuffer.capacity(), uboDataBuffer, gl.GL_DYNAMIC_DRAW);
+        gl.glBindBuffer(gl.GL_UNIFORM_BUFFER, this.uniformBuffers[1]);
+        gl.glBufferData(gl.GL_UNIFORM_BUFFER, 8L * this.lightUboDataBuffer.capacity(), lightUboDataBuffer, gl.GL_DYNAMIC_DRAW);
+        gl.glBindBufferBase(gl.GL_UNIFORM_BUFFER, 0, this.uniformBuffers[0]);
+        gl.glBindBufferBase(gl.GL_UNIFORM_BUFFER, 1, this.uniformBuffers[1]);
+    }
+
+    public void switchRenderMode(RenderMode renderMode) {
+        if (!activeRenderMode.equals(renderMode)) {
+            GL4 gl = GLContext.getCurrent().getGL().getGL4();
+            switch (renderMode) {
+                case ENTITY:
+                    gl.glBindFramebuffer(gl.GL_FRAMEBUFFER, 0);
+                    gl.glDisable(gl.GL_DEPTH_TEST);
+                    gl.glBlendEquationSeparate(gl.GL_FUNC_ADD, gl.GL_FUNC_ADD);
+                    gl.glBlendFunc(gl.GL_SRC_ALPHA, gl.GL_ONE_MINUS_SRC_ALPHA);
+                    gl.glActiveTexture(gl.GL_TEXTURE1);
+                    gl.glBindTexture(gl.GL_TEXTURE_2D, this.renderedTextures[0]);
+                    gl.glActiveTexture(gl.GL_TEXTURE2);
+                    gl.glBindTexture(gl.GL_TEXTURE_2D, this.renderedTextures[1]);
+                    break;
+                case VIEW:
+                    gl.glBindFramebuffer(gl.GL_FRAMEBUFFER, frameBuffers[0]);
+                    gl.glBlendEquationSeparate(gl.GL_MAX, gl.GL_MAX);
+                    gl.glEnable(gl.GL_DEPTH_TEST);
+                    gl.glDepthFunc(GL.GL_LEQUAL);
+                    shaderHandler.bindShaderOfType(ShaderType.VIEW_POLYGON_SHADER);
+                    textureHandler.bindTextureWithKey(TextureKey.DEFAULT, gl.GL_TEXTURE0);
+                    gl.glPolygonMode(gl.GL_FRONT_AND_BACK, gl.GL_FILL);
+                    break;
+                case LIGHT:
+                    gl.glBindFramebuffer(gl.GL_FRAMEBUFFER, frameBuffers[1]);
+                    gl.glBlendEquationSeparate(gl.GL_MAX, gl.GL_MAX);
+                    gl.glEnable(gl.GL_DEPTH_TEST);
+                    gl.glDepthFunc(GL.GL_LEQUAL);
+                    shaderHandler.bindShaderOfType(ShaderType.LIGHT_POLYGON_SHADER);
+                    textureHandler.bindTextureWithKey(TextureKey.DEFAULT, gl.GL_TEXTURE0);
+                    gl.glPolygonMode(gl.GL_FRONT_AND_BACK, gl.GL_FILL);
+                    break;
+            }
+            activeRenderMode = renderMode;
+        }
     }
 
     public void renderComponent(RenderComponent renderComponent, TransformationComponent transformationComponent) {
         GL4 gl = GLContext.getCurrent().getGL().getGL4();
-        gl.glBindFramebuffer(gl.GL_FRAMEBUFFER, 0);
-        gl.glDisable(gl.GL_DEPTH_TEST);
-        gl.glBlendEquationSeparate(gl.GL_FUNC_ADD, gl.GL_FUNC_ADD);
-        gl.glBlendFunc(gl.GL_SRC_ALPHA, gl.GL_ONE_MINUS_SRC_ALPHA);
+        switchRenderMode(RenderMode.ENTITY);
         if (renderComponent.getShaderType() != null) {
             shaderHandler.bindShaderOfType(renderComponent.getShaderType());
         } else {
             shaderHandler.bindShaderOfType(ShaderType.DEFAULT);
         }
-        gl.glActiveTexture(gl.GL_TEXTURE0);
         if (renderComponent.getTextureKey() != null) {
-            textureHandler.bindTextureWithKey(renderComponent.getTextureKey());
+            textureHandler.bindTextureWithKey(renderComponent.getTextureKey(), gl.GL_TEXTURE0);
         } else {
-            textureHandler.bindTextureWithKey(TextureKey.DEFAULT);
+            textureHandler.bindTextureWithKey(TextureKey.DEFAULT, gl.GL_TEXTURE0);
         }
-        gl.glActiveTexture(gl.GL_TEXTURE1);
-        gl.glBindTexture(gl.GL_TEXTURE_2D, this.renderedTextures[0]);
-
-        gl.glActiveTexture(gl.GL_TEXTURE2);
-        gl.glBindTexture(gl.GL_TEXTURE_2D, this.renderedTextures[1]);
-
         updateUbo(transformationComponent.getPositionX(), transformationComponent.getPositionY(),
                 renderComponent.getScale(), renderComponent.getTextureOffSetX(), renderComponent.getTextureOffSetY(), renderComponent.getTextureRotation(),
                 renderComponent.isAlwaysVisible(), renderComponent.isShadeless());
         drawCall(meshHandler.getMeshForKey(renderComponent.getMeshKey()), gl.GL_TRIANGLES);
+        entitiesRendered++;
     }
 
     public void renderToViewMap(Mesh mesh) {
         GL4 gl = GLContext.getCurrent().getGL().getGL4();
-        gl.glBindFramebuffer(gl.GL_FRAMEBUFFER, frameBuffers[0]);
-        gl.glBlendEquationSeparate(gl.GL_MAX, gl.GL_MAX);
-        gl.glEnable(gl.GL_DEPTH_TEST);
-        gl.glDepthFunc(GL.GL_LEQUAL);
-        shaderHandler.bindShaderOfType(ShaderType.VIEW_POLYGON_SHADER);
-        textureHandler.bindTextureWithKey(TextureKey.DEFAULT);
-        gl.glPolygonMode(gl.GL_FRONT_AND_BACK, gl.GL_FILL);
+        switchRenderMode(RenderMode.VIEW);
         updateUbo(0, 0, 1, 1, 0, 0, false, false);
         drawCall(mesh, gl.GL_TRIANGLES);
+        viewMapsRendered++;
     }
 
     public void renderToLightMap(Mesh mesh, Vector2d lightPosition, double lightStrength, double lightFallOff, Vector3d lightColor) {
         GL4 gl = GLContext.getCurrent().getGL().getGL4();
-        gl.glBindFramebuffer(gl.GL_FRAMEBUFFER, frameBuffers[1]);
-        gl.glBlendEquationSeparate(gl.GL_MAX, gl.GL_MAX);
-        gl.glEnable(gl.GL_DEPTH_TEST);
-        gl.glDepthFunc(GL.GL_LEQUAL);
-        shaderHandler.bindShaderOfType(ShaderType.LIGHT_POLYGON_SHADER);
-        textureHandler.bindTextureWithKey(TextureKey.DEFAULT);
-        gl.glPolygonMode(gl.GL_FRONT_AND_BACK, gl.GL_FILL);
+        switchRenderMode(RenderMode.LIGHT);
         updateLightUbo(lightPosition.x(), lightPosition.y(), 1, lightStrength, lightFallOff, lightColor);
         drawCall(mesh, gl.GL_TRIANGLES);
+        lightsRendered++;
     }
 
     private void drawCall(Mesh mesh, int GL_RENDER_MODE) {
@@ -156,9 +189,10 @@ public class RenderService {
         this.uboDataBuffer.put(13, shadeless ? 1 : 0);
 
         gl.glBindBuffer(gl.GL_UNIFORM_BUFFER, this.uniformBuffers[0]);
-        gl.glBufferData(gl.GL_UNIFORM_BUFFER, 8L * this.uboDataBuffer.capacity(), uboDataBuffer, gl.GL_DYNAMIC_DRAW);
-        gl.glBindBuffer(gl.GL_UNIFORM_BUFFER, 0);
-        gl.glBindBufferBase(gl.GL_UNIFORM_BUFFER, 0, this.uniformBuffers[0]);
+        ByteBuffer byteBuffer = gl.glMapBuffer(gl.GL_UNIFORM_BUFFER, GL.GL_WRITE_ONLY);
+        DoubleBuffer doubleBuffer = byteBuffer.asDoubleBuffer();
+        doubleBuffer.put(this.uboDataBuffer);
+        gl.glUnmapBuffer(gl.GL_UNIFORM_BUFFER);
     }
 
     private void updateLightUbo(double x, double y, double textureOffSet, double lightStrength, double lightFallOff, Vector3d lightColor) {
@@ -182,11 +216,11 @@ public class RenderService {
         this.lightUboDataBuffer.put(14, lightColor.z());
         this.lightUboDataBuffer.put(15, 0);
 
-
         gl.glBindBuffer(gl.GL_UNIFORM_BUFFER, this.uniformBuffers[1]);
-        gl.glBufferData(gl.GL_UNIFORM_BUFFER, 8L * this.lightUboDataBuffer.capacity(), lightUboDataBuffer, gl.GL_DYNAMIC_DRAW);
-        gl.glBindBuffer(gl.GL_UNIFORM_BUFFER, 0);
-        gl.glBindBufferBase(gl.GL_UNIFORM_BUFFER, 0, this.uniformBuffers[1]);
+        ByteBuffer byteBuffer = gl.glMapBuffer(gl.GL_UNIFORM_BUFFER, GL.GL_WRITE_ONLY);
+        DoubleBuffer doubleBuffer = byteBuffer.asDoubleBuffer();
+        doubleBuffer.put(this.lightUboDataBuffer);
+        gl.glUnmapBuffer(gl.GL_UNIFORM_BUFFER);
     }
 
     private void linkTextureToFbo(int frameBuffer, int renderedTexture) {
@@ -222,6 +256,10 @@ public class RenderService {
         gl.glClear(gl.GL_COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT);
         gl.glBindFramebuffer(gl.GL_FRAMEBUFFER, this.frameBuffers[1]);
         gl.glClear(gl.GL_COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT);
+        entitiesRendered = 0;
+        lightsRendered = 0;
+        viewMapsRendered = 0;
+        activeRenderMode = RenderMode.INITIAL;
     }
 
 }

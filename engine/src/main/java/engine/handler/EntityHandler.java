@@ -80,4 +80,8 @@ public class EntityHandler implements Handler<Entity> {
             removeObject(key);
         }
     }
+
+    public double getEntityCount() {
+        return this.objects.size();
+    }
 }

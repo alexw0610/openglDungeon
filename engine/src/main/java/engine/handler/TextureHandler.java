@@ -1,5 +1,7 @@
 package engine.handler;
 
+import com.jogamp.opengl.GL4;
+import com.jogamp.opengl.GLContext;
 import engine.enums.TextureKey;
 import engine.loader.TextureLoader;
 import engine.object.Texture;
@@ -15,6 +17,7 @@ public class TextureHandler {
     public static final int DEFAULT_TILE_SIZE = 32;
 
     private final Map<TextureKey, Texture> loadedTextureMap = new HashMap<>();
+    private final Map<Integer, TextureKey> boundTextureMap = new HashMap<>();
 
     private TextureHandler() {
         ByteBuffer defaultBuffer = ByteBuffer.allocate(4);
@@ -24,7 +27,16 @@ public class TextureHandler {
         loadedTextureMap.put(TextureKey.DEFAULT, defaultTexture);
     }
 
-    public void bindTextureWithKey(TextureKey textureKey) {
+    public void bindTextureWithKey(TextureKey textureKey, int target) {
+        GL4 gl = GLContext.getCurrent().getGL().getGL4();
+        if (!boundTextureMap.containsKey(target) || !boundTextureMap.get(target).equals(textureKey)) {
+            gl.glActiveTexture(target);
+            load(textureKey);
+            boundTextureMap.put(target, textureKey);
+        }
+    }
+
+    private void load(TextureKey textureKey) {
         if (loadedTextureMap.containsKey(textureKey)) {
             Texture texture = loadedTextureMap.get(textureKey);
             texture.loadTexture();

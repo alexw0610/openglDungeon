@@ -12,18 +12,21 @@ public class ShaderHandler {
     private static final ShaderLoader SHADER_LOADER = new ShaderLoader();
 
     private final Map<ShaderType, Shader> shaderMap = new HashMap<>();
+    private ShaderType boundShaderType;
 
     private ShaderHandler() {
     }
 
     public void bindShaderOfType(ShaderType shaderType) {
-        if (shaderMap.containsKey(shaderType)) {
-            shaderMap.get(shaderType).bind();
-        } else {
-            Shader shader = SHADER_LOADER.loadShader(shaderType);
-            shader.bind();
-            shaderMap.put(shaderType, shader);
+        if (boundShaderType == null || !boundShaderType.equals(shaderType)) {
+            if (shaderMap.containsKey(shaderType)) {
+                shaderMap.get(shaderType).bind();
+            } else {
+                Shader shader = SHADER_LOADER.loadShader(shaderType);
+                shader.bind();
+                shaderMap.put(shaderType, shader);
+            }
+            boundShaderType = shaderType;
         }
     }
-
 }

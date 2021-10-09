@@ -6,10 +6,7 @@ import engine.component.tag.ViewBlockingTag;
 import engine.component.tag.VisibleFaceTag;
 import engine.entity.Entity;
 import engine.entity.EntityBuilder;
-import engine.enums.HitBoxType;
-import engine.enums.PrimitiveMeshShape;
-import engine.enums.ShaderType;
-import engine.enums.TextureKey;
+import engine.enums.*;
 import engine.handler.EntityHandler;
 import engine.handler.TextureHandler;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -23,10 +20,12 @@ public class TileMap {
 
     private final int size;
     private final Room[][] tiles;
+    private final NavMap navMap;
 
     public TileMap(int size) {
         this.size = size;
         this.tiles = new Room[size][size];
+        this.navMap = new NavMap(size);
     }
 
     public void addRoom(Room room) {
@@ -36,6 +35,7 @@ public class TileMap {
                 int tilePosY = y + room.getRoomBottomLeft().y();
                 if (tiles[tilePosX][tilePosY] == null) {
                     this.tiles[tilePosX][tilePosY] = room;
+                    this.navMap.addTile(NavTileType.FLOOR, new Vector2i(tilePosX, tilePosY));
                 }
             }
         }
@@ -84,6 +84,7 @@ public class TileMap {
                                 .withTag(ViewBlockingTag.class)
                                 .build();
                         EntityHandler.getInstance().addObject(DUNGEON_ENTITY_PREFIX + "_" + RandomStringUtils.randomAlphanumeric(8), entity);
+                        this.navMap.addTile(NavTileType.WALL, new Vector2i(x, y));
                     } else if (isAdjacentToTile(x, y)) {
                         Entity entity = EntityBuilder.builder()
                                 .withComponent(new TransformationComponent(x, y))
@@ -92,6 +93,7 @@ public class TileMap {
                                 .withTag(ViewBlockingTag.class)
                                 .build();
                         EntityHandler.getInstance().addObject(DUNGEON_ENTITY_PREFIX + "_" + RandomStringUtils.randomAlphanumeric(8), entity);
+                        this.navMap.addTile(NavTileType.WALL, new Vector2i(x, y));
                     }
                 }
             }
@@ -102,7 +104,7 @@ public class TileMap {
         for (short x = 0; x < this.size; x++) {
             for (short y = 0; y < this.size; y++) {
                 if (this.tiles[x][y] != null) {
-                    if (random.nextFloat() < 0.1) {
+                    if (random.nextFloat() < 0.01) {
                         Entity skeletonPile = EntityBuilder.builder()
                                 .withComponent(new RenderComponent(PrimitiveMeshShape.QUAD, TextureKey.SKELETON_PILE, ShaderType.DEFAULT, 1, 3))
                                 .withComponent(new TransformationComponent(x, y))
@@ -110,19 +112,31 @@ public class TileMap {
                                 .build();
                         skeletonPile.getComponentOfType(RenderComponent.class).setShadeless(true);
                         skeletonPile.getComponentOfType(CollisionComponent.class).setOnCollisionFunction((self, collider) -> {
-                            self.addIfNotExistsComponent(new AnimationComponent(75, false, 7));
+                            self.addIfNotExistsComponent(new AnimationComponent(50, false, 7));
                             self.removeComponent(CollisionComponent.class);
                         });
                         EntityHandler.getInstance().addObject(DUNGEON_ENTITY_PREFIX + "_" + RandomStringUtils.randomAlphanumeric(8), skeletonPile);
                     }
                     if (this.tiles[x][y].getRoomPosition().equals(new Vector2i(x, y))) {
-                        Entity entity = EntityBuilder.builder()
+                        Entity lamp = EntityBuilder.builder()
                                 .withComponent(new TransformationComponent(x, y))
                                 .withComponent(new RenderComponent(PrimitiveMeshShape.QUAD, TextureKey.LANTERN_HANGING, ShaderType.DEFAULT, 1, 5))
                                 .withComponent(new LightSourceComponent(new Vector3d(Math.random(), Math.random(), Math.random()), 1, 0.01))
-                                .withComponent(new AnimationComponent(0.01))
-                                .buildAndInstantiate();
-                        entity.getComponentOfType(RenderComponent.class).setShadeless(true);
+                                .withComponent(new AnimationComponent(75))
+                                .build();
+                        lamp.getComponentOfType(RenderComponent.class).setShadeless(true);
+                        EntityHandler.getInstance().addObject(DUNGEON_ENTITY_PREFIX + "_" + RandomStringUtils.randomAlphanumeric(8), lamp);
+                        Entity monk = EntityBuilder.builder()
+                                .withComponent(new RenderComponent(PrimitiveMeshShape.QUAD, TextureKey.ENEMY_MONK, ShaderType.DEFAULT, 1.5, 4))
+                                .withComponent(new TransformationComponent(x, y))
+                                .withComponent(new AnimationComponent(100))
+                                //.withComponent(new CollisionComponent(new HitBox(HitBoxType.CIRCLE, 0.25)))
+                                .withComponent(new PhysicsComponent())
+                                .withComponent(new AIComponent())
+                                .build();
+                        monk.getComponentOfType(AnimationComponent.class).setMovementDriven(true);
+                        monk.getComponentOfType(RenderComponent.class).setShadeless(true);
+                        EntityHandler.getInstance().addObject(DUNGEON_ENTITY_PREFIX + "_" + RandomStringUtils.randomAlphanumeric(8), monk);
                     }
                 }
             }
@@ -140,5 +154,9 @@ public class TileMap {
             return false;
         }
         return this.tiles[x][y] != null;
+    }
+
+    public NavMap getNavMap() {
+        return navMap;
     }
 }

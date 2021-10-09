@@ -23,7 +23,6 @@ public class Texture {
 
     public void bind() {
         GL3 gl = GLContext.getCurrentGL().getGL3();
-
         gl.glBindTexture(gl.GL_TEXTURE_2D, textureId);
     }
 

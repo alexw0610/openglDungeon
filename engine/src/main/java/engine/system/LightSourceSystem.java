@@ -1,5 +1,6 @@
 package engine.system;
 
+import engine.component.CameraComponent;
 import engine.component.LightSourceComponent;
 import engine.component.TransformationComponent;
 import engine.component.tag.ShadowCastTag;
@@ -21,11 +22,14 @@ public class LightSourceSystem {
     public static void processEntity(Entity entity) {
         TransformationComponent transformationComponent = entity.getComponentOfType(TransformationComponent.class);
         LightSourceComponent lightSourceComponent = entity.getComponentOfType(LightSourceComponent.class);
-        List<Entity> entities = EntityHandler.getInstance().getAllEntitiesWithComponents(TransformationComponent.class, ShadowCastTag.class);
-        entities.remove(entity);
-        Mesh mesh = VisibilityPolygonFactory.generateVisibilityPolygon(entities, transformationComponent.getPosition(), 10);
-        MeshHandler.getInstance().addMesh(LIGHT_POLYGON_KEY_PREFIX + RandomStringUtils.randomAlphanumeric(8), mesh);
-        renderService.renderToLightMap(mesh, transformationComponent.getPosition(), lightSourceComponent.getLightStrength(), lightSourceComponent.getLightFallOff(), lightSourceComponent.getLightColor());
+        Entity camera = EntityHandler.getInstance().getEntityWithComponent(CameraComponent.class);
+        if (camera != null && transformationComponent.getPosition().distance(camera.getComponentOfType(TransformationComponent.class).getPosition()) < 15) {
+            List<Entity> entities = EntityHandler.getInstance().getAllEntitiesWithComponents(TransformationComponent.class, ShadowCastTag.class);
+            entities.remove(entity);
+            Mesh mesh = VisibilityPolygonFactory.generateVisibilityPolygon(entities, transformationComponent.getPosition(), 10);
+            MeshHandler.getInstance().addMesh(LIGHT_POLYGON_KEY_PREFIX + RandomStringUtils.randomAlphanumeric(8), mesh);
+            renderService.renderToLightMap(mesh, transformationComponent.getPosition(), lightSourceComponent.getLightStrength(), lightSourceComponent.getLightFallOff(), lightSourceComponent.getLightColor());
+        }
     }
 
     public static boolean isResponsibleFor(Entity entity) {

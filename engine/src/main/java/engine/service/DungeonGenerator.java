@@ -1,6 +1,7 @@
 package engine.service;
 
 import engine.enums.TextureKey;
+import engine.handler.NavHandler;
 import engine.object.Edge;
 import engine.object.Room;
 import engine.object.TileMap;
@@ -34,9 +35,10 @@ public class DungeonGenerator {
         List<Room> sideRooms = getSideRooms(rooms, paths, 4);
         TileMap tileMap = new TileMap(MAP_SIZE);
         mainRooms.forEach(tileMap::addRoom);
-        corridors.forEach(tileMap::addRoom);
         sideRooms.forEach(tileMap::addRoom);
+        corridors.forEach(tileMap::addRoom);
         tileMap.initMap(random);
+        NavHandler.getInstance().setNavMap(tileMap.getNavMap());
         return mainRooms;
     }
 
@@ -64,11 +66,20 @@ public class DungeonGenerator {
     private static List<Room> generateRooms(Random random) {
         List<Room> rooms = new ArrayList<>();
         while (rooms.size() < DungeonGenerator.MAX_ROOM_AMOUNT) {
-            Room room = new Room((short) (random.nextFloat() * MAX_ROOM_SIDE_LENGTH),
-                    (short) (random.nextFloat() * MAX_ROOM_SIDE_LENGTH),
-                    new Vector2i((int) (random.nextFloat() * MAP_SIZE) + 1, (int) (random.nextFloat() * MAP_SIZE) + 1),
-                    TextureKey.FLOOR_RED_PLATES_DEBRIS
-            );
+            Room room;
+            if (random.nextFloat() < 0.1) {
+                room = new Room((short) (random.nextFloat() * MAX_ROOM_SIDE_LENGTH),
+                        (short) (random.nextFloat() * MAX_ROOM_SIDE_LENGTH),
+                        new Vector2i((int) (random.nextFloat() * MAP_SIZE) + 1, (int) (random.nextFloat() * MAP_SIZE) + 1),
+                        TextureKey.FLOOR_PURPLE_GREY_PLATES
+                );
+            } else {
+                room = new Room((short) (random.nextFloat() * MAX_ROOM_SIDE_LENGTH),
+                        (short) (random.nextFloat() * MAX_ROOM_SIDE_LENGTH),
+                        new Vector2i((int) (random.nextFloat() * MAP_SIZE) + 1, (int) (random.nextFloat() * MAP_SIZE) + 1),
+                        TextureKey.FLOOR_RED_PLATES_DEBRIS
+                );
+            }
             if (isValidRoom(room)) {
                 rooms.add(room);
             }

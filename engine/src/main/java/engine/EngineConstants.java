@@ -5,7 +5,7 @@ public class EngineConstants {
     public static final String TITLE = "openglDungeon";
     public static final double WINDOW_WIDTH = 1280;
     public static final double WINDOW_HEIGHT = 960;
-    public static final int FPS = 144;
+    public static final int FPS = 500;
 
     public static final double INERTIA = 0.00001;
     public static final double DECAY = 0.75;
@@ -14,4 +14,5 @@ public class EngineConstants {
     public static final double LERP_SPEED = 0.00001;
     public static final double CAMERA_MOVE_SPEED = 0.00001;
     public static final double CAMERA_ZOOM_SPEED = 0.000001;
+    public static final double RENDER_DISTANCE = 10;
 }
