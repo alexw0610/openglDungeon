@@ -1,6 +1,5 @@
 package engine.loader;
 
-import engine.enums.ShaderType;
 import engine.object.Shader;
 
 import java.io.BufferedReader;
@@ -14,10 +13,10 @@ public class ShaderLoader {
     private static final String DEFAULT_VERTEX_SHADER_FILE_EXTENSION = ".vs";
     private static final String DEFAULT_FRAGMENT_SHADER_FILE_EXTENSION = ".fs";
 
-    public Shader loadShader(ShaderType shaderType) {
-        return new Shader(shaderType.value(),
-                readfile(RESOURCE_SHADER_SUBFOLDER + shaderType.value() + DEFAULT_VERTEX_SHADER_FILE_EXTENSION),
-                readfile(RESOURCE_SHADER_SUBFOLDER + shaderType.value() + DEFAULT_FRAGMENT_SHADER_FILE_EXTENSION));
+    public Shader loadShader(String shaderType) {
+        return new Shader(shaderType,
+                readfile(RESOURCE_SHADER_SUBFOLDER + shaderType + DEFAULT_VERTEX_SHADER_FILE_EXTENSION),
+                readfile(RESOURCE_SHADER_SUBFOLDER + shaderType + DEFAULT_FRAGMENT_SHADER_FILE_EXTENSION));
     }
 
     private String[] readfile(String file) {

@@ -23,6 +23,7 @@ layout (std140, column_major) uniform UBO{
     uniform double engineTick;
     uniform double alwaysVisible;
     uniform double shadeless;
+    uniform double mirrored;
 } ubo;
 
 void main()
@@ -35,12 +36,12 @@ void main()
     shadeless = ubo.shadeless;
 
     //Rotate the texture coordinates
-    vec2 textureCentered = vec2(textureIn.x-0.5, textureIn.y-0.5);
+    vec2 textureCentered = vec2((textureIn.x - 0.5) * ubo.mirrored, textureIn.y - 0.5);
     vec2 rotatedTexture = vec2(
         (textureCentered.x * cos(radians(float(ubo.textureRotation)))) - (textureCentered.y * sin(radians(float(ubo.textureRotation)))),
         (textureCentered.x * sin(radians(float(ubo.textureRotation)))) + (textureCentered.y * cos(radians(float(ubo.textureRotation))))
     );
-    textureUv = vec2(rotatedTexture.x+0.5,rotatedTexture.y+0.5);
+    textureUv = vec2((rotatedTexture.x) + 0.5,rotatedTexture.y + 0.5);
 
     //Scale the object
     vec3 objectScaled = vec3(vertexIn.x * ubo.objectScale, vertexIn.y * ubo.objectScale, 0);

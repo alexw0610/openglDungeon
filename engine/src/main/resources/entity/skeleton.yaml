@@ -1,0 +1,18 @@
+templateName: "enemy_skeleton"
+components:
+  - type: "RenderComponent"
+    arguments:
+      meshKey: "QUAD"
+      textureKey: "enemy_skeleton"
+      shaderType: "shader"
+      scale: 1.0
+      layer: 4
+  - type: "TransformationComponent"
+    arguments:
+  - type: "PhysicsComponent"
+    arguments:
+  - type: "AIComponent"
+    arguments:
+  - type: "AnimationComponent"
+    arguments:
+      speed: 100.0

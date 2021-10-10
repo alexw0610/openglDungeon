@@ -67,18 +67,22 @@ public class DungeonGenerator {
         List<Room> rooms = new ArrayList<>();
         while (rooms.size() < DungeonGenerator.MAX_ROOM_AMOUNT) {
             Room room;
-            if (random.nextFloat() < 0.1) {
+            if (random.nextFloat() < 0.3) {
                 room = new Room((short) (random.nextFloat() * MAX_ROOM_SIDE_LENGTH),
                         (short) (random.nextFloat() * MAX_ROOM_SIDE_LENGTH),
                         new Vector2i((int) (random.nextFloat() * MAP_SIZE) + 1, (int) (random.nextFloat() * MAP_SIZE) + 1),
                         TextureKey.FLOOR_PURPLE_GREY_PLATES
                 );
+                room.addEntityTemplate("skeleton");
+                room.addEntityTemplate("chandelier");
+                room.addEntityTemplate("monk");
             } else {
                 room = new Room((short) (random.nextFloat() * MAX_ROOM_SIDE_LENGTH),
                         (short) (random.nextFloat() * MAX_ROOM_SIDE_LENGTH),
                         new Vector2i((int) (random.nextFloat() * MAP_SIZE) + 1, (int) (random.nextFloat() * MAP_SIZE) + 1),
                         TextureKey.FLOOR_RED_PLATES_DEBRIS
                 );
+                room.addEntityTemplate("pile_of_bones");
             }
             if (isValidRoom(room)) {
                 rooms.add(room);

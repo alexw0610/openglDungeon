@@ -1,0 +1,11 @@
+templateName: "pile_of_bones"
+components:
+  - type: "RenderComponent"
+    arguments:
+      meshKey: "QUAD"
+      textureKey: "skeleton_pile"
+      shaderType: "shader"
+      scale: 1.0
+      layer: 4
+  - type: "TransformationComponent"
+    arguments:

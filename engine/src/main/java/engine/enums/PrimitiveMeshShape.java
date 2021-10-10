@@ -1,8 +1,8 @@
 package engine.enums;
 
 public enum PrimitiveMeshShape {
-    TRIANGLE("triangle"),
-    QUAD("quad");
+    TRIANGLE("TRIANGLE"),
+    QUAD("QUAD");
 
     private final String key;
 
@@ -10,7 +10,7 @@ public enum PrimitiveMeshShape {
         this.key = key;
     }
 
-    public String getKey() {
+    public String value() {
         return this.key;
     }
 }

@@ -30,7 +30,7 @@ public class AISystem {
                 Vector2i targetPosition = new Vector2i();
                 while (type != NavTileType.FLOOR) {
                     currentTilePosition.add((int) Math.round(((Math.random() * 2) - 1) * 6), (int) Math.round(((Math.random() * 2) - 1) * 6), targetPosition);
-                    type = navMap.getTile(targetPosition) != null ? navMap.getTile(targetPosition).getType() : null;
+                    type = navMap.getTile(targetPosition) != null ? navMap.getTile(targetPosition).getType() : NavTileType.WALL;
                 }
                 aiComponent.setCurrentState(AIBehaviourState.PATHING);
                 aiComponent.setCurrentTarget(targetPosition);

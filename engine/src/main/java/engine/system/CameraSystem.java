@@ -2,8 +2,8 @@ package engine.system;
 
 import engine.Engine;
 import engine.component.CameraComponent;
+import engine.component.CameraTargetTag;
 import engine.component.TransformationComponent;
-import engine.component.tag.CameraTargetTag;
 import engine.entity.Entity;
 import engine.handler.EntityHandler;
 import engine.handler.KeyHandler;

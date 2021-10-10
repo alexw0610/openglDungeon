@@ -4,18 +4,23 @@ import engine.enums.TextureKey;
 import org.joml.Intersectiond;
 import org.joml.Vector2i;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Room implements Comparable<Room> {
 
     private final double roomWidth;
     private final double roomHeight;
     private final TextureKey textureKey;
     private final Vector2i roomPosition;
+    private final List<String> roomEntityTemplates;
 
     public Room(double roomWidth, double roomHeight, Vector2i roomPosition, TextureKey textureKey) {
         this.roomWidth = roomWidth;
         this.roomHeight = roomHeight;
         this.textureKey = textureKey;
         this.roomPosition = roomPosition;
+        this.roomEntityTemplates = new ArrayList<>();
     }
 
     public double getWidth() {
@@ -57,5 +62,13 @@ public class Room implements Comparable<Room> {
                 this.getRoomPosition().y() - (this.getHeight() / 2),
                 this.getRoomPosition().x() + (this.getWidth() / 2),
                 this.getRoomPosition().y() + (this.getHeight() / 2));
+    }
+
+    public List<String> getRoomEntityTemplates() {
+        return roomEntityTemplates;
+    }
+
+    public void addEntityTemplate(String template) {
+        this.roomEntityTemplates.add(template);
     }
 }

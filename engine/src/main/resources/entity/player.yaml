@@ -1,0 +1,25 @@
+templateName: "player"
+components:
+  - type: "RenderComponent"
+    arguments:
+      meshKey: "TRIANGLE"
+      textureKey: "default"
+      shaderType: "shader"
+      scale: 1.0
+      layer: 4
+  - type: "TransformationComponent"
+    arguments:
+  - type: "PhysicsComponent"
+    arguments:
+  - type: "PlayerComponent"
+    arguments:
+  - type: "CameraTargetTag"
+    arguments:
+  - type: "ViewSourceTag"
+    arguments:
+  - type: "CollisionComponent"
+    arguments:
+      hitBoxType: "CIRCLE"
+      hitBoxSize: 0.5
+
+

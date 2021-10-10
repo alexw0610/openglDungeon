@@ -3,6 +3,7 @@ package engine.system;
 import com.jogamp.newt.event.MouseEvent;
 import engine.Engine;
 import engine.component.*;
+import engine.component.internal.CreatedByComponent;
 import engine.entity.Entity;
 import engine.entity.EntityBuilder;
 import engine.enums.HitBoxType;
@@ -11,7 +12,6 @@ import engine.enums.ShaderType;
 import engine.enums.TextureKey;
 import engine.handler.KeyHandler;
 import engine.handler.MouseHandler;
-import engine.object.HitBox;
 import org.joml.Vector2d;
 import org.joml.Vector3d;
 
@@ -44,20 +44,21 @@ public class PlayerMovementInputSystem {
             if (event != null && event.getButton() == MouseEvent.BUTTON1 && event.getClickCount() == 1) {
                 Vector2d mousePositionWorld = MouseHandler.getInstance().getMousePositionWorldSpace();
                 Vector2d projectileDirection = new Vector2d(mousePositionWorld).sub(transformationComponent.getPosition());
+                projectileDirection = projectileDirection.normalize();
                 Entity orb = EntityBuilder.builder()
                         .withComponent(new TransformationComponent(transformationComponent.getPositionX(), transformationComponent.getPositionY()))
-                        .withComponent(new RenderComponent(PrimitiveMeshShape.QUAD, TextureKey.ORB_AQUA, ShaderType.DEFAULT, 1, 5))
+                        .withComponent(new RenderComponent(PrimitiveMeshShape.QUAD.value(), TextureKey.ORB_AQUA.value(), ShaderType.DEFAULT.value(), 1.0, 5))
                         .withComponent(new AnimationComponent(0.01))
-                        .withComponent(new ProjectileComponent(projectileDirection.normalize(), 0.01))
+                        .withComponent(new ProjectileComponent(projectileDirection.x(), projectileDirection.y(), 0.01))
                         .withComponent(new LightSourceComponent(new Vector3d(Math.random(), Math.random(), Math.random()), 1, 0.01))
-                        .withComponent(new DestructionComponent(5000))
-                        .withComponent(new CollisionComponent(new HitBox(HitBoxType.CIRCLE, 0.2), false))
-                        .withComponent(new ParticleComponent(TextureKey.ORB_AQUA, 100, 2, 0.50, 500, () -> new Vector2d(0.5 - Math.random(), 0.5 - Math.random()), 0.0005))
+                        .withComponent(new DestructionComponent(5000.0))
+                        .withComponent(new CollisionComponent(HitBoxType.CIRCLE.value(), 0.2, false))
+                        .withComponent(new ParticleComponent(TextureKey.ORB_AQUA.value(), 100.0, 2.0, 0.50, 500.0, 0.0005))
                         .withComponent(new CreatedByComponent(entity))
                         .buildAndInstantiate();
                 orb.getComponentOfType(RenderComponent.class).setShadeless(true);
                 orb.getComponentOfType(RenderComponent.class).setAlwaysVisible(true);
-                orb.getComponentOfType(CollisionComponent.class).setOnCollisionFunction((self, collider) -> self.addComponent(new DestructionComponent(0)));
+                orb.getComponentOfType(CollisionComponent.class).setOnCollisionFunction((self, collider) -> self.addComponent(new DestructionComponent(0.0)));
             }
 
         }

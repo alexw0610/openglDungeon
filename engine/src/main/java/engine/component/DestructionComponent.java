@@ -4,7 +4,7 @@ public class DestructionComponent implements Component {
 
     private double timer;
 
-    public DestructionComponent(double timer) {
+    public DestructionComponent(Double timer) {
         this.timer = timer;
     }
 

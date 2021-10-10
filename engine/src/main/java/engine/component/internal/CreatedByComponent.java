@@ -1,5 +1,6 @@
-package engine.component;
+package engine.component.internal;
 
+import engine.component.Component;
 import engine.entity.Entity;
 
 public class CreatedByComponent implements Component {

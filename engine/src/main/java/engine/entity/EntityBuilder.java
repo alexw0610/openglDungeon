@@ -57,4 +57,8 @@ public class EntityBuilder {
     public Entity build() {
         return this.entity;
     }
+
+    public EntityBuilder fromTemplate(EntityTemplate template) {
+        return TemplateEntityAssembler.fromTemplate(template, this);
+    }
 }

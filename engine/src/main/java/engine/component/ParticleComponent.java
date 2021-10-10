@@ -1,10 +1,10 @@
 package engine.component;
 
 import engine.component.lambda.Vector2dFunction;
-import engine.enums.TextureKey;
+import org.joml.Vector2d;
 
 public class ParticleComponent implements Component {
-    private TextureKey particleTexture;
+    private String particleTexture;
     private double particleFrequency;
     private double particleAmount;
     private double particleSize;
@@ -14,21 +14,21 @@ public class ParticleComponent implements Component {
 
     private double emittedLast;
 
-    public ParticleComponent(TextureKey particleTexture, double particleFrequency, double particleAmount, double particleSize, double particleLifeTime, Vector2dFunction particleDirection, double particleVelocity) {
+    public ParticleComponent(String particleTexture, Double particleFrequency, Double particleAmount, Double particleSize, Double particleLifeTime, Double particleVelocity) {
         this.particleTexture = particleTexture;
         this.particleFrequency = particleFrequency;
         this.particleAmount = particleAmount;
         this.particleSize = particleSize;
         this.particleLifeTime = particleLifeTime;
-        this.particleDirection = particleDirection;
+        this.particleDirection = () -> new Vector2d(Math.random() - 0.5, Math.random() - 0.5);
         this.particleVelocity = particleVelocity;
     }
 
-    public TextureKey getParticleTexture() {
+    public String getParticleTexture() {
         return particleTexture;
     }
 
-    public void setParticleTexture(TextureKey particleTexture) {
+    public void setParticleTexture(String particleTexture) {
         this.particleTexture = particleTexture;
     }
 

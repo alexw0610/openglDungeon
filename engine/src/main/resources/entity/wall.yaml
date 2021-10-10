@@ -1,0 +1,21 @@
+templateName: "wall"
+components:
+  - type: "RenderComponent"
+    arguments:
+      meshKey: "QUAD"
+      textureKey: "default"
+      shaderType: "shader"
+      scale: 1.0
+      layer: 3
+  - type: "TransformationComponent"
+    arguments:
+  - type: "CollisionComponent"
+    arguments:
+      hitBoxType: "AABB"
+      hitBoxSize: 0.5
+  - type: "VisibleFaceTag"
+    arguments:
+  - type: "ShadowCastTag"
+    arguments:
+  - type: "ViewBlockingTag"
+    arguments:

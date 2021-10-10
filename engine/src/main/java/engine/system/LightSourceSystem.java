@@ -2,8 +2,8 @@ package engine.system;
 
 import engine.component.CameraComponent;
 import engine.component.LightSourceComponent;
+import engine.component.ShadowCastTag;
 import engine.component.TransformationComponent;
-import engine.component.tag.ShadowCastTag;
 import engine.entity.Entity;
 import engine.handler.EntityHandler;
 import engine.handler.MeshHandler;

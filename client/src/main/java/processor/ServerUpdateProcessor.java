@@ -54,7 +54,7 @@ public class ServerUpdateProcessor implements Runnable {
         if (EntityHandler.getInstance().getObject(String.valueOf(characterUpdateDto.getCharacterId())) == null) {
             Entity entity = EntityBuilder.builder()
                     .withComponent(new TransformationComponent(characterUpdateDto.getPositionX(), characterUpdateDto.getPositionY()))
-                    .withComponent(new RenderComponent(PrimitiveMeshShape.TRIANGLE, TextureKey.DEFAULT, ShaderType.DEFAULT, 1, 4))
+                    .withComponent(new RenderComponent(PrimitiveMeshShape.TRIANGLE.value(), TextureKey.DEFAULT.value(), ShaderType.DEFAULT.value(), 1.0, 4))
                     .build();
             EntityHandler.getInstance().addObject(String.valueOf(characterUpdateDto.getCharacterId()), entity);
         } else {

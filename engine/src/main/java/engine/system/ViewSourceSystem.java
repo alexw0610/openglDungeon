@@ -1,8 +1,8 @@
 package engine.system;
 
 import engine.component.TransformationComponent;
-import engine.component.tag.ViewBlockingTag;
-import engine.component.tag.ViewSourceTag;
+import engine.component.ViewBlockingTag;
+import engine.component.ViewSourceTag;
 import engine.entity.Entity;
 import engine.handler.EntityHandler;
 import engine.handler.MeshHandler;

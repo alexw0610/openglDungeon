@@ -1,6 +1,7 @@
 package engine.component;
 
 import engine.component.lambda.OnCollisionFunction;
+import engine.enums.HitBoxType;
 import engine.object.HitBox;
 
 public class CollisionComponent implements Component {
@@ -9,13 +10,13 @@ public class CollisionComponent implements Component {
     private OnCollisionFunction onCollisionFunction;
     private boolean obstructsMovement;
 
-    public CollisionComponent(HitBox hitBox) {
-        this.hitBox = hitBox;
+    public CollisionComponent(String hitBoxType, Double hitBoxSize) {
+        this.hitBox = new HitBox(HitBoxType.valueOf(hitBoxType), hitBoxSize);
         this.obstructsMovement = true;
     }
 
-    public CollisionComponent(HitBox hitBox, boolean obstructsMovement) {
-        this.hitBox = hitBox;
+    public CollisionComponent(String hitBoxType, Double hitBoxSize, Boolean obstructsMovement) {
+        this.hitBox = new HitBox(HitBoxType.valueOf(hitBoxType), hitBoxSize);
         this.obstructsMovement = obstructsMovement;
     }
 

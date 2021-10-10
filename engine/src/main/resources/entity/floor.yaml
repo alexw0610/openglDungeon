@@ -1,0 +1,18 @@
+templateName: "floor"
+components:
+  - type: "RenderComponent"
+    arguments:
+      meshKey: "QUAD"
+      textureKey: "default"
+      shaderType: "shader"
+      scale: 1.0
+      layer: 2
+  - type: "TransformationComponent"
+    arguments:
+  - type: "CollisionComponent"
+    arguments:
+      hitBoxType: "AABB"
+      hitBoxSize: 1.0
+      obstructsMovement: false
+  - type: "SurfaceTag"
+    arguments:

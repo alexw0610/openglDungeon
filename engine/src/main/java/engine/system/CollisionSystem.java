@@ -1,8 +1,8 @@
 package engine.system;
 
 import engine.component.CollisionComponent;
-import engine.component.CreatedByComponent;
 import engine.component.TransformationComponent;
+import engine.component.internal.CreatedByComponent;
 import engine.entity.Entity;
 import engine.handler.EntityHandler;
 import engine.service.util.CollisionUtil;
@@ -10,6 +10,7 @@ import org.joml.Vector2d;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class CollisionSystem {
     public static void processEntity(Entity entity) {
@@ -18,6 +19,7 @@ public class CollisionSystem {
         CreatedByComponent createdByComponent = entity.getComponentOfType(CreatedByComponent.class);
         if (collisionComponent.getOnCollisionFunction() != null) {
             List<Entity> obstacles = EntityHandler.getInstance().getAllEntitiesWithComponents(TransformationComponent.class, CollisionComponent.class);
+            obstacles = obstacles.stream().distinct().filter(e -> e.getComponentOfType(CollisionComponent.class).isObstructsMovement()).collect(Collectors.toList());
             obstacles.remove(entity);
             if (entity.hasComponentOfType(CreatedByComponent.class)) {
                 obstacles.remove(createdByComponent.getCreatorEntity());

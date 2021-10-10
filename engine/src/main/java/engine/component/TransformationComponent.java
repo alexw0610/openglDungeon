@@ -13,7 +13,7 @@ public class TransformationComponent implements Component {
         this.positionY = 0;
     }
 
-    public TransformationComponent(double x, double y) {
+    public TransformationComponent(Double x, Double y) {
         super();
         this.positionX = x;
         this.positionY = y;

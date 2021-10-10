@@ -6,8 +6,8 @@ public class ProjectileComponent implements Component {
     private Vector2d direction;
     private double velocity;
 
-    public ProjectileComponent(Vector2d direction, double velocity) {
-        this.direction = direction;
+    public ProjectileComponent(Double directionX, Double directionY, Double velocity) {
+        this.direction = new Vector2d(directionX, directionY);
         this.velocity = velocity;
     }
 

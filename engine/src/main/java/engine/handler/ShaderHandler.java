@@ -1,6 +1,5 @@
 package engine.handler;
 
-import engine.enums.ShaderType;
 import engine.loader.ShaderLoader;
 import engine.object.Shader;
 
@@ -11,13 +10,13 @@ public class ShaderHandler {
     public static final ShaderHandler SHADER_HANDLER = new ShaderHandler();
     private static final ShaderLoader SHADER_LOADER = new ShaderLoader();
 
-    private final Map<ShaderType, Shader> shaderMap = new HashMap<>();
-    private ShaderType boundShaderType;
+    private final Map<String, Shader> shaderMap = new HashMap<>();
+    private String boundShaderType;
 
     private ShaderHandler() {
     }
 
-    public void bindShaderOfType(ShaderType shaderType) {
+    public void bindShaderOfType(String shaderType) {
         if (boundShaderType == null || !boundShaderType.equals(shaderType)) {
             if (shaderMap.containsKey(shaderType)) {
                 shaderMap.get(shaderType).bind();

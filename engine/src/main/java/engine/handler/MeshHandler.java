@@ -13,7 +13,7 @@ public class MeshHandler {
 
     private MeshHandler() {
         for (PrimitiveMeshShape primitiveMeshShape : PrimitiveMeshShape.values()) {
-            meshes.put(primitiveMeshShape.getKey(), new Mesh(primitiveMeshShape));
+            meshes.put(primitiveMeshShape.value(), new Mesh(primitiveMeshShape));
         }
         meshes.forEach((primitive, mesh) -> mesh.loadMesh());
     }
@@ -48,6 +48,6 @@ public class MeshHandler {
     }
 
     public Mesh getMeshForKey(PrimitiveMeshShape primitiveMeshShape) {
-        return meshes.get(primitiveMeshShape.getKey());
+        return meshes.get(primitiveMeshShape.value());
     }
 }

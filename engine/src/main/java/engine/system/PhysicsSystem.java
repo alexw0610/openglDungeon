@@ -2,7 +2,7 @@ package engine.system;
 
 import engine.component.CollisionComponent;
 import engine.component.PhysicsComponent;
-import engine.component.SurfaceComponent;
+import engine.component.SurfaceTag;
 import engine.component.TransformationComponent;
 import engine.entity.Entity;
 import engine.handler.EntityHandler;
@@ -21,13 +21,13 @@ public class PhysicsSystem {
         PhysicsComponent physicsComponent = entity.getComponentOfType(PhysicsComponent.class);
         if (entity.hasComponentOfType(CollisionComponent.class)) {
             CollisionComponent collisionComponent = entity.getComponentOfType(CollisionComponent.class);
-            List<Entity> surfaces = EntityHandler.getInstance().getAllEntitiesWithComponents(TransformationComponent.class, SurfaceComponent.class);
-            List<Entity> obstacles = EntityHandler.getInstance().getAllEntitiesWithComponents(TransformationComponent.class, CollisionComponent.class);
-            obstacles = obstacles.stream().distinct().filter(e -> e.getComponentOfType(CollisionComponent.class).isObstructsMovement()).collect(Collectors.toList());
+            List<Entity> objects = EntityHandler.getInstance().getAllEntitiesWithComponents(TransformationComponent.class, CollisionComponent.class);
+            List<Entity> walls = objects.stream().distinct().filter(e -> e.getComponentOfType(CollisionComponent.class).isObstructsMovement()).collect(Collectors.toList());
+            List<Entity> surfaces = objects.stream().distinct().filter(e -> e.hasComponentOfType(SurfaceTag.class)).collect(Collectors.toList());
             surfaces.remove(entity);
-            obstacles.remove(entity);
+            walls.remove(entity);
             if (isSurfaced(transformationComponent, physicsComponent, surfaces)) {
-                if (!isColliding(transformationComponent, physicsComponent, collisionComponent, obstacles)) {
+                if (!isColliding(transformationComponent, physicsComponent, collisionComponent, walls)) {
                     applyMomentum(transformationComponent, physicsComponent);
                 } else {
                     deleteMomentum(physicsComponent);
@@ -45,9 +45,9 @@ public class PhysicsSystem {
         double y = transformationComponent.getPositionY() + physicsComponent.getMomentumY();
         for (Entity entity : surfaces) {
             TransformationComponent transformationComponentTarget = entity.getComponentOfType(TransformationComponent.class);
-            SurfaceComponent surfaceComponent = entity.getComponentOfType(SurfaceComponent.class);
+            CollisionComponent collisionComponent = entity.getComponentOfType(CollisionComponent.class);
             boolean collision = CollisionUtil.checkInside(new Vector2d(x, y),
-                    surfaceComponent.getHitBox(),
+                    collisionComponent.getHitBox(),
                     new Vector2d(transformationComponentTarget.getPositionX(), transformationComponentTarget.getPositionY()));
             if (collision) {
                 return true;

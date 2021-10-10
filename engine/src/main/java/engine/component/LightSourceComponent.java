@@ -8,6 +8,12 @@ public class LightSourceComponent implements Component {
     private double lightStrength;
     private double lightFallOff;
 
+    public LightSourceComponent(Double lightColorR, Double lightColorG, Double lightColorB, Double lightStrength, Double lightFallOff) {
+        this.lightColor = new Vector3d(lightColorR, lightColorG, lightColorB);
+        this.lightStrength = lightStrength;
+        this.lightFallOff = lightFallOff;
+    }
+
     public LightSourceComponent(Vector3d lightColor, double lightStrength, double lightFallOff) {
         this.lightColor = lightColor;
         this.lightStrength = lightStrength;

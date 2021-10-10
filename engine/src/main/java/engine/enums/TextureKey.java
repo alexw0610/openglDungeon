@@ -5,9 +5,11 @@ public enum TextureKey {
     FLOOR_PURPLE_GREY_PLATES("floor_purple_grey_plates"),
     WALL_AQUA_BRICK("wall_aqua_brick"),
     LANTERN_HANGING("lantern_hanging"),
+    CHANDELIER("chandelier"),
     ORB_AQUA("orb_aqua"),
     SKELETON_PILE("skeleton_pile"),
     ENEMY_MONK("enemy_monk"),
+    ENEMY_SKELETON("enemy_skeleton"),
     DEFAULT("default");
 
     public final String fileName;

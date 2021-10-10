@@ -15,10 +15,12 @@ public class ParticleSystem {
             for (int i = 0; i < particleComponent.getParticleAmount(); i++) {
                 Entity particle = EntityBuilder.builder()
                         .withComponent(new TransformationComponent(transformationComponent.getPositionX(), transformationComponent.getPositionY()))
-                        .withComponent(new RenderComponent(PrimitiveMeshShape.QUAD, particleComponent.getParticleTexture(), ShaderType.DEFAULT, particleComponent.getParticleSize(), 5))
+                        .withComponent(new RenderComponent(PrimitiveMeshShape.QUAD.value(), particleComponent.getParticleTexture(), ShaderType.DEFAULT.value(), particleComponent.getParticleSize(), 5))
                         .withComponent(new AnimationComponent(0.01))
                         .withComponent(new DestructionComponent(particleComponent.getParticleLifeTime()))
-                        .withComponent(new ProjectileComponent(particleComponent.getParticleDirection().getVector(), particleComponent.getParticleVelocity()))
+                        .withComponent(new ProjectileComponent(particleComponent.getParticleDirection().getVector().x(),
+                                particleComponent.getParticleDirection().getVector().y(),
+                                particleComponent.getParticleVelocity()))
                         .buildAndInstantiate();
                 particle.getComponentOfType(RenderComponent.class).setShadeless(true);
                 particle.getComponentOfType(RenderComponent.class).setAlwaysVisible(true);

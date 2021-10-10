@@ -2,7 +2,7 @@ package engine.service;
 
 import engine.component.CollisionComponent;
 import engine.component.TransformationComponent;
-import engine.component.tag.VisibleFaceTag;
+import engine.component.VisibleFaceTag;
 import engine.entity.Entity;
 import engine.object.Edge;
 import engine.object.Mesh;

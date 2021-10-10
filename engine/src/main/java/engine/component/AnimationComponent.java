@@ -12,7 +12,7 @@ public class AnimationComponent implements Component {
     private boolean animationFinished;
     private double animationUpdatedLast;
 
-    public AnimationComponent(double animationSpeed) {
+    public AnimationComponent(Double animationSpeed) {
         this.animationSpeed = animationSpeed;
         this.animationContinuous = true;
         this.animationFinished = false;
@@ -22,7 +22,7 @@ public class AnimationComponent implements Component {
         this.isMovementDriven = false;
     }
 
-    public AnimationComponent(double animationSpeed, boolean animationContinuous, double animationLength) {
+    public AnimationComponent(Double animationSpeed, Boolean animationContinuous, Double animationLength) {
         this.animationSpeed = animationSpeed;
         this.animationContinuous = animationContinuous;
         this.animationFinished = false;
