@@ -23,7 +23,7 @@ public class LightSourceSystem {
         TransformationComponent transformationComponent = entity.getComponentOfType(TransformationComponent.class);
         LightSourceComponent lightSourceComponent = entity.getComponentOfType(LightSourceComponent.class);
         Entity camera = EntityHandler.getInstance().getEntityWithComponent(CameraComponent.class);
-        if (camera != null && transformationComponent.getPosition().distance(camera.getComponentOfType(TransformationComponent.class).getPosition()) < 15) {
+        if (camera != null && transformationComponent.getPosition().distance(camera.getComponentOfType(TransformationComponent.class).getPosition()) < 20) {
             List<Entity> entities = EntityHandler.getInstance().getAllEntitiesWithComponents(TransformationComponent.class, ShadowCastTag.class);
             entities.remove(entity);
             Mesh mesh = VisibilityPolygonFactory.generateVisibilityPolygon(entities, transformationComponent.getPosition(), 10);

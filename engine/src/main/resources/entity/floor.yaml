@@ -6,13 +6,11 @@ components:
       textureKey: "default"
       shaderType: "shader"
       scale: 1.0
-      layer: 2
+      layer: 0
   - type: "TransformationComponent"
-    arguments:
   - type: "CollisionComponent"
     arguments:
       hitBoxType: "AABB"
       hitBoxSize: 1.0
       obstructsMovement: false
   - type: "SurfaceTag"
-    arguments:

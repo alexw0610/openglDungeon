@@ -4,13 +4,9 @@ import dto.ssl.ReadyForReceivingRequest;
 import engine.Engine;
 import engine.component.CameraComponent;
 import engine.component.PlayerComponent;
-import engine.component.RenderComponent;
 import engine.component.TransformationComponent;
-import engine.entity.Entity;
 import engine.entity.EntityBuilder;
-import engine.entity.EntityTemplate;
 import engine.handler.EntityHandler;
-import engine.handler.EntityTemplateHandler;
 import engine.object.Room;
 import engine.service.DungeonGenerator;
 import exception.UDPServerException;
@@ -46,35 +42,19 @@ public class Client {
     public static void main(String[] args) {
         Engine engine = new Engine();
 
-//        EntityBuilder.builder()
-//                .withComponent(new RenderComponent(PrimitiveMeshShape.TRIANGLE, TextureKey.DEFAULT, ShaderType.DEFAULT, 1, 4))
-//                .withComponent(new TransformationComponent())
-//                .withComponent(new PhysicsComponent())
-//                .withComponent(new PlayerComponent())
-//                .withComponent(new CollisionComponent(new HitBox(HitBoxType.CIRCLE, 0.5)))
-//                .withTag(CameraTargetTag.class)
-//                .withTag(ViewSourceTag.class)
-//                .buildAndInstantiate();
-        EntityTemplate template = EntityTemplateHandler.getInstance().getObject("player");
-        EntityBuilder.builder().fromTemplate(template).buildAndInstantiate();
-
+        List<Room> dungeonRooms = DungeonGenerator.generate(Double.parseDouble(RandomStringUtils.randomNumeric(8)));
+        Vector2i startPosition = dungeonRooms.get(0).getRoomPosition();
+        EntityBuilder.builder()
+                .fromTemplate("player")
+                .at(startPosition.x(), startPosition.y())
+                .buildAndInstantiate();
         EntityBuilder.builder()
                 .withComponent(new TransformationComponent())
                 .withComponent(new CameraComponent())
+                .at(startPosition.x(), startPosition.y())
                 .buildAndInstantiate();
-
-        List<Room> dungeonRooms = DungeonGenerator.generate(Double.parseDouble(RandomStringUtils.randomNumeric(8)));
-        Vector2i startPosition = dungeonRooms.get(0).getRoomPosition();
-
-        Entity player = EntityHandler.getInstance().getEntityWithComponent(PlayerComponent.class);
-        player.getComponentOfType(TransformationComponent.class).setPositionX(startPosition.x());
-        player.getComponentOfType(TransformationComponent.class).setPositionY(startPosition.y());
-        player.getComponentOfType(RenderComponent.class).setShadeless(true);
-
-        Entity camera = EntityHandler.getInstance().getEntityWithComponent(CameraComponent.class);
-        camera.getComponentOfType(TransformationComponent.class).setPositionX(startPosition.x());
-        camera.getComponentOfType(TransformationComponent.class).setPositionY(startPosition.y());
         engine.start();
+
         if (!Boolean.parseBoolean(applicationProperties.getProperty("offlineMode"))) {
             try {
                 establishServerConnection();
@@ -163,5 +143,4 @@ public class Client {
         }
         return serverAddress;
     }
-
 }

@@ -1,7 +1,9 @@
 package engine.entity;
 
 import engine.component.Component;
+import engine.component.TransformationComponent;
 import engine.handler.EntityHandler;
+import engine.handler.EntityTemplateHandler;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -54,11 +56,25 @@ public class EntityBuilder {
         return this.entity;
     }
 
+    public Entity buildAndInstantiate(String key) {
+        EntityHandler.getInstance().addObject(key, this.entity);
+        return this.entity;
+    }
+
     public Entity build() {
         return this.entity;
     }
 
-    public EntityBuilder fromTemplate(EntityTemplate template) {
-        return TemplateEntityAssembler.fromTemplate(template, this);
+    public EntityBuilder fromTemplate(String template) {
+        return TemplateAssembler.assembleEntity(EntityTemplateHandler.getInstance().getObject(template), this);
+    }
+
+    public EntityBuilder at(double x, double y) {
+        TransformationComponent transformationComponent = this.entity.getComponentOfType(TransformationComponent.class);
+        if (transformationComponent != null) {
+            transformationComponent.setPositionX(x);
+            transformationComponent.setPositionY(y);
+        }
+        return this;
     }
 }

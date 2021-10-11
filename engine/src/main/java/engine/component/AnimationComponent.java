@@ -36,7 +36,7 @@ public class AnimationComponent implements Component {
         return animationSpeed;
     }
 
-    public void setAnimationSpeed(double animationSpeed) {
+    public void setAnimationSpeed(Double animationSpeed) {
         this.animationSpeed = animationSpeed;
     }
 
@@ -44,7 +44,7 @@ public class AnimationComponent implements Component {
         return animationRow;
     }
 
-    public void setAnimationRow(double animationRow) {
+    public void setAnimationRow(Double animationRow) {
         this.animationRow = animationRow;
     }
 
@@ -52,7 +52,7 @@ public class AnimationComponent implements Component {
         return animationFrame;
     }
 
-    public void setAnimationFrame(double animationFrame) {
+    public void setAnimationFrame(Double animationFrame) {
         this.animationFrame = animationFrame;
     }
 
@@ -60,7 +60,7 @@ public class AnimationComponent implements Component {
         return animationContinuous;
     }
 
-    public void setAnimationContinuous(boolean animationContinuous) {
+    public void setAnimationContinuous(Boolean animationContinuous) {
         this.animationContinuous = animationContinuous;
     }
 
@@ -68,7 +68,7 @@ public class AnimationComponent implements Component {
         return animationFinished;
     }
 
-    public void setAnimationFinished(boolean animationFinished) {
+    public void setAnimationFinished(Boolean animationFinished) {
         this.animationFinished = animationFinished;
     }
 
@@ -76,7 +76,7 @@ public class AnimationComponent implements Component {
         return animationUpdatedLast;
     }
 
-    public void setAnimationUpdatedLast(double animationUpdatedLast) {
+    public void setAnimationUpdatedLast(Double animationUpdatedLast) {
         this.animationUpdatedLast = animationUpdatedLast;
     }
 
@@ -84,7 +84,7 @@ public class AnimationComponent implements Component {
         return animationLength;
     }
 
-    public void setAnimationLength(double animationLength) {
+    public void setAnimationLength(Double animationLength) {
         this.animationLength = animationLength;
     }
 
@@ -92,7 +92,7 @@ public class AnimationComponent implements Component {
         return isMovementDriven;
     }
 
-    public void setMovementDriven(boolean movementDriven) {
+    public void setMovementDriven(Boolean movementDriven) {
         isMovementDriven = movementDriven;
     }
 }

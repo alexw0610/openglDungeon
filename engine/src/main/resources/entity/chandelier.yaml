@@ -7,8 +7,10 @@ components:
       shaderType: "shader"
       scale: 1.0
       layer: 4
+    modifiers:
+      shadeless: true
+      perspectiveLayer: 1.05
   - type: "TransformationComponent"
-    arguments:
   - type: "LightSourceComponent"
     arguments:
       lightSourceR: 0.7

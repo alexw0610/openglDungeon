@@ -61,7 +61,7 @@ public class RenderService {
     private RenderService() {
         GL4 gl = GLContext.getCurrent().getGL().getGL4();
         this.uniformBuffers = new int[2];
-        this.uboDataBuffer = DoubleBuffer.allocate(15);
+        this.uboDataBuffer = DoubleBuffer.allocate(16);
         this.lightUboDataBuffer = DoubleBuffer.allocate(16);
         gl.glGenBuffers(2, uniformBuffers, 0);
         this.frameBuffers = new int[2];
@@ -137,7 +137,7 @@ public class RenderService {
         }
         updateUbo(transformationComponent.getPositionX(), transformationComponent.getPositionY(),
                 renderComponent.getScale(), renderComponent.getTextureOffSetX(), renderComponent.getTextureOffSetY(), renderComponent.getTextureRotation(),
-                renderComponent.isAlwaysVisible(), renderComponent.isShadeless(), renderComponent.isMirrored());
+                renderComponent.isAlwaysVisible(), renderComponent.isShadeless(), renderComponent.isMirrored(), renderComponent.getPerspectiveLayer());
         drawCall(meshHandler.getMeshForKey(renderComponent.getMeshKey()), gl.GL_TRIANGLES);
         entitiesRendered++;
     }
@@ -145,7 +145,7 @@ public class RenderService {
     public void renderToViewMap(Mesh mesh) {
         GL4 gl = GLContext.getCurrent().getGL().getGL4();
         switchRenderMode(RenderMode.VIEW);
-        updateUbo(0, 0, 1, 1, 0, 0, false, false, false);
+        updateUbo(0, 0, 1, 1, 0, 0, false, false, false, 0);
         drawCall(mesh, gl.GL_TRIANGLES);
         viewMapsRendered++;
     }
@@ -169,7 +169,7 @@ public class RenderService {
         gl.glBindVertexArray(0);
     }
 
-    private void updateUbo(double x, double y, double scale, double textureOffSetX, double textureOffSetY, double textureRotation, boolean alwaysVisible, boolean shadeless, boolean mirrored) {
+    private void updateUbo(double x, double y, double scale, double textureOffSetX, double textureOffSetY, double textureRotation, boolean alwaysVisible, boolean shadeless, boolean mirrored, double perspectiveLayer) {
         GL4 gl = GLContext.getCurrent().getGL().getGL4();
 
         this.uboDataBuffer.clear();
@@ -191,6 +191,7 @@ public class RenderService {
         this.uboDataBuffer.put(12, alwaysVisible ? 1 : 0);
         this.uboDataBuffer.put(13, shadeless ? 1 : 0);
         this.uboDataBuffer.put(14, mirrored ? -1 : 1);
+        this.uboDataBuffer.put(15, perspectiveLayer);
 
         gl.glBindBuffer(gl.GL_UNIFORM_BUFFER, this.uniformBuffers[0]);
         ByteBuffer byteBuffer = gl.glMapBuffer(gl.GL_UNIFORM_BUFFER, GL.GL_WRITE_ONLY);

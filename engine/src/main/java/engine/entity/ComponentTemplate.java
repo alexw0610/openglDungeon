@@ -4,8 +4,18 @@ import java.util.Map;
 
 public class ComponentTemplate {
 
+    private String templateName;
     private String type;
     private Map<String, Object> arguments;
+    private Map<String, Object> modifiers;
+
+    public String getTemplateName() {
+        return templateName;
+    }
+
+    public void setTemplateName(String templateName) {
+        this.templateName = templateName;
+    }
 
     public String getType() {
         return type;
@@ -23,11 +33,20 @@ public class ComponentTemplate {
         this.arguments = arguments;
     }
 
+    public Map<String, Object> getModifiers() {
+        return modifiers;
+    }
+
+    public void setModifiers(Map<String, Object> modifiers) {
+        this.modifiers = modifiers;
+    }
+
     @Override
     public String toString() {
         return "ComponentTemplate{" +
                 "type='" + type + '\'' +
                 ", arguments=" + arguments +
+                ", modifiers=" + modifiers +
                 '}';
     }
 }

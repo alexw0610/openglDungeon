@@ -1,14 +1,14 @@
 package engine.component;
 
-import engine.component.lambda.OnCollisionFunction;
 import engine.enums.HitBoxType;
 import engine.object.HitBox;
 
 public class CollisionComponent implements Component {
 
     private HitBox hitBox;
-    private OnCollisionFunction onCollisionFunction;
     private boolean obstructsMovement;
+    private String selfApplyComponents;
+    private String otherApplyComponents;
 
     public CollisionComponent(String hitBoxType, Double hitBoxSize) {
         this.hitBox = new HitBox(HitBoxType.valueOf(hitBoxType), hitBoxSize);
@@ -28,19 +28,27 @@ public class CollisionComponent implements Component {
         this.hitBox = hitBox;
     }
 
-    public OnCollisionFunction getOnCollisionFunction() {
-        return onCollisionFunction;
-    }
-
-    public void setOnCollisionFunction(OnCollisionFunction onCollisionFunction) {
-        this.onCollisionFunction = onCollisionFunction;
-    }
-
     public boolean isObstructsMovement() {
         return obstructsMovement;
     }
 
     public void setObstructsMovement(boolean obstructsMovement) {
         this.obstructsMovement = obstructsMovement;
+    }
+
+    public String getSelfApplyComponents() {
+        return selfApplyComponents;
+    }
+
+    public void setSelfApplyComponents(String selfApplyComponents) {
+        this.selfApplyComponents = selfApplyComponents;
+    }
+
+    public String getOtherApplyComponents() {
+        return otherApplyComponents;
+    }
+
+    public void setOtherApplyComponents(String otherApplyComponents) {
+        this.otherApplyComponents = otherApplyComponents;
     }
 }

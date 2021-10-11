@@ -67,7 +67,7 @@ public class DungeonGenerator {
         List<Room> rooms = new ArrayList<>();
         while (rooms.size() < DungeonGenerator.MAX_ROOM_AMOUNT) {
             Room room;
-            if (random.nextFloat() < 0.3) {
+            if (random.nextFloat() < 0.8) {
                 room = new Room((short) (random.nextFloat() * MAX_ROOM_SIDE_LENGTH),
                         (short) (random.nextFloat() * MAX_ROOM_SIDE_LENGTH),
                         new Vector2i((int) (random.nextFloat() * MAP_SIZE) + 1, (int) (random.nextFloat() * MAP_SIZE) + 1),

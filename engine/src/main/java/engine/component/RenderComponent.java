@@ -13,6 +13,7 @@ public class RenderComponent implements Component {
     private double textureOffSetY;
     private double textureRotation;
     private boolean mirrored;
+    private double perspectiveLayer;
 
     public RenderComponent(String meshKey, String textureKey, String shaderType, Double scale, Integer layer) {
         super();
@@ -27,6 +28,7 @@ public class RenderComponent implements Component {
         this.textureOffSetY = 0;
         this.textureRotation = 0;
         this.mirrored = false;
+        this.perspectiveLayer = 1;
     }
 
     public String getMeshKey() {
@@ -73,7 +75,7 @@ public class RenderComponent implements Component {
         return shadeless;
     }
 
-    public void setShadeless(boolean shadeless) {
+    public void setShadeless(Boolean shadeless) {
         this.shadeless = shadeless;
     }
 
@@ -81,7 +83,7 @@ public class RenderComponent implements Component {
         return alwaysVisible;
     }
 
-    public void setAlwaysVisible(boolean alwaysVisible) {
+    public void setAlwaysVisible(Boolean alwaysVisible) {
         this.alwaysVisible = alwaysVisible;
     }
 
@@ -89,7 +91,7 @@ public class RenderComponent implements Component {
         return textureOffSetX;
     }
 
-    public void setTextureOffSetX(double textureOffSetX) {
+    public void setTextureOffSetX(Double textureOffSetX) {
         this.textureOffSetX = textureOffSetX;
     }
 
@@ -97,7 +99,7 @@ public class RenderComponent implements Component {
         return textureOffSetY;
     }
 
-    public void setTextureOffSetY(double textureOffSetY) {
+    public void setTextureOffSetY(Double textureOffSetY) {
         this.textureOffSetY = textureOffSetY;
     }
 
@@ -105,7 +107,7 @@ public class RenderComponent implements Component {
         return textureRotation;
     }
 
-    public void setTextureRotation(double textureRotation) {
+    public void setTextureRotation(Double textureRotation) {
         this.textureRotation = textureRotation;
     }
 
@@ -113,7 +115,15 @@ public class RenderComponent implements Component {
         return mirrored;
     }
 
-    public void setMirrored(boolean mirrored) {
+    public void setMirrored(Boolean mirrored) {
         this.mirrored = mirrored;
+    }
+
+    public double getPerspectiveLayer() {
+        return perspectiveLayer;
+    }
+
+    public void setPerspectiveLayer(Double perspectiveLayer) {
+        this.perspectiveLayer = perspectiveLayer;
     }
 }

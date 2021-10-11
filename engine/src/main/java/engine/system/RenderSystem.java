@@ -19,7 +19,6 @@ public class RenderSystem {
             renderComponent.setTextureOffSetY(animationComponent.getAnimationRow());
         }
         renderService.renderComponent(renderComponent, transformationComponent);
-
     }
 
     public static boolean isResponsibleFor(Entity entity) {

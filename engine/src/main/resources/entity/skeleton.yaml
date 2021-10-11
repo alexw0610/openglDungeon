@@ -6,13 +6,14 @@ components:
       textureKey: "enemy_skeleton"
       shaderType: "shader"
       scale: 1.0
-      layer: 4
+      layer: 2
+    modifiers:
+      shadeless: true
   - type: "TransformationComponent"
-    arguments:
   - type: "PhysicsComponent"
-    arguments:
   - type: "AIComponent"
-    arguments:
   - type: "AnimationComponent"
     arguments:
       speed: 100.0
+    modifiers:
+      movementDriven: true

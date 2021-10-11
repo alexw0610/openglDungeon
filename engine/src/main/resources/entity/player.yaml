@@ -6,20 +6,18 @@ components:
       textureKey: "default"
       shaderType: "shader"
       scale: 1.0
-      layer: 4
+      layer: 3
+    modifiers:
+      shadeless: true
   - type: "TransformationComponent"
-    arguments:
   - type: "PhysicsComponent"
-    arguments:
   - type: "PlayerComponent"
-    arguments:
   - type: "CameraTargetTag"
-    arguments:
   - type: "ViewSourceTag"
-    arguments:
   - type: "CollisionComponent"
     arguments:
       hitBoxType: "CIRCLE"
-      hitBoxSize: 0.5
+      hitBoxSize: 0.2
+      obstructsMovement: false
 
 

@@ -24,6 +24,7 @@ layout (std140, column_major) uniform UBO{
     uniform double alwaysVisible;
     uniform double shadeless;
     uniform double mirrored;
+    uniform double perspectiveLayer;
 } ubo;
 
 void main()
@@ -47,7 +48,7 @@ void main()
     vec3 objectScaled = vec3(vertexIn.x * ubo.objectScale, vertexIn.y * ubo.objectScale, 0);
 
     //Translate the object
-    vec3 objectPositionTranslated = objectScaled + vec3(ubo.objectPosition.x, ubo.objectPosition.y, 1);
+    vec3 objectPositionTranslated = objectScaled + vec3(ubo.objectPosition.x, ubo.objectPosition.y, 0);
 
     //Translate the object relative to camera
     vec3 objectPositionCameraTranslated = objectPositionTranslated - vec3(ubo.cameraPosition.x, ubo.cameraPosition.y, 0);
@@ -56,7 +57,7 @@ void main()
     vec3 objectAspectScaled =  vec3(objectPositionCameraTranslated.x, objectPositionCameraTranslated.y * ubo.aspectRatio.y, objectPositionCameraTranslated.z);
 
     //Scale the object relative to camera zoom
-    vec3 positionScaledCamera = vec3(objectAspectScaled.x * ubo.cameraPosition.z, objectAspectScaled.y * ubo.cameraPosition.z, objectAspectScaled.z);
+    vec3 positionScaledCamera = vec3(objectAspectScaled.x * ubo.cameraPosition.z * ubo.perspectiveLayer, objectAspectScaled.y * ubo.cameraPosition.z * ubo.perspectiveLayer, objectAspectScaled.z);
 
     gl_Position = vec4(positionScaledCamera, 1);
 }

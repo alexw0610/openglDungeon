@@ -42,6 +42,7 @@ public class PlayerMovementInputSystem {
         while (!MouseHandler.getInstance().getMouseClickedEventsQueue().isEmpty()) {
             MouseEvent event = MouseHandler.getInstance().getMouseClickedEventsQueue().poll();
             if (event != null && event.getButton() == MouseEvent.BUTTON1 && event.getClickCount() == 1) {
+                //TODO: temporary
                 Vector2d mousePositionWorld = MouseHandler.getInstance().getMousePositionWorldSpace();
                 Vector2d projectileDirection = new Vector2d(mousePositionWorld).sub(transformationComponent.getPosition());
                 projectileDirection = projectileDirection.normalize();
@@ -58,9 +59,7 @@ public class PlayerMovementInputSystem {
                         .buildAndInstantiate();
                 orb.getComponentOfType(RenderComponent.class).setShadeless(true);
                 orb.getComponentOfType(RenderComponent.class).setAlwaysVisible(true);
-                orb.getComponentOfType(CollisionComponent.class).setOnCollisionFunction((self, collider) -> self.addComponent(new DestructionComponent(0.0)));
             }
-
         }
     }
 
