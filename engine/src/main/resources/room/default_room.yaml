@@ -1,0 +1,6 @@
+templateName: "defaultRoom"
+floorTextureKey: "floor_red_plates_debris"
+wallTextureKey: "wall_aqua_brick"
+roomFloorEntityTemplates:
+roomWallEntityTemplates:
+  torch: 0.05

@@ -6,11 +6,15 @@ public class TransformationComponent implements Component {
 
     private double positionX;
     private double positionY;
+    private double lastPositionX;
+    private double lastPositionY;
 
     public TransformationComponent() {
         super();
         this.positionX = 0;
         this.positionY = 0;
+        this.lastPositionX = 0;
+        this.lastPositionY = 0;
     }
 
     public TransformationComponent(Double x, Double y) {
@@ -28,6 +32,7 @@ public class TransformationComponent implements Component {
     }
 
     public void setPositionX(double positionX) {
+        this.lastPositionX = this.positionX;
         this.positionX = positionX;
     }
 
@@ -36,7 +41,19 @@ public class TransformationComponent implements Component {
     }
 
     public void setPositionY(double positionY) {
+        this.lastPositionY = this.positionY;
         this.positionY = positionY;
     }
 
+    public double getLastPositionX() {
+        return lastPositionX;
+    }
+
+    public double getLastPositionY() {
+        return lastPositionY;
+    }
+
+    public Vector2d getLastPosition() {
+        return new Vector2d(this.lastPositionX, this.lastPositionY);
+    }
 }

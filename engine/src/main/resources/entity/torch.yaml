@@ -1,21 +1,20 @@
-templateName: "chandelier"
+templateName: "torch"
 components:
   - type: "RenderComponent"
     arguments:
       meshKey: "QUAD"
-      textureKey: "chandelier"
+      textureKey: "torch"
       shaderType: "shader"
       scale: 1.0
-      layer: 4
+      layer: 2
     modifiers:
       shadeless: true
-      perspectiveLayer: 1.05
   - type: "TransformationComponent"
   - type: "LightSourceComponent"
     arguments:
-      lightSourceR: 0.9
-      lightSourceG: 0.7
-      lightSourceB: 0.5
+      lightSourceR: 1.0
+      lightSourceG: 0.3
+      lightSourceB: 0.7
       lightStrength: 1.0
       lightFallOff: 0.001
   - type: "AnimationComponent"

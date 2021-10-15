@@ -10,8 +10,8 @@ public class NavMap {
         this.navTiles = new NavTile[size][size];
     }
 
-    public void addTile(NavTileType type, Vector2i position) {
-        this.navTiles[position.x()][position.y()] = new NavTile(type);
+    public void addTile(NavTileType type, Vector2i position, String room) {
+        this.navTiles[position.x()][position.y()] = new NavTile(type, room);
     }
 
     public NavTile getTile(Vector2i position) {
@@ -25,13 +25,19 @@ public class NavMap {
 
     public static class NavTile {
         private final NavTileType type;
+        private final String roomTemplate;
 
-        public NavTile(NavTileType type) {
+        public NavTile(NavTileType type, String roomTemplate) {
             this.type = type;
+            this.roomTemplate = roomTemplate;
         }
 
         public NavTileType getType() {
             return type;
+        }
+
+        public String getRoomTemplate() {
+            return roomTemplate;
         }
     }
 }

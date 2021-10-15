@@ -1,7 +1,7 @@
 package engine.handler;
 
-import engine.entity.EntityTemplate;
 import engine.loader.EntityLoader;
+import engine.loader.template.EntityTemplate;
 
 import java.io.File;
 import java.util.HashMap;

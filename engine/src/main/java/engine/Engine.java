@@ -85,6 +85,9 @@ public class Engine {
             if (CollisionSystem.isResponsibleFor(entity)) {
                 CollisionSystem.processEntity(entity);
             }
+            if (BleedingSystem.isResponsibleFor(entity)) {
+                BleedingSystem.processEntity(entity);
+            }
         }
         //Movement Logic
         for (Entity entity : entities) {

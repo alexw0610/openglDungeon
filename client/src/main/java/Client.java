@@ -42,7 +42,9 @@ public class Client {
     public static void main(String[] args) {
         Engine engine = new Engine();
 
-        List<Room> dungeonRooms = DungeonGenerator.generate(Double.parseDouble(RandomStringUtils.randomNumeric(8)));
+        String seed = RandomStringUtils.randomNumeric(8);
+        System.out.println(seed);
+        List<Room> dungeonRooms = DungeonGenerator.generate(Double.parseDouble(seed), "default_dungeon");
         Vector2i startPosition = dungeonRooms.get(0).getRoomPosition();
         EntityBuilder.builder()
                 .fromTemplate("player")

@@ -1,0 +1,4 @@
+templateName: "defaultDungeon"
+dungeonRoomTemplates:
+  default_room: 0.5
+  hall_room: 0.5

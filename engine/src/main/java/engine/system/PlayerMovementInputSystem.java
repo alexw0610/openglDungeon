@@ -54,11 +54,12 @@ public class PlayerMovementInputSystem {
                         .withComponent(new LightSourceComponent(new Vector3d(Math.random(), Math.random(), Math.random()), 1, 0.01))
                         .withComponent(new DestructionComponent(5000.0))
                         .withComponent(new CollisionComponent(HitBoxType.CIRCLE.value(), 0.2, false))
-                        .withComponent(new ParticleComponent(TextureKey.ORB_AQUA.value(), 100.0, 2.0, 0.50, 500.0, 0.0005))
                         .withComponent(new CreatedByComponent(entity))
                         .buildAndInstantiate();
                 orb.getComponentOfType(RenderComponent.class).setShadeless(true);
                 orb.getComponentOfType(RenderComponent.class).setAlwaysVisible(true);
+                orb.getComponentOfType(CollisionComponent.class).setSelfApplyComponents("selfDestruct");
+
             }
         }
     }

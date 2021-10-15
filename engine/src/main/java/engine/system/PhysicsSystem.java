@@ -75,6 +75,12 @@ public class PhysicsSystem {
     private static void applyMomentum(TransformationComponent transformationComponent, PhysicsComponent physicsComponent) {
         double x = transformationComponent.getPositionX() + physicsComponent.getMomentumX();
         double y = transformationComponent.getPositionY() + physicsComponent.getMomentumY();
+        if (physicsComponent.isGravity()) {
+            double movement = Math.abs(physicsComponent.getMomentumY()) + Math.abs(physicsComponent.getMomentumX());
+            if (movement > 0.01) {
+                y -= Math.max(0.15 - movement, 0) * 0.8;
+            }
+        }
         transformationComponent.setPositionX(x);
         transformationComponent.setPositionY(y);
         decayMomentum(physicsComponent);

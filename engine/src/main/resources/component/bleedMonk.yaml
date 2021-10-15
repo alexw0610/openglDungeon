@@ -1,0 +1,6 @@
+templateName: "bleedMonk"
+type: "BleedingComponent"
+arguments:
+  r: 1.0
+  g: 0.1
+  b: 0.15

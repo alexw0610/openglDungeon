@@ -17,3 +17,11 @@ components:
       speed: 100.0
     modifiers:
       movementDriven: true
+  - type: "CollisionComponent"
+    arguments:
+      hitBoxType: "CIRCLE"
+      hitBoxSize: 0.3
+      obstructsMovement: false
+    modifiers:
+    #selfApplyComponents: "bleedSkeleton"
+    #otherApplyComponents: "selfDestruct"

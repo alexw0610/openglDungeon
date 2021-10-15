@@ -2,6 +2,10 @@ package engine.component;
 
 import engine.enums.HitBoxType;
 import engine.object.HitBox;
+import org.joml.Vector2d;
+
+import java.util.ArrayDeque;
+import java.util.Queue;
 
 public class CollisionComponent implements Component {
 
@@ -9,6 +13,8 @@ public class CollisionComponent implements Component {
     private boolean obstructsMovement;
     private String selfApplyComponents;
     private String otherApplyComponents;
+
+    public Queue<Vector2d> collisions = new ArrayDeque<>();
 
     public CollisionComponent(String hitBoxType, Double hitBoxSize) {
         this.hitBox = new HitBox(HitBoxType.valueOf(hitBoxType), hitBoxSize);

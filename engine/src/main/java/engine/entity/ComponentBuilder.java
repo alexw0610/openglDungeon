@@ -2,6 +2,7 @@ package engine.entity;
 
 import engine.component.Component;
 import engine.handler.ComponentTemplateHandler;
+import engine.loader.template.ComponentTemplate;
 
 public class ComponentBuilder {
     public static Component fromTemplate(String template) {

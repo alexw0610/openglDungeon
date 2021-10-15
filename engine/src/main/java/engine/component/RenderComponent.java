@@ -1,5 +1,7 @@
 package engine.component;
 
+import org.joml.Vector3d;
+
 public class RenderComponent implements Component {
 
     private String meshKey;
@@ -14,6 +16,9 @@ public class RenderComponent implements Component {
     private double textureRotation;
     private boolean mirrored;
     private double perspectiveLayer;
+    private double colorROverride;
+    private double colorGOverride;
+    private double colorBOverride;
 
     public RenderComponent(String meshKey, String textureKey, String shaderType, Double scale, Integer layer) {
         super();
@@ -29,6 +34,9 @@ public class RenderComponent implements Component {
         this.textureRotation = 0;
         this.mirrored = false;
         this.perspectiveLayer = 1;
+        this.colorROverride = -1.0;
+        this.colorGOverride = -1.0;
+        this.colorBOverride = -1.0;
     }
 
     public String getMeshKey() {
@@ -125,5 +133,15 @@ public class RenderComponent implements Component {
 
     public void setPerspectiveLayer(Double perspectiveLayer) {
         this.perspectiveLayer = perspectiveLayer;
+    }
+
+    public Vector3d getColorOverride() {
+        return new Vector3d(colorROverride, colorGOverride, colorBOverride);
+    }
+
+    public void setColorOverride(Vector3d colorOverride) {
+        this.colorROverride = colorOverride.x();
+        this.colorGOverride = colorOverride.y();
+        this.colorBOverride = colorOverride.z();
     }
 }

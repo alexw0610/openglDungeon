@@ -10,6 +10,7 @@ out double textureOffSetX;
 out double textureOffSetY;
 out double alwaysVisible;
 out double shadeless;
+out vec3 colorOverride;
 
 
 layout (std140, column_major) uniform UBO{
@@ -25,6 +26,7 @@ layout (std140, column_major) uniform UBO{
     uniform double shadeless;
     uniform double mirrored;
     uniform double perspectiveLayer;
+    uniform dvec3 colorOverride;
 } ubo;
 
 void main()
@@ -35,6 +37,7 @@ void main()
     textureOffSetY = ubo.textureOffSetY;
     alwaysVisible = ubo.alwaysVisible;
     shadeless = ubo.shadeless;
+    colorOverride = vec3(ubo.colorOverride);
 
     //Rotate the texture coordinates
     vec2 textureCentered = vec2((textureIn.x - 0.5) * ubo.mirrored, textureIn.y - 0.5);

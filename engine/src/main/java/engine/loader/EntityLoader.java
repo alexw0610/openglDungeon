@@ -1,6 +1,6 @@
 package engine.loader;
 
-import engine.entity.EntityTemplate;
+import engine.loader.template.EntityTemplate;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 

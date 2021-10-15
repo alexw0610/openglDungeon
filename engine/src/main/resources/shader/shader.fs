@@ -10,6 +10,7 @@ flat in double textureOffSetX;
 flat in double textureOffSetY;
 flat in double alwaysVisible;
 flat in double shadeless;
+flat in vec3 colorOverride;
 
 out vec4 fragColor;
 
@@ -44,16 +45,22 @@ void main(){
     ((textureUv.y/(textureSheetSize.y/DEFAULT_SPRITE_SIZE))+((DEFAULT_SPRITE_SIZE/textureSheetSize.y)*animationOffsetY)));
     vec4 viewArea = vec4(texture(view_sampler, viewMapUv.xy));
     vec4 lightArea = vec4(texture(light_sampler, viewMapUv.xy));
-    vec4 pixelColor = vec4(texture(texture_sampler, textureUv));
-
+    vec4 pixelColor;
+    if(colorOverride.r != -1){
+        pixelColor = vec4(colorOverride.rgb,1);
+    }else{
+        pixelColor = vec4(texture(texture_sampler, textureUv));
+    }
     float averagePixelValue = (pixelColor.r + pixelColor.g + pixelColor.b)/3;
-    vec3 basePixel = vec3(0,0,0);
-    if(viewArea.r > 0 || alwaysVisible == 1){
+    vec3 basePixel = vec3(.01, .008, .012);
+    if(viewArea.a > 0 || alwaysVisible == 1){
         basePixel = pixelColor.rgb * DARKNESS;
-        if(shadeless == 1){
-            basePixel = pixelColor.rgb;
-        }else if(lightArea.a > 0 ){
-            basePixel = basePixel + pixelColor.rgb * lightArea.rgb * getViewAreaRSample();
+        if(lightArea.a > 0 ){
+            if(shadeless == 1){
+                basePixel = pixelColor.rgb;
+            }else {
+                basePixel = basePixel + pixelColor.rgb * lightArea.rgb * getViewAreaRSample();
+            }
         }
     }
     fragColor = vec4(basePixel, pixelColor.a);

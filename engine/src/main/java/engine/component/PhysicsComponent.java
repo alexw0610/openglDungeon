@@ -5,6 +5,8 @@ public class PhysicsComponent implements Component {
     private double momentumX;
     private double momentumY;
 
+    private boolean gravity;
+
     public double getMomentumX() {
         return momentumX;
     }
@@ -19,5 +21,13 @@ public class PhysicsComponent implements Component {
 
     public void setMomentumY(double momentumY) {
         this.momentumY = momentumY;
+    }
+
+    public boolean isGravity() {
+        return gravity;
+    }
+
+    public void setGravity(boolean gravity) {
+        this.gravity = gravity;
     }
 }

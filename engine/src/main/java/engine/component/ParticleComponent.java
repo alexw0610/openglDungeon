@@ -1,16 +1,18 @@
 package engine.component;
 
-import engine.component.lambda.Vector2dFunction;
 import org.joml.Vector2d;
 
 public class ParticleComponent implements Component {
     private String particleTexture;
+    private double colorROverride;
+    private double colorGOverride;
+    private double colorBOverride;
     private double particleFrequency;
     private double particleAmount;
     private double particleSize;
     private double particleLifeTime;
     private double particleVelocity;
-    private Vector2dFunction particleDirection;
+    private Vector2d particleDirection;
 
     private double emittedLast;
 
@@ -20,7 +22,19 @@ public class ParticleComponent implements Component {
         this.particleAmount = particleAmount;
         this.particleSize = particleSize;
         this.particleLifeTime = particleLifeTime;
-        this.particleDirection = () -> new Vector2d(Math.random() - 0.5, Math.random() - 0.5);
+        this.particleDirection = new Vector2d(1, 1);
+        this.particleVelocity = particleVelocity;
+    }
+
+    public ParticleComponent(Double r, Double g, Double b, Double particleFrequency, Double particleAmount, Double particleSize, Double particleLifeTime, Double particleVelocity) {
+        this.colorROverride = r;
+        this.colorGOverride = g;
+        this.colorBOverride = b;
+        this.particleFrequency = particleFrequency;
+        this.particleAmount = particleAmount;
+        this.particleSize = particleSize;
+        this.particleLifeTime = particleLifeTime;
+        this.particleDirection = new Vector2d(1, 1);
         this.particleVelocity = particleVelocity;
     }
 
@@ -64,11 +78,11 @@ public class ParticleComponent implements Component {
         this.particleLifeTime = particleLifeTime;
     }
 
-    public Vector2dFunction getParticleDirection() {
+    public Vector2d getParticleDirection() {
         return particleDirection;
     }
 
-    public void setParticleDirection(Vector2dFunction particleDirection) {
+    public void setParticleDirection(Vector2d particleDirection) {
         this.particleDirection = particleDirection;
     }
 
@@ -86,5 +100,29 @@ public class ParticleComponent implements Component {
 
     public void setEmittedLast(double emittedLast) {
         this.emittedLast = emittedLast;
+    }
+
+    public double getColorROverride() {
+        return colorROverride;
+    }
+
+    public void setColorROverride(double colorROverride) {
+        this.colorROverride = colorROverride;
+    }
+
+    public double getColorGOverride() {
+        return colorGOverride;
+    }
+
+    public void setColorGOverride(double colorGOverride) {
+        this.colorGOverride = colorGOverride;
+    }
+
+    public double getColorBOverride() {
+        return colorBOverride;
+    }
+
+    public void setColorBOverride(double colorBOverride) {
+        this.colorBOverride = colorBOverride;
     }
 }
