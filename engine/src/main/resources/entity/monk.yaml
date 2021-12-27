@@ -1,4 +1,5 @@
 templateName: "enemy_monk"
+extendedTemplate: "humanoid"
 components:
   - type: "RenderComponent"
     arguments:
@@ -9,19 +10,4 @@ components:
       layer: 2
     modifiers:
       shadeless: true
-  - type: "TransformationComponent"
-  - type: "PhysicsComponent"
   - type: "AIComponent"
-  - type: "AnimationComponent"
-    arguments:
-      speed: 100.0
-    modifiers:
-      movementDriven: true
-  - type: "CollisionComponent"
-    arguments:
-      hitBoxType: "CIRCLE"
-      hitBoxSize: 0.3
-      obstructsMovement: false
-    modifiers:
-    #selfApplyComponents: "bleedMonk"
-    #otherApplyComponents: "selfDestruct"

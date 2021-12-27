@@ -10,7 +10,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class EntityHandler implements Handler<Entity> {
-
     private static final EntityHandler INSTANCE = new EntityHandler();
     private final Map<String, Entity> objects = new HashMap<>();
 
@@ -37,7 +36,7 @@ public class EntityHandler implements Handler<Entity> {
 
     public Entity getEntityWithComponent(Class component) {
         synchronized (this.objects) {
-            return this.objects.values().stream().filter(entity -> entity.hasComponentOfType(component)).findAny().orElse(null);
+            return this.objects.values().parallelStream().unordered().filter(entity -> entity.hasComponentOfType(component)).findAny().orElse(null);
         }
     }
 
@@ -45,7 +44,7 @@ public class EntityHandler implements Handler<Entity> {
         synchronized (this.objects) {
             List<Entity> entities = getAllObjects();
             for (Class component : components) {
-                entities = entities.stream().filter(entity -> entity.hasComponentOfType(component)).collect(Collectors.toList());
+                entities = entities.parallelStream().unordered().filter(entity -> entity.hasComponentOfType(component)).collect(Collectors.toList());
             }
             return entities;
         }

@@ -12,9 +12,9 @@ components:
   - type: "TransformationComponent"
   - type: "LightSourceComponent"
     arguments:
-      lightSourceR: 1.0
-      lightSourceG: 0.3
-      lightSourceB: 0.7
+      lightSourceR: 0.9
+      lightSourceG: 0.6
+      lightSourceB: 0.5
       lightStrength: 1.0
       lightFallOff: 0.001
   - type: "AnimationComponent"

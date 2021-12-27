@@ -144,4 +144,8 @@ public class RenderComponent implements Component {
         this.colorGOverride = colorOverride.y();
         this.colorBOverride = colorOverride.z();
     }
+
+    public void setRandomizeTextureOffset(Boolean bool) {
+        this.textureOffSetX = Math.random() * 100;
+    }
 }

@@ -39,6 +39,15 @@ public class PlayerMovementInputSystem {
             double x = physicsComponent.getMomentumX() - (Engine.stepTimeDelta * INERTIA * playerComponent.getMovementSpeed());
             physicsComponent.setMomentumX(x);
         }
+        if (KeyHandler.getInstance().isKeyForActionPressed("dash") && System.currentTimeMillis() - playerComponent.getLastDash() > 2500) {
+            playerComponent.setLastDash(System.currentTimeMillis());
+            Vector2d momentum = new Vector2d(physicsComponent.getMomentumX(), physicsComponent.getMomentumY());
+            momentum.normalize().mul(0.135);
+            double x = physicsComponent.getMomentumX() + momentum.x();
+            physicsComponent.setMomentumX(x);
+            double y = physicsComponent.getMomentumY() + momentum.y();
+            physicsComponent.setMomentumY(y);
+        }
         while (!MouseHandler.getInstance().getMouseClickedEventsQueue().isEmpty()) {
             MouseEvent event = MouseHandler.getInstance().getMouseClickedEventsQueue().poll();
             if (event != null && event.getButton() == MouseEvent.BUTTON1 && event.getClickCount() == 1) {

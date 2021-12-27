@@ -1,6 +1,6 @@
 package engine.handler;
 
-import engine.loader.ComponentLoader;
+import engine.loader.YamlLoader;
 import engine.loader.template.ComponentTemplate;
 
 import java.io.File;
@@ -10,6 +10,7 @@ import java.util.Map;
 
 public class ComponentTemplateHandler implements Handler<ComponentTemplate> {
     private static final ComponentTemplateHandler INSTANCE = new ComponentTemplateHandler();
+    public static final String COMPONENT_TEMPLATE_FOLDER = "component/";
     private final Map<String, ComponentTemplate> templateMap = new HashMap<>();
 
     public static ComponentTemplateHandler getInstance() {
@@ -17,9 +18,9 @@ public class ComponentTemplateHandler implements Handler<ComponentTemplate> {
     }
 
     private ComponentTemplateHandler() {
-        File templateDirectory = new File(Thread.currentThread().getContextClassLoader().getResource(ComponentLoader.RESOURCE_ENTITY_SUBFOLDER).getPath());
+        File templateDirectory = new File(Thread.currentThread().getContextClassLoader().getResource(COMPONENT_TEMPLATE_FOLDER).getPath());
         for (File file : templateDirectory.listFiles()) {
-            addObject(file.getName().split("\\.")[0], ComponentLoader.loadComponent(file.getName().split("\\.")[0]));
+            addObject(file.getName().split("\\.")[0], YamlLoader.load(ComponentTemplate.class, COMPONENT_TEMPLATE_FOLDER + file.getName()));
         }
     }
 

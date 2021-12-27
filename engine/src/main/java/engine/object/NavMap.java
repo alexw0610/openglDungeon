@@ -5,8 +5,10 @@ import org.joml.Vector2i;
 
 public class NavMap {
     private final NavTile[][] navTiles;
+    private final long seed;
 
-    public NavMap(int size) {
+    public NavMap(int size, long seed) {
+        this.seed = seed;
         this.navTiles = new NavTile[size][size];
     }
 
@@ -39,5 +41,9 @@ public class NavMap {
         public String getRoomTemplate() {
             return roomTemplate;
         }
+    }
+
+    public long getSeed() {
+        return seed;
     }
 }

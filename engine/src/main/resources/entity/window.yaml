@@ -1,23 +1,22 @@
-templateName: "chandelier"
+templateName: "window"
 components:
   - type: "RenderComponent"
     arguments:
       meshKey: "QUAD"
-      textureKey: "chandelier"
+      textureKey: "window_blue"
       shaderType: "shader"
       scale: 1.0
-      layer: 4
+      layer: 2
     modifiers:
-      shadeless: true
-      perspectiveLayer: 1.05
+      shadeless: false
   - type: "TransformationComponent"
   - type: "LightSourceComponent"
     arguments:
-      lightSourceR: 0.9
-      lightSourceG: 0.7
-      lightSourceB: 0.65
+      lightSourceR: 0.5
+      lightSourceG: 0.5
+      lightSourceB: 0.8
       lightStrength: 1.0
-      lightFallOff: 0.001
+      lightFallOff: 0.0005
   - type: "AnimationComponent"
     arguments:
       speed: 75.0

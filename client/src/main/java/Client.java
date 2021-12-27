@@ -3,10 +3,8 @@ import dto.ssl.GenericResponse;
 import dto.ssl.ReadyForReceivingRequest;
 import engine.Engine;
 import engine.component.CameraComponent;
-import engine.component.PlayerComponent;
 import engine.component.TransformationComponent;
 import engine.entity.EntityBuilder;
-import engine.handler.EntityHandler;
 import engine.object.Room;
 import engine.service.DungeonGenerator;
 import exception.UDPServerException;
@@ -15,13 +13,16 @@ import org.apache.commons.lang3.StringUtils;
 import org.joml.Vector2i;
 import processor.CharacterUpdateSender;
 import processor.ServerUpdateProcessor;
+import udp.UdpSocket;
 import udp.UpdateListener;
 import udp.UpdateSender;
 import util.ApplicationProperties;
 import util.ParameterUtil;
 
+import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -41,11 +42,13 @@ public class Client {
 
     public static void main(String[] args) {
         Engine engine = new Engine();
-
         String seed = RandomStringUtils.randomNumeric(8);
-        System.out.println(seed);
-        List<Room> dungeonRooms = DungeonGenerator.generate(Double.parseDouble(seed), "default_dungeon");
-        Vector2i startPosition = dungeonRooms.get(0).getRoomPosition();
+        List<Room> dungeonRooms = DungeonGenerator.generate(Long.parseLong("1234"), "default_dungeon");
+        Room startRoom = dungeonRooms.stream()
+                .sorted(Comparator.comparingInt(r -> r.getRoomPosition().x()))
+                .sorted(Comparator.comparingInt(r -> r.getRoomPosition().y()))
+                .findFirst().orElse(dungeonRooms.get(0));
+        Vector2i startPosition = startRoom.getRoomPosition();
         EntityBuilder.builder()
                 .fromTemplate("player")
                 .at(startPosition.x(), startPosition.y())
@@ -71,13 +74,14 @@ public class Client {
         SSLServerConnection sslServerConnection = new SSLServerConnection();
         startAuthenticationProcess(sslServerConnection);
 
-        UpdateListener updateListener = new UpdateListener(applicationProperties.getProperty(DEFAULT_UDP_PORT));
-        new Thread(updateListener).start();
+        DatagramSocket udpSocket = UdpSocket.createSocket(applicationProperties.getProperty(DEFAULT_UDP_PORT));
 
+        UpdateListener updateListener = new UpdateListener(udpSocket);
+        new Thread(updateListener).start();
         registerUdpListener(updateListener, sslServerConnection);
 
-        UpdateSender updateSender = new UpdateSender(getInetAddressFromName(serverUdpUpdateHost), Integer.parseInt(serverUdpUpdatePort), encryptionKey);
-        CharacterUpdateSender characterUpdateSender = new CharacterUpdateSender(EntityHandler.getInstance().getEntityWithComponent(PlayerComponent.class), connectionId, updateSender);
+        UpdateSender updateSender = new UpdateSender(getInetAddressFromName(serverUdpUpdateHost), Integer.parseInt(serverUdpUpdatePort), encryptionKey, udpSocket);
+        CharacterUpdateSender characterUpdateSender = new CharacterUpdateSender(connectionId, updateSender);
         new Thread(characterUpdateSender).start();
 
         ServerUpdateProcessor serverUpdateProcessor = new ServerUpdateProcessor(updateListener.receivedUpdates, encryptionKey, connectionId);
@@ -101,17 +105,19 @@ public class Client {
 
     private static void registerUdpListener(UpdateListener udpListener, SSLServerConnection serverConnection) {
         String listeningPort = udpListener.getPort();
+        System.out.println("rec port: " + udpListener.getPort());
         ReadyForReceivingRequest readyForReceivingRequest = ReadyForReceivingRequest.builder()
                 .receivingPort(listeningPort)
                 .characterName(applicationProperties.getProperty("characterName"))
                 .build();
         GenericResponse genericResponse = serverConnection.sendAndAwait(readyForReceivingRequest);
         if (genericResponse.isFailed()) {
-            System.err.println("Error while registering UDP Socket with the server. Request was not successful " + genericResponse.getResponseText());
+            System.err.println("Error while registering UDP Socket with the server. Request was not successful: " + genericResponse.getResponseText());
             System.exit(1);
         }
+        System.out.println("server udp port: " + getParameterOrExit(genericResponse.getResponseParameters(), SERVER_UDP_PORT));
         serverUdpUpdatePort = getParameterOrExit(genericResponse.getResponseParameters(), SERVER_UDP_PORT);
-        serverUdpUpdateHost = getParameterOrExit(genericResponse.getResponseParameters(), SERVER_UDP_HOST);
+        serverUdpUpdateHost = applicationProperties.getProperty("serverHost");
         connectionId = Integer.parseInt(getParameterOrExit(genericResponse.getResponseParameters(), CONNECTION_ID));
     }
 

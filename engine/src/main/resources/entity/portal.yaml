@@ -1,0 +1,25 @@
+templateName: "portal"
+components:
+  - type: "RenderComponent"
+    arguments:
+      meshKey: "QUAD"
+      textureKey: "orb_aqua"
+      shaderType: "shader"
+      scale: 2.0
+      layer: 1
+  - type: "TransformationComponent"
+  - type: "LightSourceComponent"
+    arguments:
+      lightSourceR: 0.7
+      lightSourceG: 0.7
+      lightSourceB: 0.9
+      lightStrength: 1.0
+      lightFallOff: 0.001
+  - type: "CollisionComponent"
+    arguments:
+      hitBoxType: "CIRCLE"
+      hitBoxSize: 0.5
+      obstructsMovement: false
+    modifiers:
+      #selfApplyComponents: "playAnimationOnce"
+      otherApplyComponents: "zoneChange"

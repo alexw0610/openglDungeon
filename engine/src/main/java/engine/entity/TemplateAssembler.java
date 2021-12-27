@@ -1,6 +1,7 @@
 package engine.entity;
 
 import engine.component.Component;
+import engine.handler.EntityTemplateHandler;
 import engine.loader.template.ComponentTemplate;
 import engine.loader.template.EntityTemplate;
 import org.apache.commons.lang3.StringUtils;
@@ -16,6 +17,9 @@ import java.util.stream.Collectors;
 class TemplateAssembler {
 
     static EntityBuilder assembleEntity(EntityTemplate template, EntityBuilder builder) {
+        if (StringUtils.isNotBlank(template.getExtendedTemplate())) {
+            assembleEntity(EntityTemplateHandler.getInstance().getObject(template.getExtendedTemplate()), builder);
+        }
         for (ComponentTemplate componentTemplate : template.getComponents()) {
             builder.withComponent(assembleComponent(componentTemplate));
         }

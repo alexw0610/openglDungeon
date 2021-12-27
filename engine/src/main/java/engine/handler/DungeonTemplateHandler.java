@@ -1,6 +1,6 @@
 package engine.handler;
 
-import engine.loader.DungeonLoader;
+import engine.loader.YamlLoader;
 import engine.loader.template.DungeonTemplate;
 
 import java.io.File;
@@ -10,6 +10,7 @@ import java.util.Map;
 
 public class DungeonTemplateHandler implements Handler<DungeonTemplate> {
     private static final DungeonTemplateHandler INSTANCE = new DungeonTemplateHandler();
+    public static final String DUNGEON_TEMPLATE_FOLDER = "dungeon/";
     private final Map<String, DungeonTemplate> templateMap = new HashMap<>();
 
     public static DungeonTemplateHandler getInstance() {
@@ -17,9 +18,9 @@ public class DungeonTemplateHandler implements Handler<DungeonTemplate> {
     }
 
     private DungeonTemplateHandler() {
-        File templateDirectory = new File(Thread.currentThread().getContextClassLoader().getResource(DungeonLoader.RESOURCE_ENTITY_SUBFOLDER).getPath());
+        File templateDirectory = new File(Thread.currentThread().getContextClassLoader().getResource(DUNGEON_TEMPLATE_FOLDER).getPath());
         for (File file : templateDirectory.listFiles()) {
-            addObject(file.getName().split("\\.")[0], DungeonLoader.loadDungeon(file.getName().split("\\.")[0]));
+            addObject(file.getName().split("\\.")[0], YamlLoader.load(DungeonTemplate.class, DUNGEON_TEMPLATE_FOLDER + file.getName()));
         }
     }
 

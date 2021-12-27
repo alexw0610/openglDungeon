@@ -22,11 +22,13 @@ public class TileMap {
     private final int size;
     private final String[][] tiles;
     private final NavMap navMap;
+    private final long seed;
 
-    public TileMap(int size) {
+    public TileMap(int size, long seed) {
         this.size = size;
         this.tiles = new String[size][size];
-        this.navMap = new NavMap(size);
+        this.navMap = new NavMap(size, seed);
+        this.seed = seed;
     }
 
     public void addRoom(Room room) {
@@ -77,7 +79,7 @@ public class TileMap {
                     if (isTile(x, y - 1)) {
                         RoomTemplate roomTemplate = RoomTemplateHandler.getInstance().getObject(this.tiles[x][y - 1]);
                         float rnd = random.nextFloat();
-                        if (rnd < 0.25 && isTile(x, y + 1)) {
+                        if (rnd < 0.90 && isTile(x, y + 1)) {
                             roomTemplate = RoomTemplateHandler.getInstance().getObject(this.tiles[x][y + 1]);
                             Vector2i tileMapDimensions = TextureHandler.TEXTURE_HANDLER.getTileMapDimensions(roomTemplate.getFloorTextureKey());
                             Entity entity = EntityBuilder.builder().fromTemplate("floor").at(x, y).build();
@@ -90,9 +92,12 @@ public class TileMap {
                                     .buildAndInstantiate(DUNGEON_ENTITY_PREFIX + "_" + RandomStringUtils.randomAlphanumeric(8));
                             this.navMap.addTile(NavTileType.OBSTRUCTED, new Vector2i(x, y), this.tiles[x][y - 1]);
                         } else {
+                            Vector2i tileMapDimensions = TextureHandler.TEXTURE_HANDLER.getTileMapDimensions(roomTemplate.getWallTextureKey());
                             Entity entity = EntityBuilder.builder().fromTemplate("wall")
                                     .at(x, y)
                                     .buildAndInstantiate(DUNGEON_ENTITY_PREFIX + "_" + RandomStringUtils.randomAlphanumeric(8));
+                            entity.getComponentOfType(RenderComponent.class).setTextureOffSetX(Math.floor(Math.pow(random.nextFloat(), 3) * tileMapDimensions.x()));
+                            entity.getComponentOfType(RenderComponent.class).setTextureOffSetY(Math.floor(Math.pow(random.nextFloat(), 3) * tileMapDimensions.y()));
                             entity.getComponentOfType(RenderComponent.class).setTextureKey(roomTemplate.getWallTextureKey());
                             this.navMap.addTile(NavTileType.WALL, new Vector2i(x, y), this.tiles[x][y - 1]);
                         }
@@ -131,7 +136,7 @@ public class TileMap {
                                     break;
                                 }
                             }
-
+                            break;
                         case FLOOR:
                             if (template.getRoomFloorEntityTemplates() == null) {
                                 break;
@@ -145,7 +150,7 @@ public class TileMap {
                                     break;
                                 }
                             }
-
+                            break;
                         case OBSTRUCTED:
 
                         default:

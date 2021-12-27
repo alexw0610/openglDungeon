@@ -1,5 +1,6 @@
 package engine.system;
 
+import engine.Engine;
 import engine.component.CollisionComponent;
 import engine.component.SurfaceTag;
 import engine.component.TransformationComponent;
@@ -19,9 +20,9 @@ public class CollisionSystem {
         TransformationComponent transformationComponent = entity.getComponentOfType(TransformationComponent.class);
         CollisionComponent collisionComponent = entity.getComponentOfType(CollisionComponent.class);
         CreatedByComponent createdByComponent = entity.getComponentOfType(CreatedByComponent.class);
-        if (collisionComponent.getSelfApplyComponents() != null || collisionComponent.getOtherApplyComponents() != null && collisionComponent.isObstructsMovement()) {
+        if (collisionComponent.getSelfApplyComponents() != null || collisionComponent.getOtherApplyComponents() != null) {
             List<Entity> obstacles = EntityHandler.getInstance().getAllEntitiesWithComponents(TransformationComponent.class, CollisionComponent.class);
-            obstacles = obstacles.stream().filter(e -> !e.hasComponentOfType(SurfaceTag.class)).collect(Collectors.toList());
+            obstacles = obstacles.parallelStream().unordered().filter(e -> !e.hasComponentOfType(SurfaceTag.class)).collect(Collectors.toList());
             obstacles.remove(entity);
             if (entity.hasComponentOfType(CreatedByComponent.class)) {
                 obstacles.remove(createdByComponent.getCreatorEntity());
@@ -41,6 +42,7 @@ public class CollisionSystem {
                 collisionTransformation.getLastPosition().sub(collisionTransformation.getPosition(), collisionVector);
                 collisionComponent.collisions.offer(collisionVector.normalize());
             }
+            Engine.collisionHandled += 1;
         }
     }
 

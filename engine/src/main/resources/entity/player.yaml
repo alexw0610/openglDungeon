@@ -1,23 +1,17 @@
 templateName: "player"
+extendedTemplate: "humanoid"
 components:
   - type: "RenderComponent"
     arguments:
-      meshKey: "TRIANGLE"
-      textureKey: "default"
+      meshKey: "QUAD"
+      textureKey: "human_female"
       shaderType: "shader"
       scale: 1.0
       layer: 3
     modifiers:
-      shadeless: true
-  - type: "TransformationComponent"
-  - type: "PhysicsComponent"
+      shadeless: false
   - type: "PlayerComponent"
   - type: "CameraTargetTag"
   - type: "ViewSourceTag"
-  - type: "CollisionComponent"
-    arguments:
-      hitBoxType: "CIRCLE"
-      hitBoxSize: 0.2
-      obstructsMovement: false
 
 

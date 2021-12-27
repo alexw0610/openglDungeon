@@ -23,10 +23,12 @@ public class MeshHandler {
     }
 
     public void addMesh(String key, Mesh mesh) {
-        Mesh prev = this.meshes.put(key, mesh);
-        mesh.loadMesh();
-        if (prev != null) {
-            prev.unload();
+        synchronized (this.meshes) {
+            Mesh prev = this.meshes.put(key, mesh);
+            mesh.loadMesh();
+            if (prev != null) {
+                prev.unload();
+            }
         }
     }
 

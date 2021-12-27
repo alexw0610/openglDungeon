@@ -7,6 +7,7 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManagerFactory;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -106,7 +107,7 @@ public class SSLServerConnection {
             keyStore.load(null, applicationProperties.getProperty("trustStorePassword").toCharArray());
             CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
             String certificateFileName = applicationProperties.getProperty("serverCertificateName");
-            Certificate certificate = certificateFactory.generateCertificate(applicationProperties.getResourceAsStream(certificateFileName));
+            Certificate certificate = certificateFactory.generateCertificate(new FileInputStream(applicationProperties.getFileFromConfig(certificateFileName)));
             keyStore.setCertificateEntry("openglDungeonCertificate", certificate);
             trustManagerFactory.init(keyStore);
             sslContext.init(null, trustManagerFactory.getTrustManagers(), null);

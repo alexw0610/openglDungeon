@@ -1,6 +1,6 @@
 package engine.handler;
 
-import engine.loader.RoomLoader;
+import engine.loader.YamlLoader;
 import engine.loader.template.RoomTemplate;
 
 import java.io.File;
@@ -10,6 +10,8 @@ import java.util.Map;
 
 public class RoomTemplateHandler implements Handler<RoomTemplate> {
     private static final RoomTemplateHandler INSTANCE = new RoomTemplateHandler();
+    public static final String ROOM_TEMPLATE_FOLDER = "room/";
+
     private final Map<String, RoomTemplate> templateMap = new HashMap<>();
 
     public static RoomTemplateHandler getInstance() {
@@ -17,9 +19,9 @@ public class RoomTemplateHandler implements Handler<RoomTemplate> {
     }
 
     private RoomTemplateHandler() {
-        File templateDirectory = new File(Thread.currentThread().getContextClassLoader().getResource(RoomLoader.RESOURCE_ENTITY_SUBFOLDER).getPath());
+        File templateDirectory = new File(Thread.currentThread().getContextClassLoader().getResource(ROOM_TEMPLATE_FOLDER).getPath());
         for (File file : templateDirectory.listFiles()) {
-            addObject(file.getName().split("\\.")[0], RoomLoader.loadRoom(file.getName().split("\\.")[0]));
+            addObject(file.getName().split("\\.")[0], YamlLoader.load(RoomTemplate.class, ROOM_TEMPLATE_FOLDER + file.getName()));
         }
     }
 

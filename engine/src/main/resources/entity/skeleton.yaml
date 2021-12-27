@@ -1,4 +1,5 @@
 templateName: "enemy_skeleton"
+extendedTemplate: "humanoid"
 components:
   - type: "RenderComponent"
     arguments:
@@ -8,20 +9,5 @@ components:
       scale: 1.0
       layer: 2
     modifiers:
-      shadeless: true
-  - type: "TransformationComponent"
-  - type: "PhysicsComponent"
+      shadeless: false
   - type: "AIComponent"
-  - type: "AnimationComponent"
-    arguments:
-      speed: 100.0
-    modifiers:
-      movementDriven: true
-  - type: "CollisionComponent"
-    arguments:
-      hitBoxType: "CIRCLE"
-      hitBoxSize: 0.3
-      obstructsMovement: false
-    modifiers:
-    #selfApplyComponents: "bleedSkeleton"
-    #otherApplyComponents: "selfDestruct"

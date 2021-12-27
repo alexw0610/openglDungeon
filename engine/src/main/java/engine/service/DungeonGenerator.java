@@ -8,7 +8,9 @@ import engine.object.Room;
 import engine.object.TileMap;
 import engine.service.util.MinimumSpanningTree;
 import engine.service.util.Triangulator;
-import org.joml.*;
+import org.joml.Random;
+import org.joml.Vector2d;
+import org.joml.Vector2i;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -18,24 +20,24 @@ import java.util.stream.Collectors;
 
 public class DungeonGenerator {
 
-    private static final int MAP_SIZE = 50;
+    private static final int MAP_SIZE = 60;
     private static final int MAX_ROOM_SIDE_LENGTH = 12;
-    private static final int MAX_ROOM_RATIO = 2;
-    private static final int MAX_ROOM_SIZE = 128;
+    private static final double MAX_ROOM_RATIO = 1.5;
+    private static final int MAX_ROOM_SIZE = 96;
     private static final int MIN_ROOM_SIZE = 20;
     private static final int MAX_ROOM_AMOUNT = 32;
     private static final int CORRIDOR_SIZE = 2;
 
-    public static List<Room> generate(double seed, String dungeonTemplate) {
-        Random random = new Random((long) seed);
+    public static List<Room> generate(long seed, String dungeonTemplate) {
+        Random random = new Random(seed);
         List<Room> rooms = generateRooms(random, dungeonTemplate);
         List<Room> mainRooms = getBiggestRoomsNotIntersecting(rooms, 8);
         List<Edge> paths = Triangulator.triangulateVectorField(mainRooms.stream().map(room -> new Vector2d(room.getRoomPosition())).collect(Collectors.toList()), MAP_SIZE);
         paths = MinimumSpanningTree.getMinimumSpanningTreeEdges(paths);
         List<Room> corridors = generateCorridors(paths, random);
         rooms.removeAll(mainRooms);
-        List<Room> sideRooms = getSideRooms(rooms, paths, mainRooms, 4);
-        TileMap tileMap = new TileMap(MAP_SIZE);
+        List<Room> sideRooms = getSideRooms(rooms, corridors, mainRooms, 8);
+        TileMap tileMap = new TileMap(MAP_SIZE, seed);
         mainRooms.forEach(tileMap::addRoom);
         sideRooms.forEach(tileMap::addRoom);
         corridors.forEach(tileMap::addRoom);
@@ -44,21 +46,20 @@ public class DungeonGenerator {
         return mainRooms;
     }
 
-    private static List<Room> getSideRooms(List<Room> rooms, List<Edge> paths, List<Room> mainRooms, int amount) {
+    private static List<Room> getSideRooms(List<Room> rooms, List<Room> corridors, List<Room> mainRooms, int amount) {
         List<Room> sideRooms = new ArrayList<>();
-        for (Room room : rooms) {
-            for (Edge edge : paths) {
-                if (Intersectiond.intersectLineCircle(
-                        edge.getA().x(), edge.getA().y(),
-                        edge.getB().x(), edge.getB().y(),
-                        room.getRoomPosition().x(),
-                        room.getRoomPosition().y(),
-                        room.getRoomHeight() < room.getRoomWidth() ? (room.getRoomWidth() / 2) : (room.getRoomHeight() / 2),
-                        new Vector3d())) {
-                    if (!isIntersectingAny(mainRooms, room) && !isIntersectingAny(sideRooms, room))
+        boolean emptyPass = false;
+        while (sideRooms.size() < amount && !emptyPass) {
+            emptyPass = true;
+            for (Room corridor : corridors) {
+                for (Room room : rooms) {
+                    if (corridor.intersectsRoom(room) && !isIntersectingAny(mainRooms, room) && !isIntersectingAny(sideRooms, room)) {
                         sideRooms.add(room);
-                    if (sideRooms.size() >= amount) {
-                        return sideRooms;
+                        emptyPass = false;
+                        if (sideRooms.size() >= amount) {
+                            return sideRooms;
+                        }
+                        break;
                     }
                 }
             }
@@ -91,35 +92,49 @@ public class DungeonGenerator {
         return rooms;
     }
 
-    //TODO: improve
     private static List<Room> generateCorridors(List<Edge> paths, Random random) {
         List<Room> corridors = new ArrayList<>();
         for (Edge path : paths) {
             if (random.nextFloat() < 0.5) {
-                int startX = Vector2dToVector2i(getLeftVertex(path)).x();
-                int endX = Vector2dToVector2i(getRightVertex(path)).x();
-                int fixedY = Vector2dToVector2i(getLeftVertex(path)).y();
-                Room x = new Room(endX - startX, CORRIDOR_SIZE, new Vector2i(startX + ((endX - startX) / 2), fixedY), "default_hallway");
-                corridors.add(x);
-                int startY = Vector2dToVector2i(getBottomVertex(path)).y();
-                int endY = Vector2dToVector2i(getTopVertex(path)).y();
-                int fixedX = Vector2dToVector2i(getBottomVertex(path).equals(getLeftVertex(path)) ? getTopVertex(path) : getBottomVertex(path)).x();
-                Room y = new Room(CORRIDOR_SIZE, endY - startY, new Vector2i(fixedX, startY + ((endY - startY) / 2)), "default_hallway");
-                corridors.add(y);
+                generateCorridor(corridors, path, getLeftVertex(path), getTopVertex(path), getBottomVertex(path));
             } else {
-                int startX = Vector2dToVector2i(getLeftVertex(path)).x();
-                int endX = Vector2dToVector2i(getRightVertex(path)).x();
-                int fixedY = Vector2dToVector2i(getRightVertex(path)).y();
-                Room x = new Room(endX - startX, CORRIDOR_SIZE, new Vector2i(startX + ((endX - startX) / 2), fixedY), "default_hallway");
-                corridors.add(x);
-                int startY = Vector2dToVector2i(getBottomVertex(path)).y();
-                int endY = Vector2dToVector2i(getTopVertex(path)).y();
-                int fixedX = Vector2dToVector2i(getBottomVertex(path).equals(getLeftVertex(path)) ? getBottomVertex(path) : getTopVertex(path)).x();
-                Room y = new Room(CORRIDOR_SIZE, endY - startY, new Vector2i(fixedX, startY + ((endY - startY) / 2)), "default_hallway");
-                corridors.add(y);
+                generateCorridor(corridors, path, getRightVertex(path), getBottomVertex(path), getTopVertex(path));
             }
         }
         return corridors;
+    }
+
+    private static void generateCorridor(List<Room> corridors, Edge path, Vector2d leftVertex, Vector2d topVertex, Vector2d bottomVertex) {
+        //horizontal
+        int startX;
+        int endX;
+        if (leftVertex.equals(getLeftVertex(path))) {
+            //starting at
+            startX = Vector2dToVector2i(getLeftVertex(path)).x();
+            endX = Vector2dToVector2i(getRightVertex(path)).x() + 1;
+        } else {
+            //going toward
+            startX = Vector2dToVector2i(getLeftVertex(path)).x() - 1;
+            endX = Vector2dToVector2i(getRightVertex(path)).x();
+        }
+        int fixedY = Vector2dToVector2i(leftVertex).y();
+        Room x = new Room(endX - startX, CORRIDOR_SIZE, new Vector2i(startX + ((endX - startX) / 2), fixedY), "default_hallway");
+        corridors.add(x);
+        //vertical
+        int startY;
+        int endY;
+        if ((getBottomVertex(path).equals(getLeftVertex(path)) ? topVertex : bottomVertex).equals(getBottomVertex(path))) {
+            //starting at
+            startY = Vector2dToVector2i(getBottomVertex(path)).y();
+            endY = Vector2dToVector2i(getTopVertex(path)).y() + 1;
+        } else {
+            //going toward
+            startY = Vector2dToVector2i(getBottomVertex(path)).y() - 1;
+            endY = Vector2dToVector2i(getTopVertex(path)).y();
+        }
+        int fixedX = Vector2dToVector2i(getBottomVertex(path).equals(getLeftVertex(path)) ? topVertex : bottomVertex).x();
+        Room y = new Room(CORRIDOR_SIZE, endY - startY, new Vector2i(fixedX, startY + ((endY - startY) / 2)), "default_hallway");
+        corridors.add(y);
     }
 
     private static Vector2d getLeftVertex(Edge path) {

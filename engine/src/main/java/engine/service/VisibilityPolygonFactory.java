@@ -12,8 +12,11 @@ import org.joml.Vector2dc;
 import org.joml.Vector3d;
 import org.joml.primitives.Rayd;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class VisibilityPolygonFactory {
 
@@ -24,17 +27,19 @@ public class VisibilityPolygonFactory {
         List<Edge> objectEdges = getObjectEdges(entitiesInViewDistance);
         List<Vector2d> uniqueObjectVertices = getUniqueObjectVertices(objectEdges);
         uniqueObjectVertices.addAll(getFallbackViewingQuad(viewPoint, viewDistance));
-
-        List<Vector2d> visibilityPolygonVertices = new ArrayList<>();
-        for (Vector2d vertex : uniqueObjectVertices) {
-            Vector2d dir = new Vector2d();
-            vertex.sub(viewPoint.x(), viewPoint.y(), dir).normalize();
-            visibilityPolygonVertices.add(getIntersectionRotated(viewPoint, objectEdges, dir, vertex.distance(viewPoint), 0));
-            visibilityPolygonVertices.add(getIntersectionRotated(viewPoint, objectEdges, dir, viewDistance, ONE_DEGREE_RADIAN));
-            visibilityPolygonVertices.add(getIntersectionRotated(viewPoint, objectEdges, dir, viewDistance, -ONE_DEGREE_RADIAN));
-        }
+        List<Vector2d> visibilityPolygonVertices =
+                uniqueObjectVertices
+                        .parallelStream()
+                        .unordered()
+                        .flatMap(vertex -> {
+                            Vector2d dir = new Vector2d();
+                            vertex.sub(viewPoint.x(), viewPoint.y(), dir).normalize();
+                            return Stream.of(getIntersectionRotated(viewPoint, objectEdges, dir, vertex.distance(viewPoint), 0),
+                                    getIntersectionRotated(viewPoint, objectEdges, dir, viewDistance, ONE_DEGREE_RADIAN),
+                                    getIntersectionRotated(viewPoint, objectEdges, dir, viewDistance, -ONE_DEGREE_RADIAN));
+                        })
+                        .collect(Collectors.toList());
         visibilityPolygonVertices = sortClockwise(visibilityPolygonVertices, viewPoint);
-
         return generateMesh(visibilityPolygonVertices, viewPoint);
     }
 
@@ -53,13 +58,18 @@ public class VisibilityPolygonFactory {
     }
 
     private static double getClosestEdgeIntersection(double viewDistance, List<Edge> objectEdges, Rayd ray) {
-        double distance = viewDistance;
-        for (Edge edge : objectEdges) {
-            double t = Intersectiond.intersectRayLineSegment(ray.oX, ray.oY, ray.dX, ray.dY,
-                    edge.getA().x(), edge.getA().y(), edge.getB().x(), edge.getB().y());
-            distance = Math.min(t == -1.0 ? viewDistance : t, distance);
-        }
-        return distance;
+        final double[] distance = {viewDistance};
+        objectEdges
+                .parallelStream()
+                .unordered()
+                .forEach(edge -> {
+                    double t = Intersectiond.intersectRayLineSegment(ray.oX, ray.oY, ray.dX, ray.dY,
+                            edge.getA().x(), edge.getA().y(), edge.getB().x(), edge.getB().y());
+                    if (distance[0] > (t == -1.0 ? viewDistance : t)) {
+                        distance[0] = t;
+                    }
+                });
+        return distance[0];
     }
 
     private static List<Vector2d> getFallbackViewingQuad(Vector2d viewPoint, double viewDistance) {
@@ -70,37 +80,38 @@ public class VisibilityPolygonFactory {
     }
 
     private static List<Entity> getEntitiesInViewDistance(Collection<Entity> entities, Vector2d viewPoint, double viewDistance) {
-        List<Entity> entitiesInViewDistance = new ArrayList<>();
-        for (Entity entity : entities) {
-            TransformationComponent transformationComponent = entity.getComponentOfType(TransformationComponent.class);
-            if (transformationComponent.getPosition().distance(new Vector2d(viewPoint.x(), viewPoint.y())) < viewDistance) {
-                entitiesInViewDistance.add(entity);
-            }
-        }
-        return entitiesInViewDistance;
+        return entities
+                .parallelStream()
+                .unordered()
+                .filter(entity -> entity.getComponentOfType(TransformationComponent.class).getPosition().distance(new Vector2d(viewPoint.x(), viewPoint.y())) < viewDistance)
+                .collect(Collectors.toList());
     }
 
     private static List<Vector2d> getUniqueObjectVertices(Collection<Edge> edges) {
-        List<Vector2d> objectVertices = new ArrayList<>();
-        for (Edge edge : edges) {
-            objectVertices.add(edge.getA());
-            objectVertices.add(edge.getB());
-        }
-        return objectVertices.stream().distinct().collect(Collectors.toList());
+        return edges
+                .parallelStream()
+                .unordered()
+                .flatMap(edge -> Stream.of(edge.getA(), edge.getB()))
+                .distinct()
+                .collect(Collectors.toList());
     }
 
     private static List<Edge> getObjectEdges(Collection<Entity> entities) {
-        List<Edge> entityEdges = new ArrayList<>();
-        for (Entity entity : entities) {
-            TransformationComponent transformationComponent = entity.getComponentOfType(TransformationComponent.class);
-            CollisionComponent collisionComponent = entity.getComponentOfType(CollisionComponent.class);
-            if (entity.hasComponentOfType(CollisionComponent.class) && entity.hasComponentOfType(VisibleFaceTag.class)) {
-                entityEdges.addAll(Collections.singletonList(convertEdgeToWorldSpace(collisionComponent.getHitBox().getHitBoxEdges()[0], transformationComponent.getPosition())));
-            } else if (entity.hasComponentOfType(CollisionComponent.class)) {
-                entityEdges.addAll(Arrays.asList(convertEdgesToWorldSpace(collisionComponent.getHitBox().getHitBoxEdges(), transformationComponent.getPosition())));
-            }
-        }
-        return entityEdges.stream().distinct().collect(Collectors.toList());
+        List<Edge> entityEdges =
+                entities.parallelStream()
+                        .unordered()
+                        .flatMap(entity -> {
+                            TransformationComponent transformationComponent = entity.getComponentOfType(TransformationComponent.class);
+                            CollisionComponent collisionComponent = entity.getComponentOfType(CollisionComponent.class);
+                            if (entity.hasComponentOfType(CollisionComponent.class) && entity.hasComponentOfType(VisibleFaceTag.class)) {
+                                return Stream.of(convertEdgeToWorldSpace(collisionComponent.getHitBox().getHitBoxEdges()[0], transformationComponent.getPosition()));
+                            } else if (entity.hasComponentOfType(CollisionComponent.class)) {
+                                return Stream.of(convertEdgesToWorldSpace(collisionComponent.getHitBox().getHitBoxEdges(), transformationComponent.getPosition()));
+                            }
+                            return Stream.empty();
+                        })
+                        .collect(Collectors.toList());
+        return entityEdges.parallelStream().unordered().distinct().collect(Collectors.toList());
     }
 
     private static Edge[] convertEdgesToWorldSpace(Edge[] edges, Vector2d position) {
@@ -121,12 +132,15 @@ public class VisibilityPolygonFactory {
     }
 
     private static List<Vector2d> sortClockwise(List<Vector2d> visibilityPolygonVertices, Vector2d viewPoint) {
-        return visibilityPolygonVertices.stream().sorted((v1, v2) -> {
-            Vector2d up = new Vector2d(1, 1);
-            double angleA = new Vector2d(v1.x(), v1.y()).sub(viewPoint).angle(up);
-            double angleB = new Vector2d(v2.x(), v2.y()).sub(viewPoint).angle(up);
-            return Double.compare(angleA, angleB);
-        }).collect(Collectors.toList());
+        return visibilityPolygonVertices
+                .stream()
+                .sorted((v1, v2) -> {
+                    Vector2d up = new Vector2d(1, 1);
+                    double angleA = new Vector2d(v1.x(), v1.y()).sub(viewPoint).angle(up);
+                    double angleB = new Vector2d(v2.x(), v2.y()).sub(viewPoint).angle(up);
+                    return Double.compare(angleA, angleB);
+                })
+                .collect(Collectors.toList());
     }
 
     private static Mesh generateMesh(List<Vector2d> visibilityPolygonVertices, Vector2d origin) {

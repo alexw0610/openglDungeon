@@ -8,7 +8,6 @@ import engine.entity.Entity;
 import engine.entity.EntityBuilder;
 import engine.enums.PrimitiveMeshShape;
 import engine.enums.ShaderType;
-import engine.enums.TextureKey;
 import engine.handler.EntityHandler;
 import exception.EncryptionException;
 import security.EncryptionHandler;
@@ -52,15 +51,16 @@ public class ServerUpdateProcessor implements Runnable {
 
     private void addOrUpdateCharacter(CharacterListUpdateDto.CharacterUpdateDto characterUpdateDto) {
         if (EntityHandler.getInstance().getObject(String.valueOf(characterUpdateDto.getCharacterId())) == null) {
-            Entity entity = EntityBuilder.builder()
-                    .withComponent(new TransformationComponent(characterUpdateDto.getPositionX(), characterUpdateDto.getPositionY()))
-                    .withComponent(new RenderComponent(PrimitiveMeshShape.TRIANGLE.value(), TextureKey.DEFAULT.value(), ShaderType.DEFAULT.value(), 1.0, 4))
+            Entity entity = EntityBuilder.builder().fromTemplate("humanoid")
+                    .withComponent(new RenderComponent(PrimitiveMeshShape.QUAD.value(), "human_female", ShaderType.DEFAULT.value(), 1.0, 4))
                     .build();
             EntityHandler.getInstance().addObject(String.valueOf(characterUpdateDto.getCharacterId()), entity);
+            System.out.println("Added new character");
         } else {
             Entity character = EntityHandler.getInstance().getObject(String.valueOf(characterUpdateDto.getCharacterId()));
             character.getComponentOfType(TransformationComponent.class).setPositionX(characterUpdateDto.getPositionX());
             character.getComponentOfType(TransformationComponent.class).setPositionY(characterUpdateDto.getPositionY());
+            System.out.println("Updated character");
         }
     }
 

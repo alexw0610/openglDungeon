@@ -72,7 +72,7 @@ public class RenderService {
         linkTextureToFbo(this.frameBuffers[1], this.renderedTextures[1]);
         gl.glEnable(gl.GL_BLEND);
         gl.glEnable(gl.GL_DEPTH_TEST);
-        gl.glClearColor(.015f, .008f, .012f, 0);
+        gl.glClearColor(.008f, .005f, .007f, 0);
         RenderService.cameraPosX = 0;
         RenderService.cameraPosY = 0;
         RenderService.cameraPosZ = 0.25;
@@ -100,9 +100,10 @@ public class RenderService {
                     break;
                 case VIEW:
                     gl.glBindFramebuffer(gl.GL_FRAMEBUFFER, frameBuffers[0]);
-                    gl.glBlendEquationSeparate(gl.GL_MAX, gl.GL_MAX);
                     gl.glEnable(gl.GL_DEPTH_TEST);
-                    gl.glDepthFunc(GL.GL_LEQUAL);
+                    gl.glDepthFunc(gl.GL_LEQUAL);
+                    gl.glBlendEquationSeparate(gl.GL_FUNC_ADD, gl.GL_FUNC_ADD);
+                    gl.glBlendFunc(gl.GL_SRC_ALPHA, gl.GL_ONE_MINUS_SRC_ALPHA);
                     shaderHandler.bindShaderOfType(ShaderType.VIEW_POLYGON_SHADER.value());
                     textureHandler.bindTextureWithKey(TextureKey.DEFAULT.value(), gl.GL_TEXTURE0);
                     gl.glPolygonMode(gl.GL_FRONT_AND_BACK, gl.GL_FILL);
@@ -111,7 +112,7 @@ public class RenderService {
                     gl.glBindFramebuffer(gl.GL_FRAMEBUFFER, frameBuffers[1]);
                     gl.glBlendEquationSeparate(gl.GL_MAX, gl.GL_MAX);
                     gl.glEnable(gl.GL_DEPTH_TEST);
-                    gl.glDepthFunc(GL.GL_LEQUAL);
+                    gl.glDepthFunc(gl.GL_LEQUAL);
                     shaderHandler.bindShaderOfType(ShaderType.LIGHT_POLYGON_SHADER.value());
                     textureHandler.bindTextureWithKey(TextureKey.DEFAULT.value(), gl.GL_TEXTURE0);
                     gl.glPolygonMode(gl.GL_FRONT_AND_BACK, gl.GL_FILL);

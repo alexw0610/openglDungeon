@@ -1,6 +1,6 @@
 #version 450
 
-#define DARKNESS 0.2
+#define DARKNESS 0.1
 #define DEFAULT_SPRITE_SIZE 32
 
 in vec3 vertex;
@@ -52,16 +52,19 @@ void main(){
         pixelColor = vec4(texture(texture_sampler, textureUv));
     }
     float averagePixelValue = (pixelColor.r + pixelColor.g + pixelColor.b)/3;
-    vec3 basePixel = vec3(.01, .008, .012);
+    vec3 basePixel = vec3(.007, .004, .006);
     if(viewArea.a > 0 || alwaysVisible == 1){
         basePixel = pixelColor.rgb * DARKNESS;
         if(lightArea.a > 0 ){
             if(shadeless == 1){
                 basePixel = pixelColor.rgb;
             }else {
-                basePixel = basePixel + pixelColor.rgb * lightArea.rgb * getViewAreaRSample();
+                basePixel = basePixel + pixelColor.rgb * lightArea.rgb;
             }
         }
+        basePixel = basePixel * viewArea.r;
+        fragColor = vec4(basePixel, pixelColor.a);
+    }else{
+        fragColor = vec4(basePixel, 0);
     }
-    fragColor = vec4(basePixel, pixelColor.a);
 }

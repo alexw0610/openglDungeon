@@ -22,12 +22,12 @@ public class PhysicsSystem {
         if (entity.hasComponentOfType(CollisionComponent.class)) {
             CollisionComponent collisionComponent = entity.getComponentOfType(CollisionComponent.class);
             List<Entity> objects = EntityHandler.getInstance().getAllEntitiesWithComponents(TransformationComponent.class, CollisionComponent.class);
-            List<Entity> walls = objects.stream().distinct().filter(e -> e.getComponentOfType(CollisionComponent.class).isObstructsMovement()).collect(Collectors.toList());
-            List<Entity> surfaces = objects.stream().distinct().filter(e -> e.hasComponentOfType(SurfaceTag.class)).collect(Collectors.toList());
+            List<Entity> walls = objects.parallelStream().unordered().distinct().filter(e -> e.getComponentOfType(CollisionComponent.class).isObstructsMovement()).collect(Collectors.toList());
+            List<Entity> surfaces = objects.parallelStream().unordered().distinct().filter(e -> e.hasComponentOfType(SurfaceTag.class)).collect(Collectors.toList());
             surfaces.remove(entity);
             walls.remove(entity);
-            if (isSurfaced(transformationComponent, physicsComponent, surfaces)) {
-                if (!isColliding(transformationComponent, physicsComponent, collisionComponent, walls)) {
+            if (willBeSurfaced(transformationComponent, physicsComponent, surfaces)) {
+                if (!willBeColliding(transformationComponent, physicsComponent, collisionComponent, walls)) {
                     applyMomentum(transformationComponent, physicsComponent);
                 } else {
                     deleteMomentum(physicsComponent);
@@ -40,7 +40,7 @@ public class PhysicsSystem {
         }
     }
 
-    private static boolean isSurfaced(TransformationComponent transformationComponent, PhysicsComponent physicsComponent, List<Entity> surfaces) {
+    private static boolean willBeSurfaced(TransformationComponent transformationComponent, PhysicsComponent physicsComponent, List<Entity> surfaces) {
         double x = transformationComponent.getPositionX() + physicsComponent.getMomentumX();
         double y = transformationComponent.getPositionY() + physicsComponent.getMomentumY();
         for (Entity entity : surfaces) {
@@ -56,7 +56,7 @@ public class PhysicsSystem {
         return false;
     }
 
-    private static boolean isColliding(TransformationComponent transformationComponent, PhysicsComponent physicsComponent, CollisionComponent collisionComponent, List<Entity> obstacles) {
+    private static boolean willBeColliding(TransformationComponent transformationComponent, PhysicsComponent physicsComponent, CollisionComponent collisionComponent, List<Entity> obstacles) {
         double x = transformationComponent.getPositionX() + physicsComponent.getMomentumX();
         double y = transformationComponent.getPositionY() + physicsComponent.getMomentumY();
         for (Entity entity : obstacles) {
@@ -97,7 +97,7 @@ public class PhysicsSystem {
     }
 
     private static double decay(double momentum) {
-        if (Math.abs(momentum) < 0.000001) {
+        if (Math.abs(momentum) < 0.0001) {
             return 0;
         } else {
             return momentum * (DECAY);

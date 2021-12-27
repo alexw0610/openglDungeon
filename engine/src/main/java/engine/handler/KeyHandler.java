@@ -17,6 +17,8 @@ public class KeyHandler {
         actionToKeyMap.put("movePlayerRight", KeyEvent.VK_D);
         actionToKeyMap.put("movePlayerLeft", KeyEvent.VK_A);
 
+        actionToKeyMap.put("dash", KeyEvent.VK_SPACE);
+
         actionToKeyMap.put("moveCameraUp", KeyEvent.VK_UP);
         actionToKeyMap.put("moveCameraDown", KeyEvent.VK_DOWN);
         actionToKeyMap.put("moveCameraRight", KeyEvent.VK_RIGHT);
