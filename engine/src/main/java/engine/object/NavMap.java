@@ -1,5 +1,7 @@
 package engine.object;
 
+import engine.component.RenderComponent;
+import engine.entity.EntityBuilder;
 import engine.enums.NavTileType;
 import org.joml.Vector2i;
 
@@ -25,13 +27,50 @@ public class NavMap {
         }
     }
 
+    public boolean isWalkable(Vector2i position) {
+        if (position.x() > 0 && position.x() < this.navTiles.length
+                && position.y() > 0 && position.y() < this.navTiles.length
+                && this.navTiles[position.x()][position.y()] != null
+                && this.navTiles[position.x()][position.y()].getType().equals(NavTileType.FLOOR)
+                && !this.navTiles[position.x()][position.y()].isObstructed()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public void instantiateDebugMeshes() {
+        for (int x = 0; x < navTiles.length; x++) {
+            for (int y = 0; y < navTiles.length; y++) {
+                if (navTiles[x][y] != null && navTiles[x][y].getType().equals(NavTileType.FLOOR)) {
+                    RenderComponent renderComponent = new RenderComponent("QUAD", "default", "shader", 0.9, 9);
+                    renderComponent.setShadeless(true);
+                    renderComponent.setAlwaysVisible(true);
+                    EntityBuilder.builder()
+                            .at(x, y)
+                            .withComponent(renderComponent)
+                            .buildAndInstantiate();
+                }
+            }
+        }
+    }
+
     public static class NavTile {
         private final NavTileType type;
+        private boolean isObstructed;
         private final String roomTemplate;
 
         public NavTile(NavTileType type, String roomTemplate) {
             this.type = type;
             this.roomTemplate = roomTemplate;
+        }
+
+        public boolean isObstructed() {
+            return isObstructed;
+        }
+
+        public void setObstructed(boolean obstructed) {
+            isObstructed = obstructed;
         }
 
         public NavTileType getType() {

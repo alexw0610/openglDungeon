@@ -28,7 +28,7 @@ public class DungeonGenerator {
     private static final int MAX_ROOM_AMOUNT = 32;
     private static final int CORRIDOR_SIZE = 2;
 
-    public static List<Room> generate(long seed, String dungeonTemplate) {
+    public static Vector2d generate(long seed, String dungeonTemplate) {
         Random random = new Random(seed);
         List<Room> rooms = generateRooms(random, dungeonTemplate);
         List<Room> mainRooms = getBiggestRoomsNotIntersecting(rooms, 8);
@@ -41,9 +41,14 @@ public class DungeonGenerator {
         mainRooms.forEach(tileMap::addRoom);
         sideRooms.forEach(tileMap::addRoom);
         corridors.forEach(tileMap::addRoom);
+        Room startRoom = mainRooms.stream()
+                .sorted(Comparator.comparingInt(r -> r.getRoomPosition().x()))
+                .sorted(Comparator.comparingInt(r -> r.getRoomPosition().y()))
+                .findFirst().orElse(mainRooms.get(0));
         tileMap.initMap(random);
+        tileMap.generateGlobalEntities(dungeonTemplate, mainRooms, random);
         NavHandler.getInstance().setNavMap(tileMap.getNavMap());
-        return mainRooms;
+        return new Vector2d(startRoom.getRoomPosition().x(), startRoom.getRoomPosition().y());
     }
 
     private static List<Room> getSideRooms(List<Room> rooms, List<Room> corridors, List<Room> mainRooms, int amount) {

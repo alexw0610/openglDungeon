@@ -2,3 +2,8 @@ templateName: "defaultDungeon"
 dungeonRoomTemplates:
   default_room: 0.5
   hall_room: 0.5
+globalEntities:
+  - templateName: "sewerPortal"
+    maxAmount: 1
+    minAmount: 1
+    locationConstraint: "FARTHEST"

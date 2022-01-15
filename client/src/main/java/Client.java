@@ -5,12 +5,10 @@ import engine.Engine;
 import engine.component.CameraComponent;
 import engine.component.TransformationComponent;
 import engine.entity.EntityBuilder;
-import engine.object.Room;
-import engine.service.DungeonGenerator;
+import engine.service.ZoneGenerator;
 import exception.UDPServerException;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.joml.Vector2i;
+import org.joml.Vector2d;
 import processor.CharacterUpdateSender;
 import processor.ServerUpdateProcessor;
 import udp.UdpSocket;
@@ -22,8 +20,6 @@ import util.ParameterUtil;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.Comparator;
-import java.util.List;
 import java.util.Map;
 
 public class Client {
@@ -42,13 +38,7 @@ public class Client {
 
     public static void main(String[] args) {
         Engine engine = new Engine();
-        String seed = RandomStringUtils.randomNumeric(8);
-        List<Room> dungeonRooms = DungeonGenerator.generate(Long.parseLong("1234"), "default_dungeon");
-        Room startRoom = dungeonRooms.stream()
-                .sorted(Comparator.comparingInt(r -> r.getRoomPosition().x()))
-                .sorted(Comparator.comparingInt(r -> r.getRoomPosition().y()))
-                .findFirst().orElse(dungeonRooms.get(0));
-        Vector2i startPosition = startRoom.getRoomPosition();
+        Vector2d startPosition = ZoneGenerator.generate("sewer_city");
         EntityBuilder.builder()
                 .fromTemplate("player")
                 .at(startPosition.x(), startPosition.y())

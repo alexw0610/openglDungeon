@@ -2,6 +2,5 @@ templateName: "defaultRoom"
 floorTextureKey: "floor_red_plates_debris"
 wallTextureKey: "wall_aqua_brick"
 roomFloorEntityTemplates:
-  portal: 0.05
 roomWallEntityTemplates:
   window: 0.13

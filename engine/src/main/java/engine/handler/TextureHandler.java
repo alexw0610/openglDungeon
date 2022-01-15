@@ -27,6 +27,15 @@ public class TextureHandler {
         loadedTextureMap.put(TextureKey.DEFAULT.value(), defaultTexture);
     }
 
+    public Texture getTexture(String textureKey) {
+        if (loadedTextureMap.containsKey(textureKey)) {
+            return loadedTextureMap.get(textureKey);
+        } else {
+            this.load(textureKey);
+            return loadedTextureMap.get(textureKey);
+        }
+    }
+
     public void bindTextureWithKey(String textureKey, int target) {
         GL4 gl = GLContext.getCurrent().getGL().getGL4();
         if (!boundTextureMap.containsKey(target) || !boundTextureMap.get(target).equals(textureKey)) {

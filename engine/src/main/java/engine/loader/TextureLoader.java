@@ -40,5 +40,16 @@ public class TextureLoader {
 
     }
 
+    public static BufferedImage loadTextureBuffer(String textureName) {
+        BufferedImage textureImage;
+        try {
+            InputStream resourceAsStream = TextureLoader.class.getClassLoader().getResourceAsStream(RESOURCE_TEXTURE_SUBFOLDER + textureName + DEFAULT_TEXTURE_FILE_EXTENSION);
+            textureImage = ImageIO.read(resourceAsStream);
+        } catch (IOException e) {
+            throw new MissingResourceException("The specified Texture cant be found (or opened) in the resource path. " + e, TextureLoader.class.getName(), textureName);
+        }
+        return textureImage;
+    }
+
 
 }

@@ -3,10 +3,12 @@ components:
   - type: "RenderComponent"
     arguments:
       meshKey: "QUAD"
-      textureKey: "orb_aqua"
+      textureKey: "portal"
       shaderType: "shader"
-      scale: 2.0
+      scale: 1.0
       layer: 1
+    modifiers:
+      shadeless: true
   - type: "TransformationComponent"
   - type: "LightSourceComponent"
     arguments:
@@ -15,11 +17,6 @@ components:
       lightSourceB: 0.9
       lightStrength: 1.0
       lightFallOff: 0.001
-  - type: "CollisionComponent"
+  - type: "AnimationComponent"
     arguments:
-      hitBoxType: "CIRCLE"
-      hitBoxSize: 0.5
-      obstructsMovement: false
-    modifiers:
-      #selfApplyComponents: "playAnimationOnce"
-      otherApplyComponents: "zoneChange"
+      speed: 150.0

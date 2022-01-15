@@ -1,24 +1,29 @@
 package engine.object;
 
+import engine.component.CollisionComponent;
 import engine.component.RenderComponent;
 import engine.component.VisibleFaceTag;
 import engine.entity.Entity;
 import engine.entity.EntityBuilder;
 import engine.enums.NavTileType;
+import engine.handler.DungeonTemplateHandler;
 import engine.handler.EntityHandler;
 import engine.handler.RoomTemplateHandler;
 import engine.handler.TextureHandler;
+import engine.loader.template.DungeonTemplate;
+import engine.loader.template.EntityInstanceTemplate;
 import engine.loader.template.RoomTemplate;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.joml.Random;
 import org.joml.Vector2i;
 
+import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 
 public class TileMap {
 
-    private static final String DUNGEON_ENTITY_PREFIX = "DUNGEON_ENTITY";
-
+    private static final String DUNGEON_ENTITY_PREFIX = "DUNGEON_ENTITY_";
     private final int size;
     private final String[][] tiles;
     private final NavMap navMap;
@@ -30,6 +35,15 @@ public class TileMap {
         this.navMap = new NavMap(size, seed);
         this.seed = seed;
     }
+
+    public void initMap(Random random) {
+        EntityHandler.getInstance().removeObjectsWithPrefix(DUNGEON_ENTITY_PREFIX);
+        generateFloor(random);
+        generateWalls(random);
+        generateRoomObjects(random);
+        generateRoomHostiles(random);
+    }
+
 
     public void addRoom(Room room) {
         for (int x = 0; x < room.getRoomWidth(); x++) {
@@ -44,12 +58,8 @@ public class TileMap {
         }
     }
 
-    public void initMap(Random random) {
-        EntityHandler.getInstance().removeObjectsWithPrefix(DUNGEON_ENTITY_PREFIX);
-        generateFloor(random);
-        generateWalls(random);
-        generateRoomObjects(random);
-        generateRoomHostiles(random);
+    public void setTile(int x, int y, String templateKey) {
+        this.tiles[x][y] = templateKey;
     }
 
     private void generateFloor(Random random) {
@@ -69,7 +79,7 @@ public class TileMap {
         entity.getComponentOfType(RenderComponent.class).setTextureKey(roomTemplate.getFloorTextureKey());
         entity.getComponentOfType(RenderComponent.class).setTextureOffSetX(Math.floor(Math.pow(random.nextFloat(), 3) * tileMapDimensions.x()));
         entity.getComponentOfType(RenderComponent.class).setTextureOffSetY(Math.floor(Math.pow(random.nextFloat(), 3) * tileMapDimensions.y()));
-        EntityHandler.getInstance().addObject(DUNGEON_ENTITY_PREFIX + "_" + RandomStringUtils.randomAlphanumeric(8), entity);
+        EntityHandler.getInstance().addObject(DUNGEON_ENTITY_PREFIX + RandomStringUtils.randomAlphanumeric(8), entity);
     }
 
     private void generateWalls(Random random) {
@@ -78,33 +88,18 @@ public class TileMap {
                 if (this.tiles[x][y] == null) {
                     if (isTile(x, y - 1)) {
                         RoomTemplate roomTemplate = RoomTemplateHandler.getInstance().getObject(this.tiles[x][y - 1]);
-                        float rnd = random.nextFloat();
-                        if (rnd < 0.90 && isTile(x, y + 1)) {
-                            roomTemplate = RoomTemplateHandler.getInstance().getObject(this.tiles[x][y + 1]);
-                            Vector2i tileMapDimensions = TextureHandler.TEXTURE_HANDLER.getTileMapDimensions(roomTemplate.getFloorTextureKey());
-                            Entity entity = EntityBuilder.builder().fromTemplate("floor").at(x, y).build();
-                            entity.getComponentOfType(RenderComponent.class).setTextureKey(roomTemplate.getFloorTextureKey());
-                            entity.getComponentOfType(RenderComponent.class).setTextureOffSetX(Math.floor(Math.pow(random.nextFloat(), 3) * tileMapDimensions.x()));
-                            entity.getComponentOfType(RenderComponent.class).setTextureOffSetY(Math.floor(Math.pow(random.nextFloat(), 3) * tileMapDimensions.y()));
-                            EntityHandler.getInstance().addObject(DUNGEON_ENTITY_PREFIX + "_" + RandomStringUtils.randomAlphanumeric(8), entity);
-                            EntityBuilder.builder()
-                                    .fromTemplate("bars").at(x, y)
-                                    .buildAndInstantiate(DUNGEON_ENTITY_PREFIX + "_" + RandomStringUtils.randomAlphanumeric(8));
-                            this.navMap.addTile(NavTileType.OBSTRUCTED, new Vector2i(x, y), this.tiles[x][y - 1]);
-                        } else {
-                            Vector2i tileMapDimensions = TextureHandler.TEXTURE_HANDLER.getTileMapDimensions(roomTemplate.getWallTextureKey());
-                            Entity entity = EntityBuilder.builder().fromTemplate("wall")
-                                    .at(x, y)
-                                    .buildAndInstantiate(DUNGEON_ENTITY_PREFIX + "_" + RandomStringUtils.randomAlphanumeric(8));
-                            entity.getComponentOfType(RenderComponent.class).setTextureOffSetX(Math.floor(Math.pow(random.nextFloat(), 3) * tileMapDimensions.x()));
-                            entity.getComponentOfType(RenderComponent.class).setTextureOffSetY(Math.floor(Math.pow(random.nextFloat(), 3) * tileMapDimensions.y()));
-                            entity.getComponentOfType(RenderComponent.class).setTextureKey(roomTemplate.getWallTextureKey());
-                            this.navMap.addTile(NavTileType.WALL, new Vector2i(x, y), this.tiles[x][y - 1]);
-                        }
+                        Vector2i tileMapDimensions = TextureHandler.TEXTURE_HANDLER.getTileMapDimensions(roomTemplate.getWallTextureKey());
+                        Entity entity = EntityBuilder.builder().fromTemplate("wall")
+                                .at(x, y)
+                                .buildAndInstantiate(DUNGEON_ENTITY_PREFIX + RandomStringUtils.randomAlphanumeric(8));
+                        entity.getComponentOfType(RenderComponent.class).setTextureOffSetX(Math.floor(Math.pow(random.nextFloat(), 3) * tileMapDimensions.x()));
+                        entity.getComponentOfType(RenderComponent.class).setTextureOffSetY(Math.floor(Math.pow(random.nextFloat(), 3) * tileMapDimensions.y()));
+                        entity.getComponentOfType(RenderComponent.class).setTextureKey(roomTemplate.getWallTextureKey());
+                        this.navMap.addTile(NavTileType.WALL, new Vector2i(x, y), this.tiles[x][y - 1]);
                     } else if (isAdjacentToTile(x, y)) {
                         Entity entity = EntityBuilder.builder().fromTemplate("wall")
                                 .at(x, y)
-                                .buildAndInstantiate(DUNGEON_ENTITY_PREFIX + "_" + RandomStringUtils.randomAlphanumeric(8));
+                                .buildAndInstantiate(DUNGEON_ENTITY_PREFIX + RandomStringUtils.randomAlphanumeric(8));
                         entity.removeComponent(RenderComponent.class);
                         entity.removeComponent(VisibleFaceTag.class);
                         this.navMap.addTile(NavTileType.WALL, new Vector2i(x, y), null);
@@ -130,9 +125,12 @@ public class TileMap {
                             for (Map.Entry<String, Double> entry : template.getRoomWallEntityTemplates().entrySet()) {
                                 total += entry.getValue();
                                 if (rnd <= total) {
-                                    EntityBuilder.builder().fromTemplate(entry.getKey())
+                                    Entity entity = EntityBuilder.builder().fromTemplate(entry.getKey())
                                             .at(x, y)
-                                            .buildAndInstantiate(DUNGEON_ENTITY_PREFIX + "_" + RandomStringUtils.randomAlphanumeric(8));
+                                            .buildAndInstantiate(DUNGEON_ENTITY_PREFIX + RandomStringUtils.randomAlphanumeric(8));
+                                    if (entity.getComponentOfType(CollisionComponent.class) != null && entity.getComponentOfType(CollisionComponent.class).isObstructsMovement()) {
+                                        this.navMap.getTile(new Vector2i(x, y)).setObstructed(true);
+                                    }
                                     break;
                                 }
                             }
@@ -144,9 +142,12 @@ public class TileMap {
                             for (Map.Entry<String, Double> entry : template.getRoomFloorEntityTemplates().entrySet()) {
                                 total += entry.getValue();
                                 if (rnd <= total) {
-                                    EntityBuilder.builder().fromTemplate(entry.getKey())
+                                    Entity entity = EntityBuilder.builder().fromTemplate(entry.getKey())
                                             .at(x, y)
-                                            .buildAndInstantiate(DUNGEON_ENTITY_PREFIX + "_" + RandomStringUtils.randomAlphanumeric(8));
+                                            .buildAndInstantiate(DUNGEON_ENTITY_PREFIX + RandomStringUtils.randomAlphanumeric(8));
+                                    if (entity.getComponentOfType(CollisionComponent.class) != null && entity.getComponentOfType(CollisionComponent.class).isObstructsMovement()) {
+                                        this.navMap.getTile(new Vector2i(x, y)).setObstructed(true);
+                                    }
                                     break;
                                 }
                             }
@@ -176,10 +177,69 @@ public class TileMap {
                         if (rnd <= total) {
                             EntityBuilder.builder().fromTemplate(entry.getKey())
                                     .at(x, y)
-                                    .buildAndInstantiate(DUNGEON_ENTITY_PREFIX + "_" + RandomStringUtils.randomAlphanumeric(8));
+                                    .buildAndInstantiate(DUNGEON_ENTITY_PREFIX + RandomStringUtils.randomAlphanumeric(8));
                             break;
                         }
                     }
+                }
+            }
+        }
+    }
+
+    public void generateGlobalEntities(String dungeonTemplate, List<Room> mainRooms, Random random) {
+        DungeonTemplate template = DungeonTemplateHandler.getInstance().getObject(dungeonTemplate);
+        List<EntityInstanceTemplate> globalEntities = template.getGlobalEntities();
+        if (!globalEntities.isEmpty()) {
+            for (EntityInstanceTemplate instanceTemplate : globalEntities) {
+                int instanceCount = 0;
+                int delta = instanceTemplate.getMaxAmount() - instanceTemplate.getMinAmount();
+                float rnd = random.nextFloat();
+                int targetAmount = instanceTemplate.getMinAmount() + (int) Math.floor(delta * rnd);
+                switch (instanceTemplate.getLocationConstraint()) {
+                    case "FARTHEST":
+                        Room farthestRoom = mainRooms.stream()
+                                .sorted(Comparator.comparingInt(r -> r.getRoomPosition().x()))
+                                .sorted(Comparator.comparingInt(r -> r.getRoomPosition().y()))
+                                .reduce((prev, next) -> next).orElse(mainRooms.get(mainRooms.size() - 1));
+                        while (instanceCount < targetAmount) {
+                            for (int x = farthestRoom.getRoomBottomLeft().x(); x < farthestRoom.getRoomBottomLeft().x() + farthestRoom.getRoomWidth(); x++) {
+                                for (int y = farthestRoom.getRoomBottomLeft().y(); y < farthestRoom.getRoomBottomLeft().y() + farthestRoom.getRoomHeight(); y++) {
+                                    if (!this.navMap.getTile(new Vector2i(x, y)).isObstructed()) {
+                                        rnd = random.nextFloat();
+                                        if (rnd > 0.85f && instanceCount < targetAmount) {
+                                            instanceCount++;
+                                            EntityBuilder.builder().fromTemplate(instanceTemplate.getTemplateName())
+                                                    .at(x, y)
+                                                    .buildAndInstantiate(DUNGEON_ENTITY_PREFIX + RandomStringUtils.randomAlphanumeric(8));
+                                            this.navMap.getTile(new Vector2i(x, y)).setObstructed(true);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        break;
+                    default:
+                        while (instanceCount < targetAmount) {
+                            for (int x = 0; x < this.size; x++) {
+                                for (int y = 0; y < this.size; y++) {
+                                    if (this.navMap.getTile(new Vector2i(x, y)) != null
+                                            && !this.navMap.getTile(new Vector2i(x, y)).isObstructed()
+                                            && this.navMap.getTile(new Vector2i(x, y)).getType().equals(NavTileType.FLOOR)) {
+                                        rnd = random.nextFloat();
+                                        if (rnd > 0.85f && instanceCount < targetAmount) {
+                                            instanceCount++;
+                                            Entity entity = EntityBuilder.builder().fromTemplate(instanceTemplate.getTemplateName())
+                                                    .at(x, y)
+                                                    .buildAndInstantiate(DUNGEON_ENTITY_PREFIX + RandomStringUtils.randomAlphanumeric(8));
+                                            if (entity.getComponentOfType(CollisionComponent.class) != null && entity.getComponentOfType(CollisionComponent.class).isObstructsMovement()) {
+                                                this.navMap.getTile(new Vector2i(x, y)).setObstructed(true);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        break;
                 }
             }
         }
@@ -199,6 +259,10 @@ public class TileMap {
     }
 
     public NavMap getNavMap() {
-        return navMap;
+        return this.navMap;
+    }
+
+    public int getSize() {
+        return size;
     }
 }

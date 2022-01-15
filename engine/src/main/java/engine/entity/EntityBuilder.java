@@ -74,6 +74,8 @@ public class EntityBuilder {
         if (transformationComponent != null) {
             transformationComponent.setPositionX(x);
             transformationComponent.setPositionY(y);
+        } else {
+            this.entity.addComponent(new TransformationComponent(x, y));
         }
         return this;
     }

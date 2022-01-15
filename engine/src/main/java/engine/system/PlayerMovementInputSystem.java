@@ -2,18 +2,15 @@ package engine.system;
 
 import com.jogamp.newt.event.MouseEvent;
 import engine.Engine;
-import engine.component.*;
-import engine.component.internal.CreatedByComponent;
+import engine.component.PhysicsComponent;
+import engine.component.PlayerComponent;
+import engine.component.TransformationComponent;
 import engine.entity.Entity;
-import engine.entity.EntityBuilder;
-import engine.enums.HitBoxType;
-import engine.enums.PrimitiveMeshShape;
-import engine.enums.ShaderType;
-import engine.enums.TextureKey;
 import engine.handler.KeyHandler;
 import engine.handler.MouseHandler;
 import org.joml.Vector2d;
-import org.joml.Vector3d;
+
+import java.text.NumberFormat;
 
 import static engine.EngineConstants.INERTIA;
 
@@ -39,36 +36,11 @@ public class PlayerMovementInputSystem {
             double x = physicsComponent.getMomentumX() - (Engine.stepTimeDelta * INERTIA * playerComponent.getMovementSpeed());
             physicsComponent.setMomentumX(x);
         }
-        if (KeyHandler.getInstance().isKeyForActionPressed("dash") && System.currentTimeMillis() - playerComponent.getLastDash() > 2500) {
-            playerComponent.setLastDash(System.currentTimeMillis());
-            Vector2d momentum = new Vector2d(physicsComponent.getMomentumX(), physicsComponent.getMomentumY());
-            momentum.normalize().mul(0.135);
-            double x = physicsComponent.getMomentumX() + momentum.x();
-            physicsComponent.setMomentumX(x);
-            double y = physicsComponent.getMomentumY() + momentum.y();
-            physicsComponent.setMomentumY(y);
-        }
         while (!MouseHandler.getInstance().getMouseClickedEventsQueue().isEmpty()) {
             MouseEvent event = MouseHandler.getInstance().getMouseClickedEventsQueue().poll();
             if (event != null && event.getButton() == MouseEvent.BUTTON1 && event.getClickCount() == 1) {
-                //TODO: temporary
                 Vector2d mousePositionWorld = MouseHandler.getInstance().getMousePositionWorldSpace();
-                Vector2d projectileDirection = new Vector2d(mousePositionWorld).sub(transformationComponent.getPosition());
-                projectileDirection = projectileDirection.normalize();
-                Entity orb = EntityBuilder.builder()
-                        .withComponent(new TransformationComponent(transformationComponent.getPositionX(), transformationComponent.getPositionY()))
-                        .withComponent(new RenderComponent(PrimitiveMeshShape.QUAD.value(), TextureKey.ORB_AQUA.value(), ShaderType.DEFAULT.value(), 1.0, 5))
-                        .withComponent(new AnimationComponent(0.01))
-                        .withComponent(new ProjectileComponent(projectileDirection.x(), projectileDirection.y(), 0.01))
-                        .withComponent(new LightSourceComponent(new Vector3d(Math.random(), Math.random(), Math.random()), 1, 0.01))
-                        .withComponent(new DestructionComponent(5000.0))
-                        .withComponent(new CollisionComponent(HitBoxType.CIRCLE.value(), 0.2, false))
-                        .withComponent(new CreatedByComponent(entity))
-                        .buildAndInstantiate();
-                orb.getComponentOfType(RenderComponent.class).setShadeless(true);
-                orb.getComponentOfType(RenderComponent.class).setAlwaysVisible(true);
-                orb.getComponentOfType(CollisionComponent.class).setSelfApplyComponents("selfDestruct");
-
+                System.out.println(mousePositionWorld.toString(NumberFormat.getIntegerInstance()));
             }
         }
     }

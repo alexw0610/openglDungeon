@@ -1,0 +1,10 @@
+templateName: "rndPortal"
+extendedTemplate: "portal"
+components:
+  - type: "CollisionComponent"
+    arguments:
+      hitBoxType: "CIRCLE"
+      hitBoxSize: 0.5
+      obstructsMovement: false
+    modifiers:
+      otherApplyComponents: "sewerZoneChange"

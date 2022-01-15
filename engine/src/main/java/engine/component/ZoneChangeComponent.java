@@ -3,6 +3,7 @@ package engine.component;
 public class ZoneChangeComponent implements Component {
 
     private long seed;
+    private String zoneTemplateName;
 
     public ZoneChangeComponent() {
     }
@@ -17,5 +18,13 @@ public class ZoneChangeComponent implements Component {
 
     public void setSeed(long seed) {
         this.seed = seed;
+    }
+
+    public String getZoneTemplateName() {
+        return zoneTemplateName;
+    }
+
+    public void setZoneTemplateName(String zoneTemplateName) {
+        this.zoneTemplateName = zoneTemplateName;
     }
 }

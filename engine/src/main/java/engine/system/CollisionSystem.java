@@ -8,7 +8,7 @@ import engine.component.internal.CreatedByComponent;
 import engine.entity.ComponentBuilder;
 import engine.entity.Entity;
 import engine.handler.EntityHandler;
-import engine.system.util.CollisionUtil;
+import engine.service.util.CollisionUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.joml.Vector2d;
 
