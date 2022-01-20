@@ -145,9 +145,9 @@ public class RenderService {
                 renderComponent.isShadeless(),
                 renderComponent.isMirrored(),
                 renderComponent.getPerspectiveLayer(),
-                renderComponent.getColorOverride().x(),
-                renderComponent.getColorOverride().y(),
-                renderComponent.getColorOverride().z());
+                renderComponent.getColorOverride() != null ? renderComponent.getColorOverride().x() : 1,
+                renderComponent.getColorOverride() != null ? renderComponent.getColorOverride().y() : 1,
+                renderComponent.getColorOverride() != null ? renderComponent.getColorOverride().z() : 1);
         drawCall(meshHandler.getMeshForKey(renderComponent.getMeshKey()), gl.GL_TRIANGLES);
         entitiesRendered++;
     }
@@ -155,7 +155,7 @@ public class RenderService {
     public void renderToViewMap(Mesh mesh) {
         GL4 gl = GLContext.getCurrent().getGL().getGL4();
         switchRenderMode(RenderMode.VIEW);
-        updateUbo(0, 0, 1, 1, 0, 0, false, false, false, 0, -1, -1, -1);
+        updateUbo(0, 0, 1, 1, 0, 0, false, false, false, 0, 1, 1, 1);
         drawCall(mesh, gl.GL_TRIANGLES);
         viewMapsRendered++;
     }

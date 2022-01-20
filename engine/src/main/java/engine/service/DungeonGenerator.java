@@ -41,10 +41,7 @@ public class DungeonGenerator {
         mainRooms.forEach(tileMap::addRoom);
         sideRooms.forEach(tileMap::addRoom);
         corridors.forEach(tileMap::addRoom);
-        Room startRoom = mainRooms.stream()
-                .sorted(Comparator.comparingInt(r -> r.getRoomPosition().x()))
-                .sorted(Comparator.comparingInt(r -> r.getRoomPosition().y()))
-                .findFirst().orElse(mainRooms.get(0));
+        Room startRoom = mainRooms.stream().min(Comparator.comparingInt(r -> r.getRoomPosition().x() + r.getRoomPosition().y())).orElse(mainRooms.get(0));
         tileMap.initMap(random);
         tileMap.generateGlobalEntities(dungeonTemplate, mainRooms, random);
         NavHandler.getInstance().setNavMap(tileMap.getNavMap());

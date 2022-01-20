@@ -75,6 +75,9 @@ public class Engine {
         //Game logic
         List<Entity> entities = EntityHandler.getInstance().getAllObjects();
         for (Entity entity : entities) {
+            if (StatSystem.isResponsibleFor(entity)) {
+                StatSystem.processEntity(entity);
+            }
             if (PlayerMovementInputSystem.isResponsibleFor(entity)) {
                 PlayerMovementInputSystem.processEntity(entity);
             }
@@ -98,6 +101,15 @@ public class Engine {
             }
             if (ZoneChangeSystem.isResponsibleFor(entity)) {
                 ZoneChangeSystem.processEntity(entity);
+            }
+            if (AttackSystem.isResponsibleFor(entity)) {
+                AttackSystem.processEntity(entity);
+            }
+            if (ColorShadeSystem.isResponsibleFor(entity)) {
+                ColorShadeSystem.processEntity(entity);
+            }
+            if (InventorySystem.isResponsibleFor(entity)) {
+                InventorySystem.processEntity(entity);
             }
         }
         this.gameLogicTime = System.nanoTime() - sectionStartTime;

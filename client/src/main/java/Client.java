@@ -52,7 +52,9 @@ public class Client {
 
         if (!Boolean.parseBoolean(applicationProperties.getProperty("offlineMode"))) {
             try {
+                System.out.println("Connecting with server..");
                 establishServerConnection();
+                System.out.println("Connection established. Sending updates to " + serverUdpUpdateHost + ":" + serverUdpUpdatePort);
             } catch (UDPServerException e) {
                 System.err.println("Failed to create server connection! " + e.getMessage());
                 System.exit(1);
@@ -95,7 +97,6 @@ public class Client {
 
     private static void registerUdpListener(UpdateListener udpListener, SSLServerConnection serverConnection) {
         String listeningPort = udpListener.getPort();
-        System.out.println("rec port: " + udpListener.getPort());
         ReadyForReceivingRequest readyForReceivingRequest = ReadyForReceivingRequest.builder()
                 .receivingPort(listeningPort)
                 .characterName(applicationProperties.getProperty("characterName"))
@@ -105,7 +106,6 @@ public class Client {
             System.err.println("Error while registering UDP Socket with the server. Request was not successful: " + genericResponse.getResponseText());
             System.exit(1);
         }
-        System.out.println("server udp port: " + getParameterOrExit(genericResponse.getResponseParameters(), SERVER_UDP_PORT));
         serverUdpUpdatePort = getParameterOrExit(genericResponse.getResponseParameters(), SERVER_UDP_PORT);
         serverUdpUpdateHost = applicationProperties.getProperty("serverHost");
         connectionId = Integer.parseInt(getParameterOrExit(genericResponse.getResponseParameters(), CONNECTION_ID));

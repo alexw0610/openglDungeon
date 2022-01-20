@@ -1,0 +1,6 @@
+templateName: "potionItem"
+type: "ItemComponent"
+arguments:
+  itemName: "healthPotion"
+  itemType: "Consumable"
+  itemTexture: "potion"

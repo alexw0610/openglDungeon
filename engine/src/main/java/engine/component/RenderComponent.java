@@ -16,9 +16,7 @@ public class RenderComponent implements Component {
     private double textureRotation;
     private boolean mirrored;
     private double perspectiveLayer;
-    private double colorROverride;
-    private double colorGOverride;
-    private double colorBOverride;
+    private Vector3d colorOverride;
 
     public RenderComponent(String meshKey, String textureKey, String shaderType, Double scale, Integer layer) {
         super();
@@ -34,9 +32,6 @@ public class RenderComponent implements Component {
         this.textureRotation = 0;
         this.mirrored = false;
         this.perspectiveLayer = 1;
-        this.colorROverride = -1.0;
-        this.colorGOverride = -1.0;
-        this.colorBOverride = -1.0;
     }
 
     public String getMeshKey() {
@@ -136,13 +131,11 @@ public class RenderComponent implements Component {
     }
 
     public Vector3d getColorOverride() {
-        return new Vector3d(colorROverride, colorGOverride, colorBOverride);
+        return colorOverride;
     }
 
     public void setColorOverride(Vector3d colorOverride) {
-        this.colorROverride = colorOverride.x();
-        this.colorGOverride = colorOverride.y();
-        this.colorBOverride = colorOverride.z();
+        this.colorOverride = colorOverride;
     }
 
     public void setRandomizeTextureOffset(Boolean bool) {

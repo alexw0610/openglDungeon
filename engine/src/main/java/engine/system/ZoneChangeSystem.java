@@ -1,7 +1,7 @@
 package engine.system;
 
 import engine.component.CameraComponent;
-import engine.component.PlayerComponent;
+import engine.component.PlayerTag;
 import engine.component.TransformationComponent;
 import engine.component.ZoneChangeComponent;
 import engine.entity.Entity;
@@ -40,6 +40,6 @@ public class ZoneChangeSystem {
 
     public static boolean isResponsibleFor(Entity entity) {
         return entity.hasComponentOfType(ZoneChangeComponent.class)
-                && entity.hasComponentOfType(PlayerComponent.class);
+                && entity.hasComponentOfType(PlayerTag.class);
     }
 }

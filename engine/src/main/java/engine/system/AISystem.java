@@ -1,11 +1,9 @@
 package engine.system;
 
-import engine.Engine;
-import engine.component.AIComponent;
-import engine.component.PhysicsComponent;
-import engine.component.PlayerComponent;
-import engine.component.TransformationComponent;
+import engine.component.*;
+import engine.entity.ComponentBuilder;
 import engine.entity.Entity;
+import engine.entity.EntityBuilder;
 import engine.enums.AIBehaviourState;
 import engine.handler.EntityHandler;
 import engine.handler.NavHandler;
@@ -17,39 +15,37 @@ import org.joml.Vector2dc;
 import org.joml.Vector2i;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
-
-import static engine.EngineConstants.INERTIA;
+import java.util.Optional;
 
 public class AISystem {
     public static void processEntity(Entity entity) {
         AIComponent aiComponent = entity.getComponentOfType(AIComponent.class);
         TransformationComponent transformationComponent = entity.getComponentOfType(TransformationComponent.class);
         PhysicsComponent physicsComponent = entity.getComponentOfType(PhysicsComponent.class);
-        Vector2d currentPosition = transformationComponent.getPosition();
+        checkAggro(aiComponent, transformationComponent);
         switch (aiComponent.getCurrentState()) {
             case IDLE:
-                if (!checkAggro(aiComponent, currentPosition)) {
-                    if (Math.random() < 0.90) {
-                        break;
-                    }
-                    idle(aiComponent, currentPosition);
+                if (Math.random() < 0.90) {
+                    break;
                 }
+                idle(aiComponent, transformationComponent);
                 break;
             case ATTACKING:
-                attacking(aiComponent, currentPosition);
+                attacking(aiComponent, transformationComponent);
                 break;
             case PATHING:
-                checkAggro(aiComponent, currentPosition);
                 pathing(aiComponent, transformationComponent, physicsComponent);
                 break;
         }
     }
 
-    private static void idle(AIComponent aiComponent, Vector2d currentPosition) {
+    private static void idle(AIComponent aiComponent, TransformationComponent transformationComponent) {
         NavMap navMap = NavHandler.getInstance().getNavMap();
         Vector2d targetPosition = new Vector2d();
         List<Vector2i> pathToTarget = new ArrayList<>();
+        Vector2d currentPosition = transformationComponent.getPosition();
         while (pathToTarget.isEmpty()) {
             currentPosition.add((int) Math.round(((Math.random() * 2) - 1) * 6), (int) Math.round(((Math.random() * 2) - 1) * 6), targetPosition);
             pathToTarget = new Pathfinding().getPath(navMap, currentPosition, targetPosition);
@@ -58,8 +54,16 @@ public class AISystem {
         aiComponent.setPathToTarget(pathToTarget);
     }
 
-    private static void attacking(AIComponent aiComponent, Vector2d currentTilePosition) {
-
+    private static void attacking(AIComponent aiComponent, TransformationComponent transformationComponent) {
+        if (aiComponent.getAttackedLast() == 0 || aiComponent.getAttackedLast() < System.currentTimeMillis() - 1500.0) {
+            AttackComponent attack = (AttackComponent) ComponentBuilder.fromTemplate("slashAttack");
+            attack.setTargetComponentConstraint(PlayerTag.class);
+            EntityBuilder.builder()
+                    .withComponent(attack)
+                    .at(transformationComponent.getPosition().x(), transformationComponent.getPosition().y())
+                    .buildAndInstantiate();
+            aiComponent.setAttackedLast(System.currentTimeMillis());
+        }
     }
 
     private static void pathing(AIComponent aiComponent, TransformationComponent transformationComponent, PhysicsComponent physicsComponent) {
@@ -70,14 +74,9 @@ public class AISystem {
             if (transformationComponent.getPosition().distance(currentTargetD) < 0.01) {
                 currentPath.remove(0);
                 aiComponent.setPathToTarget(currentPath);
-            } else {
-                Vector2d dir = new Vector2d();
-                currentTargetD.sub(transformationComponent.getPosition(), dir);
-                dir.normalize();
-                double x = physicsComponent.getMomentumX() + Engine.stepTimeDelta * dir.x() * INERTIA * 0.02;
-                double y = physicsComponent.getMomentumY() + Engine.stepTimeDelta * dir.y() * INERTIA * 0.02;
-                physicsComponent.setMomentumX(x);
-                physicsComponent.setMomentumY(y);
+                physicsComponent.setMoveToTarget(null);
+            } else if (physicsComponent.getMoveToTarget() == null || !physicsComponent.getMoveToTarget().equals(currentTargetD)) {
+                physicsComponent.setMoveToTarget(currentTargetD);
             }
         } else {
             aiComponent.setCurrentState(AIBehaviourState.IDLE);
@@ -85,25 +84,30 @@ public class AISystem {
         }
     }
 
-    private static boolean checkAggro(AIComponent aiComponent, Vector2d currentPosition) {
+    private static void checkAggro(AIComponent aiComponent, TransformationComponent transformationComponent) {
         NavMap navMap = NavHandler.getInstance().getNavMap();
-        Vector2d playerPos = EntityHandler.getInstance()
-                .getEntityWithComponent(PlayerComponent.class)
-                .getComponentOfType(TransformationComponent.class)
-                .getPosition();
-        if (aiComponent.getCurrentState().equals(AIBehaviourState.PATHING)
-                && aiComponent.getPathToTarget() != null
-                && !aiComponent.getPathToTarget().isEmpty()
-                && targetDistanceDeltaSmallerThan(aiComponent, playerPos, 1)) {
-            return true;
+        List<Entity> targets = EntityHandler.getInstance().getAllEntitiesWithComponents(AiTargetTag.class);
+        Vector2d currentPosition = transformationComponent.getPosition();
+        Optional<Entity> nearestTarget = targets.stream().min(Comparator.comparingDouble(targetA -> targetA.getComponentOfType(TransformationComponent.class).getPosition().distance(currentPosition)));
+        if (nearestTarget.isPresent()) {
+            Vector2d targetPosition = nearestTarget.get().getComponentOfType(TransformationComponent.class).getPosition();
+            if (CollisionUtil.hasLineOfSight(currentPosition, targetPosition, 5)) {
+                if (currentPosition.distance(targetPosition) < 1) {
+                    aiComponent.setCurrentState(AIBehaviourState.ATTACKING);
+                } else if (aiComponent.getCurrentState().equals(AIBehaviourState.PATHING)
+                        && aiComponent.getPathToTarget() != null
+                        && !aiComponent.getPathToTarget().isEmpty()
+                        && targetDistanceDeltaSmallerThan(aiComponent, targetPosition, 1)) {
+                    aiComponent.setCurrentState(AIBehaviourState.PATHING);
+                } else {
+                    aiComponent.setCurrentState(AIBehaviourState.PATHING);
+                    List<Vector2i> pathToTarget = new Pathfinding().getPath(navMap, currentPosition, targetPosition);
+                    aiComponent.setPathToTarget(pathToTarget);
+                }
+            } else {
+                aiComponent.setCurrentState(AIBehaviourState.IDLE);
+            }
         }
-        if (CollisionUtil.hasLineOfSight(currentPosition, playerPos, 5)) {
-            aiComponent.setCurrentState(AIBehaviourState.PATHING);
-            List<Vector2i> pathToTarget = new Pathfinding().getPath(navMap, currentPosition, playerPos);
-            aiComponent.setPathToTarget(pathToTarget);
-            return true;
-        }
-        return false;
     }
 
     private static boolean targetDistanceDeltaSmallerThan(AIComponent aiComponent, Vector2d playerPos, int distance) {
@@ -113,6 +117,7 @@ public class AISystem {
     }
 
     public static boolean isResponsibleFor(Entity entity) {
-        return entity.hasComponentOfType(AIComponent.class) && entity.hasComponentOfType(PhysicsComponent.class);
+        return entity.hasComponentOfType(AIComponent.class)
+                && entity.hasComponentOfType(PhysicsComponent.class);
     }
 }

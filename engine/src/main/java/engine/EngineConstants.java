@@ -15,4 +15,7 @@ public class EngineConstants {
     public static final double CAMERA_MOVE_SPEED = 0.00001;
     public static final double CAMERA_ZOOM_SPEED = 0.000001;
     public static final double RENDER_DISTANCE = 10;
+    public static final double KNOCKBACK_VALUE_FACTOR = 100.0;
+    public static final double MOVEMENT_SPEED_VALUE_FACTOR = 1000.0;
+
 }

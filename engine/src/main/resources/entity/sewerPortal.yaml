@@ -1,4 +1,4 @@
-templateName: "rndPortal"
+templateName: "sewerPortal"
 extendedTemplate: "portal"
 components:
   - type: "CollisionComponent"

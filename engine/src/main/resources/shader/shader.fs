@@ -45,12 +45,8 @@ void main(){
     ((textureUv.y/(textureSheetSize.y/DEFAULT_SPRITE_SIZE))+((DEFAULT_SPRITE_SIZE/textureSheetSize.y)*animationOffsetY)));
     vec4 viewArea = vec4(texture(view_sampler, viewMapUv.xy));
     vec4 lightArea = vec4(texture(light_sampler, viewMapUv.xy));
-    vec4 pixelColor;
-    if(colorOverride.r != -1){
-        pixelColor = vec4(colorOverride.rgb,1);
-    }else{
-        pixelColor = vec4(texture(texture_sampler, textureUv));
-    }
+    vec4 pixelColor = vec4(texture(texture_sampler, textureUv)) *  vec4(colorOverride.rgb,1);
+
     float averagePixelValue = (pixelColor.r + pixelColor.g + pixelColor.b)/3;
     vec3 basePixel = vec3(.007, .004, .006);
     if(viewArea.a > 0 || alwaysVisible == 1){

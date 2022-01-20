@@ -1,9 +1,7 @@
 package engine.system;
 
-import engine.component.CollisionComponent;
-import engine.component.PhysicsComponent;
-import engine.component.SurfaceTag;
-import engine.component.TransformationComponent;
+import engine.Engine;
+import engine.component.*;
 import engine.entity.Entity;
 import engine.handler.EntityHandler;
 import engine.service.util.CollisionUtil;
@@ -13,12 +11,33 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static engine.EngineConstants.DECAY;
+import static engine.EngineConstants.INERTIA;
 
 public class PhysicsSystem {
 
     public static void processEntity(Entity entity) {
         TransformationComponent transformationComponent = entity.getComponentOfType(TransformationComponent.class);
         PhysicsComponent physicsComponent = entity.getComponentOfType(PhysicsComponent.class);
+        StatComponent statComponent = entity.getComponentOfType(StatComponent.class);
+        applyMoveToTargetMomentum(transformationComponent, physicsComponent, statComponent);
+        applyPhysics(entity, transformationComponent, physicsComponent);
+    }
+
+    private static void applyMoveToTargetMomentum(TransformationComponent transformationComponent, PhysicsComponent physicsComponent, StatComponent statComponent) {
+        double movementSpeed = statComponent != null ? statComponent.getMovementSpeed() : 50;
+        Vector2d moveToTarget = physicsComponent.getMoveToTarget();
+        if (moveToTarget != null) {
+            Vector2d dir = new Vector2d();
+            moveToTarget.sub(transformationComponent.getPosition(), dir);
+            dir.normalize();
+            double x = physicsComponent.getMomentumX() + Engine.stepTimeDelta * dir.x() * INERTIA * movementSpeed;
+            double y = physicsComponent.getMomentumY() + Engine.stepTimeDelta * dir.y() * INERTIA * movementSpeed;
+            physicsComponent.setMomentumX(x);
+            physicsComponent.setMomentumY(y);
+        }
+    }
+
+    private static void applyPhysics(Entity entity, TransformationComponent transformationComponent, PhysicsComponent physicsComponent) {
         if (entity.hasComponentOfType(CollisionComponent.class)) {
             CollisionComponent collisionComponent = entity.getComponentOfType(CollisionComponent.class);
             List<Entity> objects = EntityHandler.getInstance().getAllEntitiesWithComponents(TransformationComponent.class, CollisionComponent.class);

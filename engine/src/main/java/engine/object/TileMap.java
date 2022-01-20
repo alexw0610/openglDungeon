@@ -1,19 +1,17 @@
 package engine.object;
 
-import engine.component.CollisionComponent;
-import engine.component.RenderComponent;
-import engine.component.VisibleFaceTag;
+import engine.component.*;
+import engine.entity.ComponentBuilder;
 import engine.entity.Entity;
 import engine.entity.EntityBuilder;
 import engine.enums.NavTileType;
-import engine.handler.DungeonTemplateHandler;
-import engine.handler.EntityHandler;
-import engine.handler.RoomTemplateHandler;
-import engine.handler.TextureHandler;
+import engine.handler.*;
 import engine.loader.template.DungeonTemplate;
 import engine.loader.template.EntityInstanceTemplate;
+import engine.loader.template.LootTableTemplate;
 import engine.loader.template.RoomTemplate;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.joml.Random;
 import org.joml.Vector2i;
 
@@ -175,9 +173,24 @@ public class TileMap {
                     for (Map.Entry<String, Double> entry : template.getRoomHostileEntityTemplates().entrySet()) {
                         total += entry.getValue();
                         if (rnd <= total) {
-                            EntityBuilder.builder().fromTemplate(entry.getKey())
+                            Entity entity = EntityBuilder.builder().fromTemplate(entry.getKey())
                                     .at(x, y)
                                     .buildAndInstantiate(DUNGEON_ENTITY_PREFIX + RandomStringUtils.randomAlphanumeric(8));
+                            InventoryComponent inventoryComponent = entity.getComponentOfType(InventoryComponent.class);
+                            if (inventoryComponent != null && StringUtils.isNotBlank(inventoryComponent.getLootTable())) {
+                                LootTableTemplate lootTable = LootTableTemplateHandler.getInstance().getObject(inventoryComponent.getLootTable());
+                                for (int i = 0; i < inventoryComponent.getInventorySize(); i++) {
+                                    float rndLoot = random.nextFloat();
+                                    float totalLoot = 0;
+                                    for (Map.Entry<String, Double> loot : lootTable.getLootMap().entrySet()) {
+                                        totalLoot += loot.getValue();
+                                        if (rndLoot <= totalLoot) {
+                                            inventoryComponent.getItems().add((ItemComponent) ComponentBuilder.fromTemplate(loot.getKey()));
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
                             break;
                         }
                     }
@@ -198,9 +211,8 @@ public class TileMap {
                 switch (instanceTemplate.getLocationConstraint()) {
                     case "FARTHEST":
                         Room farthestRoom = mainRooms.stream()
-                                .sorted(Comparator.comparingInt(r -> r.getRoomPosition().x()))
-                                .sorted(Comparator.comparingInt(r -> r.getRoomPosition().y()))
-                                .reduce((prev, next) -> next).orElse(mainRooms.get(mainRooms.size() - 1));
+                                .max(Comparator.comparingInt(r -> r.getRoomPosition().x() + r.getRoomPosition().y()))
+                                .orElse(mainRooms.get(mainRooms.size() - 1));
                         while (instanceCount < targetAmount) {
                             for (int x = farthestRoom.getRoomBottomLeft().x(); x < farthestRoom.getRoomBottomLeft().x() + farthestRoom.getRoomWidth(); x++) {
                                 for (int y = farthestRoom.getRoomBottomLeft().y(); y < farthestRoom.getRoomBottomLeft().y() + farthestRoom.getRoomHeight(); y++) {

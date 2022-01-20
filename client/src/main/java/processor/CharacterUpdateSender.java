@@ -1,7 +1,7 @@
 package processor;
 
 import dto.udp.PlayerUpdateDto;
-import engine.component.PlayerComponent;
+import engine.component.PlayerTag;
 import engine.component.TransformationComponent;
 import engine.entity.Entity;
 import engine.handler.EntityHandler;
@@ -35,7 +35,7 @@ public class CharacterUpdateSender implements Runnable {
     public void run() {
         ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(1);
         ScheduledFuture<?> updateWorkerFactory = scheduledExecutorService.scheduleAtFixedRate(() -> {
-            Entity player = EntityHandler.getInstance().getEntityWithComponent(PlayerComponent.class);
+            Entity player = EntityHandler.getInstance().getEntityWithComponent(PlayerTag.class);
             NavMap navMap = NavHandler.getInstance().getNavMap();
             if (navMap != null) {
                 long seed = navMap.getSeed();

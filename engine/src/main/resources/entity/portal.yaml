@@ -14,7 +14,7 @@ components:
     arguments:
       lightSourceR: 0.7
       lightSourceG: 0.7
-      lightSourceB: 0.9
+      lightSourceB: 1.0
       lightStrength: 1.0
       lightFallOff: 0.001
   - type: "AnimationComponent"

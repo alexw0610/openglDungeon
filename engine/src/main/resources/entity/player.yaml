@@ -10,8 +10,17 @@ components:
       layer: 3
     modifiers:
       shadeless: false
-  - type: "PlayerComponent"
+  - type: "PlayerTag"
   - type: "CameraTargetTag"
   - type: "ViewSourceTag"
+  - type: "AiTargetTag"
+  - type: "StatComponent"
+    modifiers:
+      healthPoints: 200.0
+      movementSpeed: 70.0
+  - type: "InventoryComponent"
+    arguments:
+      inventorySize: 8
+      pickUpRange: 0.5
 
 

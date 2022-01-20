@@ -2,6 +2,7 @@ package processor;
 
 import dto.udp.CharacterListUpdateDto;
 import dto.udp.UpdateEncryptionWrapper;
+import engine.component.AiTargetTag;
 import engine.component.PhysicsComponent;
 import engine.component.RenderComponent;
 import engine.component.TransformationComponent;
@@ -61,6 +62,7 @@ public class ServerUpdateProcessor implements Runnable {
                     .fromTemplate("humanoid")
                     .at(characterUpdateDto.getPositionX(), characterUpdateDto.getPositionY())
                     .withComponent(new RenderComponent(PrimitiveMeshShape.QUAD.value(), "human_female", ShaderType.DEFAULT.value(), 1.0, 4))
+                    .withComponent(new AiTargetTag())
                     .build();
             EntityHandler.getInstance().addObject(String.valueOf(characterUpdateDto.getCharacterId()), entity);
         } else {

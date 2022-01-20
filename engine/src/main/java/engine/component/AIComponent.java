@@ -8,6 +8,7 @@ import java.util.List;
 public class AIComponent implements Component {
     private List<Vector2i> pathToTarget;
     private AIBehaviourState currentState;
+    private double attackedLast;
 
     public AIComponent() {
         this.currentState = AIBehaviourState.IDLE;
@@ -27,5 +28,13 @@ public class AIComponent implements Component {
 
     public void setCurrentState(AIBehaviourState currentState) {
         this.currentState = currentState;
+    }
+
+    public double getAttackedLast() {
+        return attackedLast;
+    }
+
+    public void setAttackedLast(double attackedLast) {
+        this.attackedLast = attackedLast;
     }
 }

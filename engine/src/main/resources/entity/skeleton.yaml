@@ -11,3 +11,14 @@ components:
     modifiers:
       shadeless: false
   - type: "AIComponent"
+  - type: "MobTag"
+  - type: "StatComponent"
+    modifiers:
+      healthPoints: 60.0
+      movementSpeed: 35.0
+  - type: "InventoryComponent"
+    arguments:
+      inventorySize: 8
+      pickUpRange: 0.0
+    modifiers:
+      lootTable: "basicLootTable"
