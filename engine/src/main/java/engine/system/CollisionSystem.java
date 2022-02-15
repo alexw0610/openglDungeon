@@ -1,7 +1,9 @@
 package engine.system;
 
 import engine.Engine;
+import engine.EngineConstants;
 import engine.component.CollisionComponent;
+import engine.component.Component;
 import engine.component.SurfaceTag;
 import engine.component.TransformationComponent;
 import engine.component.internal.CreatedByComponent;
@@ -30,12 +32,18 @@ public class CollisionSystem {
             List<Entity> collisions = CollisionUtil.getCollisions(transformationComponent, collisionComponent, obstacles);
             if (!collisions.isEmpty()) {
                 if (StringUtils.isNotBlank(collisionComponent.getSelfApplyComponents())) {
-                    entity.addComponent(ComponentBuilder.fromTemplate(collisionComponent.getSelfApplyComponents()));
+                    Component component = ComponentBuilder.fromTemplate(collisionComponent.getSelfApplyComponents());
+                    if (EngineConstants.INSTANCE.isServerMode() || !component.isServerSide()) {
+                        entity.addComponent(component);
+                    }
                 }
             }
             for (Entity collision : collisions) {
                 if (StringUtils.isNotBlank(collisionComponent.getOtherApplyComponents())) {
-                    collision.addComponent(ComponentBuilder.fromTemplate(collisionComponent.getOtherApplyComponents()));
+                    Component component = ComponentBuilder.fromTemplate(collisionComponent.getOtherApplyComponents());
+                    if (EngineConstants.INSTANCE.isServerMode() || !component.isServerSide()) {
+                        collision.addComponent(component);
+                    }
                 }
                 Vector2d collisionVector = new Vector2d();
                 TransformationComponent collisionTransformation = collision.getComponentOfType(TransformationComponent.class);

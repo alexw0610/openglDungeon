@@ -11,10 +11,10 @@ import java.util.Arrays;
 
 public class Shader {
 
-    public String shaderKey;
-    int program;
-    int vs;
-    int fs;
+    public final String shaderKey;
+    final int program;
+    final int vs;
+    final int fs;
 
     public Shader(String shaderKey, String[] vertexShaderContent, String[] fragmentShaderContent) {
 

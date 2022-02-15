@@ -1,6 +1,6 @@
 templateName: "sewer_city"
 zoneIdTexture: "sewer_city"
-zoneId: 0
+zoneId: 1
 spawnPointX: 16
 spawnPointY: 16
 zoneFloorIdMappings:

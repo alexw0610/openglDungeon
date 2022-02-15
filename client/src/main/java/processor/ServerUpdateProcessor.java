@@ -2,6 +2,7 @@ package processor;
 
 import dto.udp.CharacterListUpdateDto;
 import dto.udp.UpdateEncryptionWrapper;
+import engine.Engine;
 import engine.component.AiTargetTag;
 import engine.component.PhysicsComponent;
 import engine.component.RenderComponent;
@@ -10,7 +11,6 @@ import engine.entity.Entity;
 import engine.entity.EntityBuilder;
 import engine.enums.PrimitiveMeshShape;
 import engine.enums.ShaderType;
-import engine.handler.EntityHandler;
 import exception.EncryptionException;
 import security.EncryptionHandler;
 import util.SerializableUtil;
@@ -26,8 +26,10 @@ public class ServerUpdateProcessor implements Runnable {
     private final byte[] encryptionKey;
     private final int connectionId;
     private final Map<Integer, Long> channelMap = new HashMap<>();
+    private final Engine engine;
 
-    public ServerUpdateProcessor(Queue<UpdateEncryptionWrapper> updatesToProcess, byte[] encryptionKey, int connectionId) {
+    public ServerUpdateProcessor(Queue<UpdateEncryptionWrapper> updatesToProcess, byte[] encryptionKey, int connectionId, Engine engine) {
+        this.engine = engine;
         this.updatesToProcess = updatesToProcess;
         this.encryptionKey = encryptionKey;
         this.connectionId = connectionId;
@@ -57,16 +59,16 @@ public class ServerUpdateProcessor implements Runnable {
     }
 
     private void addOrUpdateCharacter(CharacterListUpdateDto.CharacterUpdateDto characterUpdateDto) {
-        if (EntityHandler.getInstance().getObject(String.valueOf(characterUpdateDto.getCharacterId())) == null) {
+        if (engine.getEntityHandler().getObject(String.valueOf(characterUpdateDto.getCharacterId())) == null) {
             Entity entity = EntityBuilder.builder()
                     .fromTemplate("humanoid")
                     .at(characterUpdateDto.getPositionX(), characterUpdateDto.getPositionY())
                     .withComponent(new RenderComponent(PrimitiveMeshShape.QUAD.value(), "human_female", ShaderType.DEFAULT.value(), 1.0, 4))
                     .withComponent(new AiTargetTag())
                     .build();
-            EntityHandler.getInstance().addObject(String.valueOf(characterUpdateDto.getCharacterId()), entity);
+            engine.getEntityHandler().addObject(String.valueOf(characterUpdateDto.getCharacterId()), entity);
         } else {
-            Entity character = EntityHandler.getInstance().getObject(String.valueOf(characterUpdateDto.getCharacterId()));
+            Entity character = engine.getEntityHandler().getObject(String.valueOf(characterUpdateDto.getCharacterId()));
             double deltaX = characterUpdateDto.getPositionX() - character.getComponentOfType(TransformationComponent.class).getPositionX();
             double deltaY = characterUpdateDto.getPositionY() - character.getComponentOfType(TransformationComponent.class).getPositionY();
             character.getComponentOfType(PhysicsComponent.class).setMomentumX(deltaX * SMOOTHING);

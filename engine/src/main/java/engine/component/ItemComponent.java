@@ -5,6 +5,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 
 public class ItemComponent implements Component {
 
+    private static final long serialVersionUID = -8558888374421418388L;
     private String itemId;
     private String itemName;
     private ItemType itemType;

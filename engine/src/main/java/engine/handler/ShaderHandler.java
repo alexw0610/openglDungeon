@@ -7,11 +7,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ShaderHandler {
-    public static final ShaderHandler SHADER_HANDLER = new ShaderHandler();
-    private static final ShaderLoader SHADER_LOADER = new ShaderLoader();
-
+    private static final ThreadLocal<ShaderHandler> INSTANCE = ThreadLocal.withInitial(ShaderHandler::new);
     private final Map<String, Shader> shaderMap = new HashMap<>();
     private String boundShaderType;
+
+    public static ShaderHandler getInstance() {
+        return INSTANCE.get();
+    }
 
     private ShaderHandler() {
     }
@@ -21,7 +23,7 @@ public class ShaderHandler {
             if (shaderMap.containsKey(shaderType)) {
                 shaderMap.get(shaderType).bind();
             } else {
-                Shader shader = SHADER_LOADER.loadShader(shaderType);
+                Shader shader = ShaderLoader.loadShader(shaderType);
                 shader.bind();
                 shaderMap.put(shaderType, shader);
             }

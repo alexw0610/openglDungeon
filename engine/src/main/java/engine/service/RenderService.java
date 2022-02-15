@@ -26,8 +26,8 @@ public class RenderService {
     private static RenderService INSTANCE;
 
     private final MeshHandler meshHandler = MeshHandler.getInstance();
-    private final ShaderHandler shaderHandler = ShaderHandler.SHADER_HANDLER;
-    private final TextureHandler textureHandler = TextureHandler.TEXTURE_HANDLER;
+    private final ShaderHandler shaderHandler = ShaderHandler.getInstance();
+    private final TextureHandler textureHandler = TextureHandler.getInstance();
 
     private final int[] uniformBuffers;
     private final int[] frameBuffers;
@@ -46,7 +46,7 @@ public class RenderService {
     public static double lightsRendered = 0;
     public static double viewMapsRendered = 0;
 
-    Vector2d aspectRatio;
+    final Vector2d aspectRatio;
 
     private RenderMode activeRenderMode = RenderMode.INITIAL;
 

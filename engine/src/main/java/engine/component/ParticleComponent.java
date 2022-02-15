@@ -3,6 +3,7 @@ package engine.component;
 import org.joml.Vector2d;
 
 public class ParticleComponent implements Component {
+    private static final long serialVersionUID = -3352980751842570691L;
     private String particleTexture;
     private double colorROverride;
     private double colorGOverride;

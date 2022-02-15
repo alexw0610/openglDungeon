@@ -1,7 +1,7 @@
 package engine.entity;
 
 import engine.component.Component;
-import engine.handler.EntityTemplateHandler;
+import engine.handler.template.EntityTemplateHandler;
 import engine.loader.template.ComponentTemplate;
 import engine.loader.template.EntityTemplate;
 import org.apache.commons.lang3.StringUtils;

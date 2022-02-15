@@ -9,12 +9,13 @@ import java.util.Queue;
 
 public class CollisionComponent implements Component {
 
+    private static final long serialVersionUID = -8090166882972027605L;
     private HitBox hitBox;
     private boolean obstructsMovement;
     private String selfApplyComponents;
     private String otherApplyComponents;
 
-    public Queue<Vector2d> collisions = new ArrayDeque<>();
+    public final Queue<Vector2d> collisions = new ArrayDeque<>();
 
     public CollisionComponent(String hitBoxType, Double hitBoxSize) {
         this.hitBox = new HitBox(HitBoxType.valueOf(hitBoxType), hitBoxSize);

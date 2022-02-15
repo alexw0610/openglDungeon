@@ -13,16 +13,16 @@ public class ShaderLoader {
     private static final String DEFAULT_VERTEX_SHADER_FILE_EXTENSION = ".vs";
     private static final String DEFAULT_FRAGMENT_SHADER_FILE_EXTENSION = ".fs";
 
-    public Shader loadShader(String shaderType) {
+    public static Shader loadShader(String shaderType) {
         return new Shader(shaderType,
                 readfile(RESOURCE_SHADER_SUBFOLDER + shaderType + DEFAULT_VERTEX_SHADER_FILE_EXTENSION),
                 readfile(RESOURCE_SHADER_SUBFOLDER + shaderType + DEFAULT_FRAGMENT_SHADER_FILE_EXTENSION));
     }
 
-    private String[] readfile(String file) {
+    private static String[] readfile(String file) {
         StringBuilder shadercode = new StringBuilder();
         BufferedReader br;
-        InputStream is = getClass().getClassLoader().getResourceAsStream(file);
+        InputStream is = ShaderLoader.class.getClassLoader().getResourceAsStream(file);
         try {
             br = new BufferedReader(new InputStreamReader(is));
             String line;
@@ -32,7 +32,7 @@ public class ShaderLoader {
             }
             br.close();
         } catch (IOException e) {
-            throw new MissingResourceException("The specified Shader cant be found (or opened) in the resource path." + e, this.getClass().getName(), file);
+            throw new MissingResourceException("The specified Shader cant be found (or opened) in the resource path." + e, ShaderLoader.class.getName(), file);
         }
         return new String[]{shadercode.toString()};
     }

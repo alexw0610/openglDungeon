@@ -4,6 +4,7 @@ import org.joml.Vector2d;
 
 public class PhysicsComponent implements Component {
 
+    private static final long serialVersionUID = 6962944663306622171L;
     private double momentumX;
     private double momentumY;
     private boolean gravity;

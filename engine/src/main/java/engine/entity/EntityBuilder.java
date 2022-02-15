@@ -3,7 +3,7 @@ package engine.entity;
 import engine.component.Component;
 import engine.component.TransformationComponent;
 import engine.handler.EntityHandler;
-import engine.handler.EntityTemplateHandler;
+import engine.handler.template.EntityTemplateHandler;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -11,13 +11,19 @@ import java.lang.reflect.InvocationTargetException;
 public class EntityBuilder {
 
     private final Entity entity;
+    private final EntityHandler entityHandler;
 
-    private EntityBuilder() {
+    private EntityBuilder(EntityHandler entityHandler) {
+        this.entityHandler = entityHandler;
         this.entity = new Entity();
     }
 
+    public static EntityBuilder builder(EntityHandler entityHandler) {
+        return new EntityBuilder(entityHandler);
+    }
+
     public static EntityBuilder builder() {
-        return new EntityBuilder();
+        return new EntityBuilder(EntityHandler.getInstance());
     }
 
     public EntityBuilder withComponent(Component... component) {
@@ -52,12 +58,12 @@ public class EntityBuilder {
     }
 
     public Entity buildAndInstantiate() {
-        EntityHandler.getInstance().addObject(this.entity);
+        this.entityHandler.addObject(this.entity);
         return this.entity;
     }
 
     public Entity buildAndInstantiate(String key) {
-        EntityHandler.getInstance().addObject(key, this.entity);
+        this.entityHandler.addObject(key, this.entity);
         return this.entity;
     }
 

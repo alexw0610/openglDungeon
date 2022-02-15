@@ -4,6 +4,7 @@ import org.joml.Vector3d;
 
 public class LightSourceComponent implements Component {
 
+    private static final long serialVersionUID = 3303986516626186876L;
     private Vector3d lightColor;
     private double lightStrength;
     private double lightFallOff;

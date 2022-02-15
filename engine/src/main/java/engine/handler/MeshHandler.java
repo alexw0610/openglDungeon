@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class MeshHandler {
-    private static final MeshHandler INSTANCE = new MeshHandler();
+    private static final ThreadLocal<MeshHandler> INSTANCE = ThreadLocal.withInitial(MeshHandler::new);
     private final Map<String, Mesh> meshes = new HashMap<>();
 
     private MeshHandler() {
@@ -19,7 +19,7 @@ public class MeshHandler {
     }
 
     public static MeshHandler getInstance() {
-        return INSTANCE;
+        return INSTANCE.get();
     }
 
     public void addMesh(String key, Mesh mesh) {

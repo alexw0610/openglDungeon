@@ -1,7 +1,7 @@
 package engine.entity;
 
 import engine.component.Component;
-import engine.handler.ComponentTemplateHandler;
+import engine.handler.template.ComponentTemplateHandler;
 import engine.loader.template.ComponentTemplate;
 
 public class ComponentBuilder {

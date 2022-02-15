@@ -1,4 +1,4 @@
 templateName: "sewerZoneChange"
 type: "ZoneChangeComponent"
 modifiers:
-  zoneTemplateName: "sewer_city"
+  seed: 1

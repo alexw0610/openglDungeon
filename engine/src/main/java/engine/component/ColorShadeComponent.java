@@ -2,6 +2,7 @@ package engine.component;
 
 public class ColorShadeComponent implements Component {
 
+    private static final long serialVersionUID = -8244844041688813245L;
     private double redMultiplier;
     private double greenMultiplier;
     private double blueMultiplier;

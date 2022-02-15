@@ -10,14 +10,18 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class EntityHandler implements Handler<Entity> {
-    private static final EntityHandler INSTANCE = new EntityHandler();
+    private static final ThreadLocal<EntityHandler> INSTANCE = ThreadLocal.withInitial(EntityHandler::new);
     private final Map<String, Entity> objects = new HashMap<>();
 
     private EntityHandler() {
     }
 
     public static EntityHandler getInstance() {
-        return INSTANCE;
+        return INSTANCE.get();
+    }
+
+    public static void setInstance(EntityHandler entityHandler) {
+        INSTANCE.set(entityHandler);
     }
 
     @Override

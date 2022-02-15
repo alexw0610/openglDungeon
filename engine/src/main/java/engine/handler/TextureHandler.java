@@ -12,12 +12,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class TextureHandler {
-    public static final TextureHandler TEXTURE_HANDLER = new TextureHandler();
-    private static final TextureLoader TEXTURE_LOADER = new TextureLoader();
+    private static final ThreadLocal<TextureHandler> INSTANCE = ThreadLocal.withInitial(TextureHandler::new);
     public static final int DEFAULT_TILE_SIZE = 32;
 
     private final Map<String, Texture> loadedTextureMap = new HashMap<>();
     private final Map<Integer, String> boundTextureMap = new HashMap<>();
+
+    public static TextureHandler getInstance() {
+        return INSTANCE.get();
+    }
 
     private TextureHandler() {
         ByteBuffer defaultBuffer = ByteBuffer.allocate(4);
@@ -28,12 +31,10 @@ public class TextureHandler {
     }
 
     public Texture getTexture(String textureKey) {
-        if (loadedTextureMap.containsKey(textureKey)) {
-            return loadedTextureMap.get(textureKey);
-        } else {
+        if (!loadedTextureMap.containsKey(textureKey)) {
             this.load(textureKey);
-            return loadedTextureMap.get(textureKey);
         }
+        return loadedTextureMap.get(textureKey);
     }
 
     public void bindTextureWithKey(String textureKey, int target) {
@@ -51,7 +52,7 @@ public class TextureHandler {
             texture.loadTexture();
             texture.bind();
         } else {
-            Texture texture = TEXTURE_LOADER.loadTexture(textureKey);
+            Texture texture = TextureLoader.loadTexture(textureKey);
             texture.loadTexture();
             texture.bind();
             loadedTextureMap.put(textureKey, texture);
@@ -60,7 +61,7 @@ public class TextureHandler {
 
     public Vector2i getTileMapDimensions(String textureKey) {
         if (!loadedTextureMap.containsKey(textureKey)) {
-            Texture texture = TEXTURE_LOADER.loadTexture(textureKey);
+            Texture texture = TextureLoader.loadTexture(textureKey);
             loadedTextureMap.put(textureKey, texture);
         }
         return new Vector2i(loadedTextureMap.get(textureKey).getWidth() / DEFAULT_TILE_SIZE,

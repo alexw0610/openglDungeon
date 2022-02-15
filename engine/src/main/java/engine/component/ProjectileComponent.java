@@ -3,6 +3,7 @@ package engine.component;
 import org.joml.Vector2d;
 
 public class ProjectileComponent implements Component {
+    private static final long serialVersionUID = -1268060665062914044L;
     private Vector2d direction;
     private double velocity;
 

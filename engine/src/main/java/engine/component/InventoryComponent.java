@@ -5,6 +5,7 @@ import java.util.List;
 
 public class InventoryComponent implements Component {
 
+    private static final long serialVersionUID = -4581973562355472791L;
     private int inventorySize;
     private List<ItemComponent> items;
     private double pickUpRange;

@@ -3,6 +3,7 @@ package engine.component;
 import static engine.EngineConstants.KNOCKBACK_VALUE_FACTOR;
 
 public class AttackComponent implements Component {
+    private static final long serialVersionUID = -4310546471445337516L;
     private final String attackName;
     private boolean isAoE;
     private boolean isSingleTarget;

@@ -1,5 +1,9 @@
 package engine.component;
 
-public interface Component {
+import java.io.Serializable;
 
+public interface Component extends Serializable {
+    default boolean isServerSide() {
+        return false;
+    }
 }

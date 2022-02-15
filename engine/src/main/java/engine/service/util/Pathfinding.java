@@ -121,7 +121,7 @@ public class Pathfinding {
         return successors;
     }
 
-    private class Node {
+    private static class Node {
         int x;
         int y;
         int g;

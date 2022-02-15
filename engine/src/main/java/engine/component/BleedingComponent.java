@@ -2,6 +2,7 @@ package engine.component;
 
 public class BleedingComponent implements Component {
 
+    private static final long serialVersionUID = -3928923046132052288L;
     private double bloodColorR;
     private double bloodColorG;
     private double bloodColorB;

@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class KeyHandler {
-    private static final KeyHandler INSTANCE = new KeyHandler();
+    private static final ThreadLocal<KeyHandler> INSTANCE = ThreadLocal.withInitial(KeyHandler::new);
     private static Map<String, Short> actionToKeyMap;
     private static final byte[] keyMap = new byte[255];
 
@@ -30,7 +30,11 @@ public class KeyHandler {
     }
 
     public static KeyHandler getInstance() {
-        return INSTANCE;
+        return INSTANCE.get();
+    }
+
+    public static void setInstance(KeyHandler keyHandler) {
+        INSTANCE.set(keyHandler);
     }
 
     public boolean isKeyForActionPressed(String action) {

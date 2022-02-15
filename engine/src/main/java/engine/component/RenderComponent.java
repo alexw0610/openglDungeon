@@ -4,6 +4,7 @@ import org.joml.Vector3d;
 
 public class RenderComponent implements Component {
 
+    private static final long serialVersionUID = 5515837852593525054L;
     private String meshKey;
     private String textureKey;
     private String shaderType;

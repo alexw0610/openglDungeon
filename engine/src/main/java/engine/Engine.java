@@ -12,6 +12,7 @@ import engine.component.TransformationComponent;
 import engine.entity.Entity;
 import engine.handler.EntityHandler;
 import engine.handler.MeshHandler;
+import engine.handler.NavHandler;
 import engine.service.RenderService;
 import engine.system.*;
 import org.joml.Vector2d;
@@ -35,8 +36,31 @@ public class Engine {
     private double postLogicTime = 0;
     private double preRenderingTime = 0;
 
-    public void start() {
-        setupDisplay();
+    private EntityHandler entityHandler;
+    private NavHandler navHandler;
+
+    private boolean started = false;
+
+    public void start(boolean offlineMode, boolean serverMode) {
+        INSTANCE.setOfflineMode(offlineMode);
+        INSTANCE.setServerMode(serverMode);
+        if (!serverMode) {
+            setupDisplay();
+        } else {
+            setupServerLoop();
+        }
+        while (!started) {
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void setupServerLoop() {
+        ServerLoop serverLoop = new ServerLoop(this);
+        new Thread(serverLoop).start();
     }
 
     private void setupDisplay() {
@@ -58,54 +82,56 @@ public class Engine {
             }
         });
         window.setSize((int) WINDOW_WIDTH, (int) WINDOW_HEIGHT);
-        window.addGLEventListener(new Display(this));
         InputListener inputListener = new InputListener();
+        window.addGLEventListener(new Display(this, inputListener));
         window.addKeyListener(inputListener);
         window.addMouseListener(inputListener);
         window.setTitle(TITLE);
         animator.start();
-        window.setVisible(true);
+        window.setVisible(!INSTANCE.isServerMode());
     }
 
     public void step() {
         double sectionStartTime = System.nanoTime();
-        RenderService.getInstance().clearCall();
-        MeshHandler.getInstance().removeMeshesWithPrefix(LightSourceSystem.LIGHT_POLYGON_KEY_PREFIX);
-        MeshHandler.getInstance().removeMeshesWithPrefix(ViewSourceSystem.VIEW_POLYGON_KEY_PREFIX);
+        if (!INSTANCE.isServerMode()) {
+            RenderService.getInstance().clearCall();
+            MeshHandler.getInstance().removeMeshesWithPrefix(LightSourceSystem.LIGHT_POLYGON_KEY_PREFIX);
+            MeshHandler.getInstance().removeMeshesWithPrefix(ViewSourceSystem.VIEW_POLYGON_KEY_PREFIX);
+        }
         //Game logic
         List<Entity> entities = EntityHandler.getInstance().getAllObjects();
         for (Entity entity : entities) {
             if (StatSystem.isResponsibleFor(entity)) {
                 StatSystem.processEntity(entity);
             }
-            if (PlayerMovementInputSystem.isResponsibleFor(entity)) {
+            if (!INSTANCE.isServerMode() && PlayerMovementInputSystem.isResponsibleFor(entity)) {
                 PlayerMovementInputSystem.processEntity(entity);
             }
             if (AISystem.isResponsibleFor(entity)) {
                 AISystem.processEntity(entity);
             }
-            if (CameraSystem.isResponsibleFor(entity)) {
+            if (!INSTANCE.isServerMode() && CameraSystem.isResponsibleFor(entity)) {
                 CameraSystem.processEntity(entity);
             }
-            if (AnimationSystem.isResponsibleFor(entity)) {
+            if (!INSTANCE.isServerMode() && AnimationSystem.isResponsibleFor(entity)) {
                 AnimationSystem.processEntity(entity);
             }
-            if (ParticleSystem.isResponsibleFor(entity)) {
+            if (!INSTANCE.isServerMode() && ParticleSystem.isResponsibleFor(entity)) {
                 ParticleSystem.processEntity(entity);
             }
             if (CollisionSystem.isResponsibleFor(entity)) {
                 CollisionSystem.processEntity(entity);
             }
-            if (BleedingSystem.isResponsibleFor(entity)) {
+            if (!INSTANCE.isServerMode() && BleedingSystem.isResponsibleFor(entity)) {
                 BleedingSystem.processEntity(entity);
             }
-            if (ZoneChangeSystem.isResponsibleFor(entity)) {
+            if (!INSTANCE.isServerMode() && ZoneChangeSystem.isResponsibleFor(entity)) {
                 ZoneChangeSystem.processEntity(entity);
             }
             if (AttackSystem.isResponsibleFor(entity)) {
                 AttackSystem.processEntity(entity);
             }
-            if (ColorShadeSystem.isResponsibleFor(entity)) {
+            if (!INSTANCE.isServerMode() && ColorShadeSystem.isResponsibleFor(entity)) {
                 ColorShadeSystem.processEntity(entity);
             }
             if (InventorySystem.isResponsibleFor(entity)) {
@@ -132,32 +158,39 @@ public class Engine {
             }
         }
         this.postLogicTime = System.nanoTime() - sectionStartTime;
-        sectionStartTime = System.nanoTime();
-        Vector2d cameraPosition = EntityHandler.getInstance()
-                .getEntityWithComponent(CameraComponent.class)
-                .getComponentOfType(TransformationComponent.class)
-                .getPosition();
-        List<Entity> entitiesToRender = EntityHandler.getInstance().getAllEntitiesWithComponents(RenderComponent.class)
-                .parallelStream()
-                .unordered()
-                .filter(e -> e.getComponentOfType(TransformationComponent.class).getPosition().distance(cameraPosition) < EngineConstants.RENDER_DISTANCE)
-                .sorted(Comparator.comparingInt(e -> e.getComponentOfType(RenderComponent.class).getLayer()))
-                .collect(Collectors.toList());
-        //Pre Rendering
-        for (Entity entity : entitiesToRender) {
-            if (ViewSourceSystem.isResponsibleFor(entity)) {
-                ViewSourceSystem.processEntity(entity);
+        if (!INSTANCE.isServerMode()) {
+            sectionStartTime = System.nanoTime();
+            Entity camera = EntityHandler.getInstance()
+                    .getEntityWithComponent(CameraComponent.class);
+            final Vector2d cameraPosition;
+            if (camera != null) {
+                cameraPosition = camera.getComponentOfType(TransformationComponent.class)
+                        .getPosition();
+            } else {
+                cameraPosition = new Vector2d(0, 0);
             }
-            if (LightSourceSystem.isResponsibleFor(entity)) {
-                LightSourceSystem.processEntity(entity);
+            List<Entity> entitiesToRender = EntityHandler.getInstance().getAllEntitiesWithComponents(RenderComponent.class)
+                    .parallelStream()
+                    .unordered()
+                    .filter(e -> e.getComponentOfType(TransformationComponent.class).getPosition().distance(cameraPosition) < EngineConstants.RENDER_DISTANCE)
+                    .sorted(Comparator.comparingInt(e -> e.getComponentOfType(RenderComponent.class).getLayer()))
+                    .collect(Collectors.toList());
+            //Pre Rendering
+            for (Entity entity : entitiesToRender) {
+                if (ViewSourceSystem.isResponsibleFor(entity)) {
+                    ViewSourceSystem.processEntity(entity);
+                }
+                if (LightSourceSystem.isResponsibleFor(entity)) {
+                    LightSourceSystem.processEntity(entity);
+                }
             }
-        }
-        this.preRenderingTime = System.nanoTime() - sectionStartTime;
-        sectionStartTime = System.nanoTime();
-        //Rendering
-        for (Entity entity : entitiesToRender) {
-            if (RenderSystem.isResponsibleFor(entity)) {
-                RenderSystem.processEntity(entity);
+            this.preRenderingTime = System.nanoTime() - sectionStartTime;
+            sectionStartTime = System.nanoTime();
+            //Rendering
+            for (Entity entity : entitiesToRender) {
+                if (RenderSystem.isResponsibleFor(entity)) {
+                    RenderSystem.processEntity(entity);
+                }
             }
         }
         this.renderingTime = System.nanoTime() - sectionStartTime;
@@ -206,5 +239,29 @@ public class Engine {
             lastPerformanceAudit = (System.nanoTime() / 1000000.0);
             fpsCount = 0;
         }
+    }
+
+    public void setEntityHandler(EntityHandler entityHandler) {
+        this.entityHandler = entityHandler;
+    }
+
+    public EntityHandler getEntityHandler() {
+        return this.entityHandler;
+    }
+
+    public NavHandler getNavHandler() {
+        return navHandler;
+    }
+
+    public void setNavHandler(NavHandler navHandler) {
+        this.navHandler = navHandler;
+    }
+
+    public boolean isStarted() {
+        return started;
+    }
+
+    public void setStarted(boolean started) {
+        this.started = started;
     }
 }

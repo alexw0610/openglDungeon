@@ -2,8 +2,8 @@ package engine.component;
 
 public class ZoneChangeComponent implements Component {
 
+    private static final long serialVersionUID = -2254350620787946888L;
     private long seed;
-    private String zoneTemplateName;
 
     public ZoneChangeComponent() {
     }
@@ -16,15 +16,12 @@ public class ZoneChangeComponent implements Component {
         return this.seed;
     }
 
-    public void setSeed(long seed) {
-        this.seed = seed;
+    public void setSeed(Integer seed) {
+        this.seed = seed.longValue();
     }
 
-    public String getZoneTemplateName() {
-        return zoneTemplateName;
-    }
-
-    public void setZoneTemplateName(String zoneTemplateName) {
-        this.zoneTemplateName = zoneTemplateName;
+    @Override
+    public boolean isServerSide() {
+        return true;
     }
 }

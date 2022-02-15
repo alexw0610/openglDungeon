@@ -1,7 +1,7 @@
 package engine.service;
 
-import engine.handler.DungeonTemplateHandler;
 import engine.handler.NavHandler;
+import engine.handler.template.DungeonTemplateHandler;
 import engine.loader.template.DungeonTemplate;
 import engine.object.Edge;
 import engine.object.Room;

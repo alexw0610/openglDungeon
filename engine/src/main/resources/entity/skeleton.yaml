@@ -1,6 +1,7 @@
 templateName: "enemy_skeleton"
 extendedTemplate: "humanoid"
 components:
+  - type: "SynchronizedTag"
   - type: "RenderComponent"
     arguments:
       meshKey: "QUAD"

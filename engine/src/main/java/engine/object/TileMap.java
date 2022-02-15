@@ -1,11 +1,16 @@
 package engine.object;
 
+import engine.EngineConstants;
 import engine.component.*;
 import engine.entity.ComponentBuilder;
 import engine.entity.Entity;
 import engine.entity.EntityBuilder;
 import engine.enums.NavTileType;
-import engine.handler.*;
+import engine.handler.EntityHandler;
+import engine.handler.TextureHandler;
+import engine.handler.template.DungeonTemplateHandler;
+import engine.handler.template.LootTableTemplateHandler;
+import engine.handler.template.RoomTemplateHandler;
 import engine.loader.template.DungeonTemplate;
 import engine.loader.template.EntityInstanceTemplate;
 import engine.loader.template.LootTableTemplate;
@@ -25,13 +30,11 @@ public class TileMap {
     private final int size;
     private final String[][] tiles;
     private final NavMap navMap;
-    private final long seed;
 
     public TileMap(int size, long seed) {
         this.size = size;
         this.tiles = new String[size][size];
         this.navMap = new NavMap(size, seed);
-        this.seed = seed;
     }
 
     public void initMap(Random random) {
@@ -39,9 +42,10 @@ public class TileMap {
         generateFloor(random);
         generateWalls(random);
         generateRoomObjects(random);
-        generateRoomHostiles(random);
+        if (EngineConstants.INSTANCE.isOfflineMode() || EngineConstants.INSTANCE.isServerMode()) {
+            generateRoomHostiles(random);
+        }
     }
-
 
     public void addRoom(Room room) {
         for (int x = 0; x < room.getRoomWidth(); x++) {
@@ -72,7 +76,7 @@ public class TileMap {
 
     private void generateEntityFromRoom(String template, int x, int y, Random random) {
         RoomTemplate roomTemplate = RoomTemplateHandler.getInstance().getObject(template);
-        Vector2i tileMapDimensions = TextureHandler.TEXTURE_HANDLER.getTileMapDimensions(roomTemplate.getFloorTextureKey());
+        Vector2i tileMapDimensions = TextureHandler.getInstance().getTileMapDimensions(roomTemplate.getFloorTextureKey());
         Entity entity = EntityBuilder.builder().fromTemplate("floor").at(x, y).build();
         entity.getComponentOfType(RenderComponent.class).setTextureKey(roomTemplate.getFloorTextureKey());
         entity.getComponentOfType(RenderComponent.class).setTextureOffSetX(Math.floor(Math.pow(random.nextFloat(), 3) * tileMapDimensions.x()));
@@ -86,7 +90,7 @@ public class TileMap {
                 if (this.tiles[x][y] == null) {
                     if (isTile(x, y - 1)) {
                         RoomTemplate roomTemplate = RoomTemplateHandler.getInstance().getObject(this.tiles[x][y - 1]);
-                        Vector2i tileMapDimensions = TextureHandler.TEXTURE_HANDLER.getTileMapDimensions(roomTemplate.getWallTextureKey());
+                        Vector2i tileMapDimensions = TextureHandler.getInstance().getTileMapDimensions(roomTemplate.getWallTextureKey());
                         Entity entity = EntityBuilder.builder().fromTemplate("wall")
                                 .at(x, y)
                                 .buildAndInstantiate(DUNGEON_ENTITY_PREFIX + RandomStringUtils.randomAlphanumeric(8));

@@ -4,6 +4,7 @@ import static engine.EngineConstants.MOVEMENT_SPEED_VALUE_FACTOR;
 
 public class StatComponent implements Component {
 
+    private static final long serialVersionUID = 4912727537252374835L;
     private double healthPoints;
     private double movementSpeed;
     private boolean isDead;

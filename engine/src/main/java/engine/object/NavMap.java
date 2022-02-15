@@ -28,15 +28,11 @@ public class NavMap {
     }
 
     public boolean isWalkable(Vector2i position) {
-        if (position.x() > 0 && position.x() < this.navTiles.length
+        return position.x() > 0 && position.x() < this.navTiles.length
                 && position.y() > 0 && position.y() < this.navTiles.length
                 && this.navTiles[position.x()][position.y()] != null
                 && this.navTiles[position.x()][position.y()].getType().equals(NavTileType.FLOOR)
-                && !this.navTiles[position.x()][position.y()].isObstructed()) {
-            return true;
-        } else {
-            return false;
-        }
+                && !this.navTiles[position.x()][position.y()].isObstructed();
     }
 
     public void instantiateDebugMeshes() {

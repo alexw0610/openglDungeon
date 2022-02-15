@@ -3,8 +3,11 @@ package engine.object;
 import engine.enums.HitBoxType;
 import org.joml.Vector2d;
 
-public class HitBox {
+import java.io.Serializable;
 
+public class HitBox implements Serializable {
+
+    private static final long serialVersionUID = -7121462545287713834L;
     private final HitBoxType hitBoxType;
     private final double size;
 

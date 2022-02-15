@@ -1,29 +1,46 @@
-package engine.handler;
+package engine.handler.template;
 
+import engine.handler.Handler;
 import engine.loader.YamlLoader;
 import engine.loader.template.RoomTemplate;
 import org.apache.commons.lang3.RandomStringUtils;
 
 import java.io.File;
+import java.net.JarURLConnection;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.jar.JarEntry;
 import java.util.stream.Collectors;
 
 public class RoomTemplateHandler implements Handler<RoomTemplate> {
-    private static final RoomTemplateHandler INSTANCE = new RoomTemplateHandler();
+    private static final ThreadLocal<RoomTemplateHandler> INSTANCE = ThreadLocal.withInitial(RoomTemplateHandler::new);
     public static final String ROOM_TEMPLATE_FOLDER = "room/";
 
     private final Map<String, RoomTemplate> templateMap = new HashMap<>();
 
     public static RoomTemplateHandler getInstance() {
-        return INSTANCE;
+        return INSTANCE.get();
     }
 
     private RoomTemplateHandler() {
-        File templateDirectory = new File(Thread.currentThread().getContextClassLoader().getResource(ROOM_TEMPLATE_FOLDER).getPath());
-        for (File file : templateDirectory.listFiles()) {
-            addObject(file.getName().split("\\.")[0], YamlLoader.load(RoomTemplate.class, ROOM_TEMPLATE_FOLDER + file.getName()));
+        try {
+            Enumeration<JarEntry> entries = ((JarURLConnection) getClass().getClassLoader()
+                    .getResource("zone/").toURI().toURL().openConnection())
+                    .getJarFile().entries();
+            while (entries.hasMoreElements()) {
+                JarEntry entry = entries.nextElement();
+                if (entry.getName().startsWith(ROOM_TEMPLATE_FOLDER) && entry.getName().endsWith(".yaml")) {
+                    String filename = entry.getName().split("/")[1];
+                    addObject(filename.split("\\.")[0], YamlLoader.load(RoomTemplate.class, ROOM_TEMPLATE_FOLDER + filename));
+                }
+            }
+        } catch (Exception e) {
+            File templateDirectory = new File(Thread.currentThread().getContextClassLoader().getResource(ROOM_TEMPLATE_FOLDER).getPath());
+            for (File file : templateDirectory.listFiles()) {
+                addObject(file.getName().split("\\.")[0], YamlLoader.load(RoomTemplate.class, ROOM_TEMPLATE_FOLDER + file.getName()));
+            }
         }
     }
 

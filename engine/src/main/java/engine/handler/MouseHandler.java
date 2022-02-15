@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.Queue;
 
 public class MouseHandler {
-    private static final MouseHandler INSTANCE = new MouseHandler();
+    private static final ThreadLocal<MouseHandler> INSTANCE = ThreadLocal.withInitial(MouseHandler::new);
     private static Map<String, Short> actionToMouseMap;
     private final Queue<MouseEvent> mouseClickedEventsQueue = new ArrayDeque<>();
     private double mousePositionX;
@@ -25,7 +25,11 @@ public class MouseHandler {
     }
 
     public static MouseHandler getInstance() {
-        return INSTANCE;
+        return INSTANCE.get();
+    }
+
+    public static void setInstance(MouseHandler mouseHandler) {
+        INSTANCE.set(mouseHandler);
     }
 
     public boolean isKeyForActionPressed(String action) {

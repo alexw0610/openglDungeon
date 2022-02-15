@@ -6,6 +6,7 @@ import org.joml.Vector2i;
 import java.util.List;
 
 public class AIComponent implements Component {
+    private static final long serialVersionUID = 6264644310722620263L;
     private List<Vector2i> pathToTarget;
     private AIBehaviourState currentState;
     private double attackedLast;

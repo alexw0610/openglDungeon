@@ -5,11 +5,14 @@ import engine.Engine;
 import engine.component.CameraComponent;
 import engine.component.TransformationComponent;
 import engine.entity.EntityBuilder;
+import engine.handler.EntityHandler;
+import engine.handler.NavHandler;
 import engine.service.ZoneGenerator;
 import exception.UDPServerException;
 import org.apache.commons.lang3.StringUtils;
 import org.joml.Vector2d;
 import processor.CharacterUpdateSender;
+import processor.InstanceServerConnection;
 import processor.ServerUpdateProcessor;
 import udp.UdpSocket;
 import udp.UpdateListener;
@@ -28,16 +31,23 @@ public class Client {
     private static final String ENCRYPTION_KEY = "ENCRYPTION_KEY";
     private static final String SERVER_UDP_HOST = "UDP_LISTENING_ADDRESS";
     private static final String SERVER_UDP_PORT = "UDP_LISTENING_PORT";
+    private static final String SERVER_TCP_PORT = "TCP_LISTENING_PORT";
     private static final String CONNECTION_ID = "CONNECTION_ID";
     private static final String DEFAULT_UDP_PORT = "defaultUDPPort";
 
     private static String serverUdpUpdatePort;
+    private static String serverTcpUpdatePort;
     private static String serverUdpUpdateHost;
     private static int connectionId;
     private static byte[] encryptionKey;
+    private static Engine engine;
 
     public static void main(String[] args) {
-        Engine engine = new Engine();
+        boolean offlineMode = Boolean.parseBoolean(applicationProperties.getProperty("offlineMode"));
+        engine = new Engine();
+        engine.start(offlineMode, false);
+        NavHandler.setInstance(engine.getNavHandler());
+        EntityHandler.setInstance(engine.getEntityHandler());
         Vector2d startPosition = ZoneGenerator.generate("sewer_city");
         EntityBuilder.builder()
                 .fromTemplate("player")
@@ -48,9 +58,8 @@ public class Client {
                 .withComponent(new CameraComponent())
                 .at(startPosition.x(), startPosition.y())
                 .buildAndInstantiate();
-        engine.start();
-
-        if (!Boolean.parseBoolean(applicationProperties.getProperty("offlineMode"))) {
+        System.out.println("Engine startup complete!");
+        if (!offlineMode) {
             try {
                 System.out.println("Connecting with server..");
                 establishServerConnection();
@@ -73,11 +82,15 @@ public class Client {
         registerUdpListener(updateListener, sslServerConnection);
 
         UpdateSender updateSender = new UpdateSender(getInetAddressFromName(serverUdpUpdateHost), Integer.parseInt(serverUdpUpdatePort), encryptionKey, udpSocket);
-        CharacterUpdateSender characterUpdateSender = new CharacterUpdateSender(connectionId, updateSender);
+        CharacterUpdateSender characterUpdateSender = new CharacterUpdateSender(connectionId, updateSender, engine);
         new Thread(characterUpdateSender).start();
 
-        ServerUpdateProcessor serverUpdateProcessor = new ServerUpdateProcessor(updateListener.receivedUpdates, encryptionKey, connectionId);
+        ServerUpdateProcessor serverUpdateProcessor = new ServerUpdateProcessor(updateListener.receivedUpdates, encryptionKey, connectionId, engine);
         new Thread(serverUpdateProcessor).start();
+
+        InstanceServerConnection instanceServerConnection = new InstanceServerConnection(encryptionKey, connectionId, engine, serverUdpUpdateHost, serverTcpUpdatePort);
+        new Thread(instanceServerConnection).start();
+
         sslServerConnection.close();
     }
 
@@ -107,6 +120,7 @@ public class Client {
             System.exit(1);
         }
         serverUdpUpdatePort = getParameterOrExit(genericResponse.getResponseParameters(), SERVER_UDP_PORT);
+        serverTcpUpdatePort = getParameterOrExit(genericResponse.getResponseParameters(), SERVER_TCP_PORT);
         serverUdpUpdateHost = applicationProperties.getProperty("serverHost");
         connectionId = Integer.parseInt(getParameterOrExit(genericResponse.getResponseParameters(), CONNECTION_ID));
     }

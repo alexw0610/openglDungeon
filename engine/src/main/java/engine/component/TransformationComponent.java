@@ -4,6 +4,7 @@ import org.joml.Vector2d;
 
 public class TransformationComponent implements Component {
 
+    private static final long serialVersionUID = 7528520654317466342L;
     private double positionX;
     private double positionY;
     private double lastPositionX;

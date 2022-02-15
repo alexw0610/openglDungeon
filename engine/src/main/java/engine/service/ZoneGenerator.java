@@ -2,8 +2,8 @@ package engine.service;
 
 import engine.entity.EntityBuilder;
 import engine.handler.NavHandler;
-import engine.handler.RoomTemplateHandler;
-import engine.handler.ZoneTemplateHandler;
+import engine.handler.template.RoomTemplateHandler;
+import engine.handler.template.ZoneTemplateHandler;
 import engine.loader.TextureLoader;
 import engine.loader.template.EntityInstanceTemplate;
 import engine.loader.template.RoomTemplate;

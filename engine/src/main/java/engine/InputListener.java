@@ -8,9 +8,8 @@ import engine.handler.KeyHandler;
 import engine.handler.MouseHandler;
 
 public class InputListener implements KeyListener, MouseListener {
-    private static final KeyHandler keyHandler = KeyHandler.getInstance();
-    private static final MouseHandler mouseHandler = MouseHandler.getInstance();
-
+    private static KeyHandler keyHandler = KeyHandler.getInstance();
+    private static MouseHandler mouseHandler = MouseHandler.getInstance();
 
     @Override
     public void keyPressed(KeyEvent keyEvent) {
@@ -56,5 +55,13 @@ public class InputListener implements KeyListener, MouseListener {
 
     @Override
     public void mouseWheelMoved(MouseEvent mouseEvent) {
+    }
+
+    public void setKeyHandler(KeyHandler keyHandler) {
+        InputListener.keyHandler = keyHandler;
+    }
+
+    public void setMouseHandler(MouseHandler mouseHandler) {
+        InputListener.mouseHandler = mouseHandler;
     }
 }

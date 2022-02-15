@@ -14,13 +14,13 @@ public class TextureLoader {
     private static final String RESOURCE_TEXTURE_SUBFOLDER = "texture/";
     private static final String DEFAULT_TEXTURE_FILE_EXTENSION = ".png";
 
-    public Texture loadTexture(String textureName) {
+    public static Texture loadTexture(String textureName) {
         BufferedImage textureImage;
         try {
             InputStream resourceAsStream = TextureLoader.class.getClassLoader().getResourceAsStream(RESOURCE_TEXTURE_SUBFOLDER + textureName + DEFAULT_TEXTURE_FILE_EXTENSION);
             textureImage = ImageIO.read(resourceAsStream);
         } catch (IOException e) {
-            throw new MissingResourceException("The specified Texture cant be found (or opened) in the resource path. " + e, this.getClass().getName(), textureName);
+            throw new MissingResourceException("The specified Texture cant be found (or opened) in the resource path. " + e, TextureLoader.class.getName(), textureName);
         }
 
         ByteBuffer textureBuffer = ByteBuffer.allocate(textureImage.getWidth() * textureImage.getHeight() * 4);

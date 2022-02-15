@@ -2,12 +2,14 @@ package engine.entity;
 
 import engine.component.Component;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public class Entity {
+public class Entity implements Serializable {
 
+    private static final long serialVersionUID = 732199433633596042L;
     private String entityId;
 
     private final Map<Class<? extends Component>, Component> components = new HashMap<>();

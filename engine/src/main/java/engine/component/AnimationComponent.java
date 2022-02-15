@@ -2,6 +2,7 @@ package engine.component;
 
 public class AnimationComponent implements Component {
 
+    private static final long serialVersionUID = -2733185359091855469L;
     private double animationSpeed;
     private double animationRow;
     private double animationFrame;
