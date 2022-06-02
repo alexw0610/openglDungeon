@@ -4,6 +4,7 @@ public class EngineConstants {
     public static final String TITLE = "openglDungeon";
     public static final double WINDOW_WIDTH = 1280;
     public static final double WINDOW_HEIGHT = 960;
+    public static final boolean FULLSCREEN = false;
     public static final int FPS = 500;
     public static final double INERTIA = 0.00001;
     public static final double DECAY = 0.75;
@@ -38,5 +39,9 @@ public class EngineConstants {
 
     public void setOfflineMode(boolean offlineMode) {
         this.offlineMode = offlineMode;
+    }
+
+    public static double getAspectRatio() {
+        return WINDOW_WIDTH / WINDOW_HEIGHT;
     }
 }

@@ -15,7 +15,7 @@ public class AnimationSystem {
         TransformationComponent transformationComponent = entity.getComponentOfType(TransformationComponent.class);
         if (((java.lang.System.nanoTime() / 1000000.0) - animationComponent.getAnimationUpdatedLast()) > animationComponent.getAnimationSpeed()) {
             if (animationComponent.isMovementDriven() && physicsComponent != null) {
-                if (physicsComponent.getMomentumX() != 0 || physicsComponent.getMomentumY() != 0) {
+                if (Math.abs(physicsComponent.getMomentumX()) > 0.02 || Math.abs(physicsComponent.getMomentumY()) > 0.02) {
                     animationComponent.setAnimationRow(1.0);
                     animationComponent.setAnimationUpdatedLast(java.lang.System.nanoTime() / 1000000.0);
                     animationComponent.setAnimationFrame(animationComponent.getAnimationFrame() + 1);
@@ -28,7 +28,7 @@ public class AnimationSystem {
                 }
             } else if (animationComponent.isMovementDriven() && physicsComponent == null) {
                 Vector2d deltaPosition = transformationComponent.getPosition().negate(transformationComponent.getLastPosition());
-                if (deltaPosition.length() > 0) {
+                if (deltaPosition.length() > 0.02) {
                     animationComponent.setAnimationRow(1.0);
                     animationComponent.setAnimationUpdatedLast(java.lang.System.nanoTime() / 1000000.0);
                     animationComponent.setAnimationFrame(animationComponent.getAnimationFrame() + 1);

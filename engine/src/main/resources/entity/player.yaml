@@ -16,11 +16,12 @@ components:
   - type: "AiTargetTag"
   - type: "StatComponent"
     modifiers:
-      healthPoints: 200.0
+      currentHealthPoints: 200.0
+      maxHealthPoints: 200.0
       movementSpeed: 70.0
   - type: "InventoryComponent"
     arguments:
-      inventorySize: 8
+      inventorySize: 16
       pickUpRange: 0.5
 
 

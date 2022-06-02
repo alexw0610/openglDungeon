@@ -3,6 +3,8 @@ package engine.component;
 import engine.enums.ItemType;
 import org.apache.commons.lang3.RandomStringUtils;
 
+import java.util.Objects;
+
 public class ItemComponent implements Component {
 
     private static final long serialVersionUID = -8558888374421418388L;
@@ -10,12 +12,14 @@ public class ItemComponent implements Component {
     private String itemName;
     private ItemType itemType;
     private String itemTexture;
+    private String itemBackdrop;
 
     public ItemComponent(String itemName, String itemType, String itemTexture) {
         this.itemId = RandomStringUtils.randomAlphanumeric(16);
         this.itemName = itemName;
         this.itemType = ItemType.valueOf(itemType);
         this.itemTexture = itemTexture;
+        this.itemBackdrop = "default_item_backdrop";
     }
 
     public ItemComponent(String itemId, String itemName, String itemType, String itemTexture) {
@@ -23,6 +27,7 @@ public class ItemComponent implements Component {
         this.itemName = itemName;
         this.itemType = ItemType.valueOf(itemType);
         this.itemTexture = itemTexture;
+        this.itemBackdrop = "default_item_backdrop";
     }
 
     public String getItemId() {
@@ -55,5 +60,26 @@ public class ItemComponent implements Component {
 
     public void setItemTexture(String itemTexture) {
         this.itemTexture = itemTexture;
+    }
+
+    public String getItemBackdrop() {
+        return itemBackdrop;
+    }
+
+    public void setItemBackdrop(String itemBackdrop) {
+        this.itemBackdrop = itemBackdrop;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ItemComponent that = (ItemComponent) o;
+        return Objects.equals(itemId, that.itemId) && Objects.equals(itemName, that.itemName) && itemType == that.itemType && Objects.equals(itemTexture, that.itemTexture);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(itemId, itemName, itemType, itemTexture);
     }
 }

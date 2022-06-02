@@ -50,7 +50,7 @@ public class CharacterUpdateSender implements Runnable {
                     System.err.println(e.getMessage());
                 }
             }
-        }, 10, 10, TimeUnit.MILLISECONDS);
+        }, 10, 64, TimeUnit.MILLISECONDS);
         while (true) {
 
         }

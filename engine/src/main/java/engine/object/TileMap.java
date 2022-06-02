@@ -42,8 +42,9 @@ public class TileMap {
         generateFloor(random);
         generateWalls(random);
         generateRoomObjects(random);
+        Random hostileRandom = new Random(random.nextInt(1000));
         if (EngineConstants.INSTANCE.isOfflineMode() || EngineConstants.INSTANCE.isServerMode()) {
-            generateRoomHostiles(random);
+            generateRoomHostiles(hostileRandom);
         }
     }
 
@@ -224,9 +225,10 @@ public class TileMap {
                                         rnd = random.nextFloat();
                                         if (rnd > 0.85f && instanceCount < targetAmount) {
                                             instanceCount++;
-                                            EntityBuilder.builder().fromTemplate(instanceTemplate.getTemplateName())
+                                            Entity entity = EntityBuilder.builder().fromTemplate(instanceTemplate.getTemplateName())
                                                     .at(x, y)
-                                                    .buildAndInstantiate(DUNGEON_ENTITY_PREFIX + RandomStringUtils.randomAlphanumeric(8));
+                                                    .build();
+                                            EntityHandler.getInstance().addObject(DUNGEON_ENTITY_PREFIX + "_GLOBAL_" + RandomStringUtils.randomAlphanumeric(8), entity);
                                             this.navMap.getTile(new Vector2i(x, y)).setObstructed(true);
                                         }
                                     }

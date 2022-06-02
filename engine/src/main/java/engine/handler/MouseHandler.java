@@ -41,12 +41,21 @@ public class MouseHandler {
         return new Vector2d(this.mousePositionX, this.mousePositionY);
     }
 
+    public Vector2d getMousePositionClipSpace(Vector2d positionScreenSpace) {
+        return new Vector2d(((positionScreenSpace.x() / (EngineConstants.WINDOW_WIDTH)) - 0.5) * 2, ((0.5 - (positionScreenSpace.y() / (EngineConstants.WINDOW_HEIGHT))) * 2) / EngineConstants.getAspectRatio());
+    }
+
     public Vector2d getMousePositionClipSpace() {
-        return new Vector2d(0.5 - (this.mousePositionX / (EngineConstants.WINDOW_WIDTH)), 0.5 - (this.mousePositionY / (EngineConstants.WINDOW_HEIGHT)));
+        return getMousePositionClipSpace(new Vector2d(this.mousePositionX, this.mousePositionY));
+    }
+
+    public Vector2d getMousePositionWorldSpace(Vector2d positionScreenSpace) {
+        Vector2d positionClipSpace = new Vector2d(((positionScreenSpace.x() / (EngineConstants.WINDOW_WIDTH)) - 0.5) * 2, ((0.5 - (positionScreenSpace.y() / (EngineConstants.WINDOW_HEIGHT))) * 2) / EngineConstants.getAspectRatio()).div(RenderService.cameraPosZ);
+        return new Vector2d(RenderService.cameraPosX + positionClipSpace.x(), RenderService.cameraPosY + positionClipSpace.y());
     }
 
     public Vector2d getMousePositionWorldSpace() {
-        Vector2d clipSpaceMouse = getMousePositionClipSpace().mul(2).mul(1, EngineConstants.WINDOW_HEIGHT / EngineConstants.WINDOW_WIDTH).div(RenderService.cameraPosZ);
+        Vector2d clipSpaceMouse = getMousePositionClipSpace().mul(2).div(RenderService.cameraPosZ);
         return new Vector2d(RenderService.cameraPosX - clipSpaceMouse.x(), RenderService.cameraPosY + clipSpaceMouse.y());
     }
 

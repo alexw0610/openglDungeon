@@ -1,0 +1,8 @@
+templateName: "rottingFlesh"
+type: "ItemComponent"
+arguments:
+  itemName: "Chunk of rotting flesh"
+  itemType: "Basic"
+  itemTexture: "rotting_chunk_of_flesh"
+modifiers:
+  itemBackdrop: "default_item_backdrop"

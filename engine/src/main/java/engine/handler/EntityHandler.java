@@ -38,6 +38,10 @@ public class EntityHandler implements Handler<Entity> {
         }
     }
 
+    public Entity getEntityWithId(String entityId) {
+        return this.objects.get(entityId);
+    }
+
     public Entity getEntityWithComponent(Class component) {
         synchronized (this.objects) {
             return this.objects.values().parallelStream().unordered().filter(entity -> entity.hasComponentOfType(component)).findAny().orElse(null);
@@ -82,6 +86,26 @@ public class EntityHandler implements Handler<Entity> {
         for (String key : this.objects.keySet().stream().filter(key -> key.startsWith(prefix)).collect(Collectors.toList())) {
             removeObject(key);
         }
+    }
+
+    public List<Entity> getObjectsWithPrefix(String prefix) {
+        List<Entity> entitiesToReturn = new ArrayList<>();
+        synchronized (this.objects) {
+            for (String key : this.objects.keySet().stream().filter(key -> key.startsWith(prefix)).collect(Collectors.toList())) {
+                entitiesToReturn.add(this.objects.get(key));
+            }
+        }
+        return entitiesToReturn;
+    }
+
+    public List<Entity> getGlobalObjects() {
+        List<Entity> entitiesToReturn = new ArrayList<>();
+        synchronized (this.objects) {
+            for (String key : this.objects.keySet().stream().filter(key -> key.contains("_GLOBAL_")).collect(Collectors.toList())) {
+                entitiesToReturn.add(this.objects.get(key));
+            }
+        }
+        return entitiesToReturn;
     }
 
     public double getEntityCount() {

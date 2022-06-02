@@ -11,14 +11,13 @@ import engine.entity.Entity;
 import engine.entity.EntityBuilder;
 import engine.enums.PrimitiveMeshShape;
 import engine.enums.ShaderType;
+import engine.handler.EntityHandler;
 import exception.EncryptionException;
 import security.EncryptionHandler;
 import util.SerializableUtil;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Queue;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class ServerUpdateProcessor implements Runnable {
     public static final double SMOOTHING = 0.34;
@@ -53,10 +52,19 @@ public class ServerUpdateProcessor implements Runnable {
                     for (CharacterListUpdateDto.CharacterUpdateDto characterUpdateDto : characterListUpdateDto.getCharacterUpdateDtos()) {
                         addOrUpdateCharacter(characterUpdateDto);
                     }
+                    List<Entity> players = EntityHandler.getInstance().getObjectsWithPrefix("PLAYER_");
+                    CharacterListUpdateDto finalCharacterListUpdateDto = characterListUpdateDto;
+                    players.stream()
+                            .filter(player -> !finalCharacterListUpdateDto.getCharacterUpdateDtos()
+                                    .stream()
+                                    .map(CharacterListUpdateDto.CharacterUpdateDto::getCharacterId)
+                                    .collect(Collectors.toList()).contains(Integer.parseInt(player.getEntityId().replaceFirst("PLAYER_", ""))))
+                            .forEach(player -> EntityHandler.getInstance().removeObject(player.getEntityId()));
                 }
             }
         }
     }
+
 
     private void addOrUpdateCharacter(CharacterListUpdateDto.CharacterUpdateDto characterUpdateDto) {
         if (engine.getEntityHandler().getObject(String.valueOf(characterUpdateDto.getCharacterId())) == null) {
@@ -66,7 +74,7 @@ public class ServerUpdateProcessor implements Runnable {
                     .withComponent(new RenderComponent(PrimitiveMeshShape.QUAD.value(), "human_female", ShaderType.DEFAULT.value(), 1.0, 4))
                     .withComponent(new AiTargetTag())
                     .build();
-            engine.getEntityHandler().addObject(String.valueOf(characterUpdateDto.getCharacterId()), entity);
+            engine.getEntityHandler().addObject("PLAYER_" + characterUpdateDto.getCharacterId(), entity);
         } else {
             Entity character = engine.getEntityHandler().getObject(String.valueOf(characterUpdateDto.getCharacterId()));
             double deltaX = characterUpdateDto.getPositionX() - character.getComponentOfType(TransformationComponent.class).getPositionX();

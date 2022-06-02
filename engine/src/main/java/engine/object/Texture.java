@@ -11,6 +11,7 @@ public class Texture {
     private final int height;
     private final ByteBuffer textureBuffer;
     private int textureId;
+    private boolean useMipmap;
     private boolean isLoaded;
 
     public Texture(int width, int height, ByteBuffer textureBuffer) {
@@ -18,7 +19,11 @@ public class Texture {
         this.height = height;
         this.textureBuffer = textureBuffer;
         this.isLoaded = false;
+        this.useMipmap = false;
+    }
 
+    public void useMipmap() {
+        this.useMipmap = true;
     }
 
     public void bind() {
@@ -39,9 +44,13 @@ public class Texture {
             gl.glPixelStorei(gl.GL_UNPACK_ALIGNMENT, 1);
             gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MAG_FILTER, gl.GL_NEAREST);
             gl.glTexImage2D(gl.GL_TEXTURE_2D, 0, gl.GL_RGBA, this.width, this.height, 0, gl.GL_RGBA, gl.GL_UNSIGNED_BYTE, this.textureBuffer);
-            gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MIN_FILTER, gl.GL_NEAREST);
+            gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MIN_FILTER, this.useMipmap ? gl.GL_LINEAR_MIPMAP_NEAREST : gl.GL_NEAREST);
             gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_WRAP_S, gl.GL_REPEAT);
             gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_WRAP_T, gl.GL_REPEAT);
+            if (this.useMipmap) {
+                System.out.println("loaded with mipmap");
+                gl.glGenerateMipmap(gl.GL_TEXTURE_2D);
+            }
             isLoaded = true;
         }
     }

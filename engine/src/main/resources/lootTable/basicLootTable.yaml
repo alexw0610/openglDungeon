@@ -1,3 +1,5 @@
 templateName: "basicLootTable"
 lootMap:
-  potionItem: 0.08
+  potionItem: 0.06
+  crackedBones: 0.06
+  rottingFlesh: 0.06

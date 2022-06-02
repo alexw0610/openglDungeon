@@ -24,10 +24,12 @@ public class AISystem {
         AIComponent aiComponent = entity.getComponentOfType(AIComponent.class);
         TransformationComponent transformationComponent = entity.getComponentOfType(TransformationComponent.class);
         PhysicsComponent physicsComponent = entity.getComponentOfType(PhysicsComponent.class);
-        checkAggro(aiComponent, transformationComponent);
+        if (aiComponent.isHostile()) {
+            checkAggro(aiComponent, transformationComponent);
+        }
         switch (aiComponent.getCurrentState()) {
             case IDLE:
-                if (Math.random() < 0.90) {
+                if (Math.random() < 0.80) {
                     break;
                 }
                 idle(aiComponent, transformationComponent);
@@ -43,15 +45,17 @@ public class AISystem {
 
     private static void idle(AIComponent aiComponent, TransformationComponent transformationComponent) {
         NavMap navMap = NavHandler.getInstance().getNavMap();
-        Vector2d targetPosition = new Vector2d();
-        List<Vector2i> pathToTarget = new ArrayList<>();
-        Vector2d currentPosition = transformationComponent.getPosition();
-        while (pathToTarget.isEmpty()) {
-            currentPosition.add((int) Math.round(((Math.random() * 2) - 1) * 6), (int) Math.round(((Math.random() * 2) - 1) * 6), targetPosition);
-            pathToTarget = new Pathfinding().getPath(navMap, currentPosition, targetPosition);
+        if (navMap != null) {
+            Vector2d targetPosition = new Vector2d();
+            List<Vector2i> pathToTarget = new ArrayList<>();
+            Vector2d currentPosition = transformationComponent.getPosition();
+            while (pathToTarget.isEmpty()) {
+                currentPosition.add((int) Math.round(((Math.random() * 2) - 1) * 6), (int) Math.round(((Math.random() * 2) - 1) * 6), targetPosition);
+                pathToTarget = new Pathfinding().getPath(navMap, currentPosition, targetPosition);
+            }
+            aiComponent.setCurrentState(AIBehaviourState.PATHING);
+            aiComponent.setPathToTarget(pathToTarget);
         }
-        aiComponent.setCurrentState(AIBehaviourState.PATHING);
-        aiComponent.setPathToTarget(pathToTarget);
     }
 
     private static void attacking(AIComponent aiComponent, TransformationComponent transformationComponent) {

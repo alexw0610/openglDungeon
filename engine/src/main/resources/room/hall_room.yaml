@@ -2,7 +2,7 @@ templateName: "hallRoom"
 floorTextureKey: "floor_purple_grey_plates"
 wallTextureKey: "wall_aqua_brick"
 roomFloorEntityTemplates:
-  chandelier: 0.03
+  chandelier: 0.04
   table: 0.02
 roomWallEntityTemplates:
 roomHostileEntityTemplates:

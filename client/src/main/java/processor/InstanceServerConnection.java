@@ -8,25 +8,24 @@ import dto.udp.PlayerUpdateDto;
 import engine.Engine;
 import engine.component.AIComponent;
 import engine.component.PlayerTag;
+import engine.component.TransformationComponent;
 import engine.component.ZoneChangeComponent;
 import engine.entity.Entity;
 import exception.EncryptionException;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.joml.Vector2d;
 import security.EncryptionHandler;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class InstanceServerConnection implements Runnable {
     private final byte[] encryptionKey;
     private final int connectionId;
-    private final Map<Integer, Long> channelMap = new HashMap<>();
     private final Engine engine;
     private final String tcpPort;
     private final String tcpHost;
@@ -83,14 +82,18 @@ public class InstanceServerConnection implements Runnable {
                     Class<?> objectType = ((TcpEncryptionWrapper) request).getObjectType();
                     if (PlayerUpdateDto.class.equals(objectType)) {
                         PlayerUpdateDto playerUpdateDto = (PlayerUpdateDto) encryptionHandler.decryptByteArrayToObject(((TcpEncryptionWrapper) request).getEncryptedPayload());
+                        System.out.println("Local/Server player delta: " + new Vector2d(playerUpdateDto.getPositionX(), playerUpdateDto.getPositionY()).distance(engine.getEntityHandler().getEntityWithComponent(PlayerTag.class).getComponentOfType(TransformationComponent.class).getPosition()));
                         if (engine.getNavHandler().getNavMap().getSeed() != playerUpdateDto.getZoneId()) {
                             ZoneChangeComponent zoneChangeComponent = new ZoneChangeComponent((int) playerUpdateDto.getZoneId());
                             engine.getEntityHandler().getEntityWithComponent(PlayerTag.class).addComponent(zoneChangeComponent);
+                            System.out.println("changed zone from " + engine.getNavHandler().getNavMap().getSeed() + " to " + playerUpdateDto.getZoneId());
                         }
                     } else if (List.class.equals(objectType)) {
-                        System.out.println("Received synchronized entity list!");
-                        ArrayList<Entity> synchronizedEntities = (ArrayList<Entity>) encryptionHandler.decryptByteArrayToObject(((TcpEncryptionWrapper) request).getEncryptedPayload());
-                        addOrUpdateSynchronizedEntities(synchronizedEntities);
+                        Serializable retrieveObject = encryptionHandler.decryptByteArrayToObject(((TcpEncryptionWrapper) request).getEncryptedPayload());
+                        if (retrieveObject instanceof List) {
+                            List<Entity> synchronizedEntities = (List<Entity>) retrieveObject;
+                            addOrUpdateSynchronizedEntities(synchronizedEntities);
+                        }
                     }
                 }
             } catch (IOException | ClassNotFoundException | EncryptionException e) {
@@ -101,13 +104,12 @@ public class InstanceServerConnection implements Runnable {
 
     }
 
-    private void addOrUpdateSynchronizedEntities(ArrayList<Entity> synchronizedEntities) {
+    private void addOrUpdateSynchronizedEntities(List<Entity> synchronizedEntities) {
         for (Entity synchronizedEntity : synchronizedEntities) {
             if (engine.getEntityHandler().getObject(String.valueOf(synchronizedEntity.getEntityId())) == null) {
                 System.out.println("Added synchronized entity!");
                 engine.getEntityHandler().addObject(String.valueOf(synchronizedEntity.getEntityId()), synchronizedEntity);
             } else {
-                System.out.println("Updated synchronized entity!");
                 Entity entity = engine.getEntityHandler().getObject(String.valueOf(synchronizedEntity.getEntityId()));
                 entity.getComponentOfType(AIComponent.class).setPathToTarget(synchronizedEntity.getComponentOfType(AIComponent.class).getPathToTarget());
                 entity.getComponentOfType(AIComponent.class).setCurrentState(synchronizedEntity.getComponentOfType(AIComponent.class).getCurrentState());

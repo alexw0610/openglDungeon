@@ -21,7 +21,7 @@ public class ZoneChangeComponent implements Component {
     }
 
     @Override
-    public boolean isServerSide() {
-        return true;
+    public boolean isLocal() {
+        return false;
     }
 }

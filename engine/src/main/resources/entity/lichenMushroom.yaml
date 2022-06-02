@@ -1,0 +1,17 @@
+templateName: "lichenMushroom"
+components:
+  - type: "RenderComponent"
+    arguments:
+      meshKey: "QUAD"
+      textureKey: "lichen_mushroom"
+      shaderType: "shader"
+      scale: 1.0
+      layer: 1
+    modifiers:
+      randomizeTextureOffset: true
+  - type: "TransformationComponent"
+  - type: "CollisionComponent"
+    arguments:
+      hitBoxType: "AABB"
+      hitBoxSize: 0.5
+      obstructsMovement: false

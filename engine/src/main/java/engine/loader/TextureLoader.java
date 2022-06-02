@@ -17,6 +17,7 @@ public class TextureLoader {
     public static Texture loadTexture(String textureName) {
         BufferedImage textureImage;
         try {
+            System.out.println("loading texture " + textureName);
             InputStream resourceAsStream = TextureLoader.class.getClassLoader().getResourceAsStream(RESOURCE_TEXTURE_SUBFOLDER + textureName + DEFAULT_TEXTURE_FILE_EXTENSION);
             textureImage = ImageIO.read(resourceAsStream);
         } catch (IOException e) {

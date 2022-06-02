@@ -1,7 +1,8 @@
 package engine.enums;
 
 public enum TextureKey {
-    DEFAULT("default");
+    DEFAULT("default"),
+    FONT("font");
 
     public final String fileName;
 

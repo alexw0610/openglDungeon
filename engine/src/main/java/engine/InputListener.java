@@ -14,6 +14,7 @@ public class InputListener implements KeyListener, MouseListener {
     @Override
     public void keyPressed(KeyEvent keyEvent) {
         keyHandler.setKeyPressed(keyEvent);
+        keyHandler.addKeyPressedEvent(keyEvent);
     }
 
     @Override

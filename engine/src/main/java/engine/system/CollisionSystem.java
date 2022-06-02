@@ -33,7 +33,7 @@ public class CollisionSystem {
             if (!collisions.isEmpty()) {
                 if (StringUtils.isNotBlank(collisionComponent.getSelfApplyComponents())) {
                     Component component = ComponentBuilder.fromTemplate(collisionComponent.getSelfApplyComponents());
-                    if (EngineConstants.INSTANCE.isServerMode() || !component.isServerSide()) {
+                    if (EngineConstants.INSTANCE.isServerMode() || EngineConstants.INSTANCE.isOfflineMode() || component.isLocal()) {
                         entity.addComponent(component);
                     }
                 }
@@ -41,7 +41,7 @@ public class CollisionSystem {
             for (Entity collision : collisions) {
                 if (StringUtils.isNotBlank(collisionComponent.getOtherApplyComponents())) {
                     Component component = ComponentBuilder.fromTemplate(collisionComponent.getOtherApplyComponents());
-                    if (EngineConstants.INSTANCE.isServerMode() || !component.isServerSide()) {
+                    if (EngineConstants.INSTANCE.isServerMode() || EngineConstants.INSTANCE.isOfflineMode() || component.isLocal()) {
                         collision.addComponent(component);
                     }
                 }

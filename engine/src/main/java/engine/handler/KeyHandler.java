@@ -2,13 +2,16 @@ package engine.handler;
 
 import com.jogamp.newt.event.KeyEvent;
 
+import java.util.ArrayDeque;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Queue;
 
 public class KeyHandler {
     private static final ThreadLocal<KeyHandler> INSTANCE = ThreadLocal.withInitial(KeyHandler::new);
     private static Map<String, Short> actionToKeyMap;
     private static final byte[] keyMap = new byte[255];
+    private final Queue<KeyEvent> keyPressedEventQueue = new ArrayDeque<>();
 
     private KeyHandler() {
         actionToKeyMap = new HashMap<>();
@@ -27,6 +30,7 @@ public class KeyHandler {
         actionToKeyMap.put("zoomCameraIn", KeyEvent.VK_PAGE_DOWN);
         actionToKeyMap.put("zoomCameraOut", KeyEvent.VK_PAGE_UP);
 
+        actionToKeyMap.put("openInventory", KeyEvent.VK_I);
     }
 
     public static KeyHandler getInstance() {
@@ -52,5 +56,17 @@ public class KeyHandler {
         if (!keyEvent.isAutoRepeat()) {
             keyMap[keyEvent.getKeyCode()] = 0;
         }
+    }
+
+    public void addKeyPressedEvent(KeyEvent keyEvent) {
+        this.keyPressedEventQueue.add(keyEvent);
+    }
+
+    public Queue<KeyEvent> getKeyPressedEventsQueue() {
+        return this.keyPressedEventQueue;
+    }
+
+    public static short getKeyForAction(String action) {
+        return actionToKeyMap.get(action);
     }
 }

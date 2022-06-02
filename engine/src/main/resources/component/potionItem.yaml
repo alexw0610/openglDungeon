@@ -1,6 +1,8 @@
 templateName: "potionItem"
 type: "ItemComponent"
 arguments:
-  itemName: "healthPotion"
+  itemName: "Health Potion"
   itemType: "Consumable"
   itemTexture: "potion"
+modifiers:
+  itemBackdrop: "default_item_backdrop"

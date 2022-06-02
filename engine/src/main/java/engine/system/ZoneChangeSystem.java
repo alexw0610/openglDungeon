@@ -17,13 +17,16 @@ public class ZoneChangeSystem {
         ZoneChangeComponent zoneChangeComponent = entity.getComponentOfType(ZoneChangeComponent.class);
         Entity camera = EntityHandler.getInstance().getEntityWithComponent(CameraComponent.class);
         Vector2d startPosition;
-        if (ZoneTemplateHandler.getInstance().getObject(String.valueOf(zoneChangeComponent.getSeed())) != null) {
+        if (ZoneTemplateHandler.getInstance().getObject(String.valueOf((int) zoneChangeComponent.getSeed())) != null) {
             startPosition = ZoneGenerator.generate(String.valueOf(zoneChangeComponent.getSeed()));
+            System.out.println("Processed zone change with seed " + zoneChangeComponent.getSeed());
         } else if (zoneChangeComponent.getSeed() != 0L) {
             startPosition = DungeonGenerator.generate(zoneChangeComponent.getSeed(), "default_dungeon");
+            System.out.println("Processed dungeon change with seed " + zoneChangeComponent.getSeed());
         } else {
             String seed = RandomStringUtils.randomNumeric(8);
             startPosition = DungeonGenerator.generate(Long.parseLong(seed), "default_dungeon");
+            System.out.println("Processed dungeon change with random seed " + seed);
         }
         entity.getComponentOfType(TransformationComponent.class).setPositionX(startPosition.x());
         entity.getComponentOfType(TransformationComponent.class).setPositionY(startPosition.y());

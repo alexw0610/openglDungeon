@@ -38,7 +38,8 @@ public class ZoneTemplateHandler implements Handler<ZoneTemplate> {
         } catch (Exception e) {
             File templateDirectory = new File(Thread.currentThread().getContextClassLoader().getResource(ZONE_TEMPLATE_FOLDER).getPath());
             for (File file : templateDirectory.listFiles()) {
-                addObject(file.getName().split("\\.")[0], YamlLoader.load(ZoneTemplate.class, ZONE_TEMPLATE_FOLDER + file.getName()));
+                ZoneTemplate template = YamlLoader.load(ZoneTemplate.class, ZONE_TEMPLATE_FOLDER + file.getName());
+                addObject(String.valueOf(template.getZoneId()), template);
             }
         }
     }

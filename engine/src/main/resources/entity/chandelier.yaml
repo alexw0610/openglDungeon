@@ -17,7 +17,7 @@ components:
       lightSourceG: 0.7
       lightSourceB: 0.65
       lightStrength: 1.0
-      lightFallOff: 0.001
+      lightFallOff: 0.003
   - type: "AnimationComponent"
     arguments:
       speed: 75.0

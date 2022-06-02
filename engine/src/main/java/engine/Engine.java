@@ -11,9 +11,12 @@ import engine.component.RenderComponent;
 import engine.component.TransformationComponent;
 import engine.entity.Entity;
 import engine.handler.EntityHandler;
+import engine.handler.EventHandler;
 import engine.handler.MeshHandler;
 import engine.handler.NavHandler;
+import engine.service.InputProcessor;
 import engine.service.RenderService;
+import engine.service.UIService;
 import engine.system.*;
 import org.joml.Vector2d;
 
@@ -82,6 +85,7 @@ public class Engine {
             }
         });
         window.setSize((int) WINDOW_WIDTH, (int) WINDOW_HEIGHT);
+        window.setFullscreen(FULLSCREEN);
         InputListener inputListener = new InputListener();
         window.addGLEventListener(new Display(this, inputListener));
         window.addKeyListener(inputListener);
@@ -192,6 +196,10 @@ public class Engine {
                     RenderSystem.processEntity(entity);
                 }
             }
+            InputProcessor.processInput();
+            UIService.getInstance().updateUI();
+            EventHandler.getInstance().clearAllEvents();
+
         }
         this.renderingTime = System.nanoTime() - sectionStartTime;
         long stepTime = java.lang.System.nanoTime();

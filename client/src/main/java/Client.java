@@ -2,8 +2,9 @@ import dto.ssl.AuthenticationRequest;
 import dto.ssl.GenericResponse;
 import dto.ssl.ReadyForReceivingRequest;
 import engine.Engine;
-import engine.component.CameraComponent;
-import engine.component.TransformationComponent;
+import engine.component.*;
+import engine.entity.ComponentBuilder;
+import engine.entity.Entity;
 import engine.entity.EntityBuilder;
 import engine.handler.EntityHandler;
 import engine.handler.NavHandler;
@@ -48,11 +49,15 @@ public class Client {
         engine.start(offlineMode, false);
         NavHandler.setInstance(engine.getNavHandler());
         EntityHandler.setInstance(engine.getEntityHandler());
-        Vector2d startPosition = ZoneGenerator.generate("sewer_city");
-        EntityBuilder.builder()
+        Vector2d startPosition = ZoneGenerator.generate("1");
+        Entity player = EntityBuilder.builder()
                 .fromTemplate("player")
                 .at(startPosition.x(), startPosition.y())
                 .buildAndInstantiate();
+        player.getComponentOfType(StatComponent.class).setEntityName(applicationProperties.getProperty("characterName"));
+        player.getComponentOfType(InventoryComponent.class).getItems().add((ItemComponent) ComponentBuilder.fromTemplate("potionItem"));
+        player.getComponentOfType(InventoryComponent.class).getItems().add((ItemComponent) ComponentBuilder.fromTemplate("rottingFlesh"));
+        player.getComponentOfType(InventoryComponent.class).getItems().add((ItemComponent) ComponentBuilder.fromTemplate("crackedBones"));
         EntityBuilder.builder()
                 .withComponent(new TransformationComponent())
                 .withComponent(new CameraComponent())
