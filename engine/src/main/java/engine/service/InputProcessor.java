@@ -91,7 +91,12 @@ public class InputProcessor {
                     .buildAndInstantiate();
         }
         if (event != null && event.getButton() == MouseEvent.BUTTON3 && event.getClickCount() == 1) {
-            List<Entity> entityList = EntityHandler.getInstance().getAllEntitiesWithComponents(StatComponent.class, CollisionComponent.class, InventoryComponent.class).stream().filter(entity -> entity.getComponentOfType(StatComponent.class).isDead()).collect(Collectors.toList());
+            List<Entity> entityList = EntityHandler.getInstance()
+                    .getAllEntitiesWithComponents(CollisionComponent.class, InventoryComponent.class)
+                    .stream()
+                    .filter(entity -> !entity.hasComponentOfType(StatComponent.class) || entity.getComponentOfType(StatComponent.class)
+                            .isDead())
+                    .collect(Collectors.toList());
             Vector2d mousePositionWorldSpace = MouseHandler.getInstance().getMousePositionWorldSpace(new Vector2d(event.getX(), event.getY()));
             for (Entity entity : entityList) {
                 boolean clickedOn = CollisionUtil.checkInside(mousePositionWorldSpace,

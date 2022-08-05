@@ -1,0 +1,13 @@
+templateName: "banner"
+components:
+  - type: "RenderComponent"
+    arguments:
+      meshKey: "QUAD"
+      textureKey: "banner"
+      shaderType: "shader"
+      scale: 1.0
+      layer: 2
+    modifiers:
+      shadeless: false
+      randomizeTextureOffset: true
+  - type: "TransformationComponent"

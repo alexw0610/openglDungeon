@@ -2,7 +2,9 @@ templateName: "defaultHallway"
 floorTextureKey: "floor_red_plates_debris"
 wallTextureKey: "wall_aqua_brick"
 roomFloorEntityTemplates:
-  glowingMushroom: 0.02
+  lantern: 0.02
+  pot: 0.01
 roomWallEntityTemplates:
+  banner: 0.1
   torch: 0.2
 roomHostileEntityTemplates:

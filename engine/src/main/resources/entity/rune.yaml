@@ -1,0 +1,20 @@
+templateName: "rune"
+components:
+  - type: "RenderComponent"
+    arguments:
+      meshKey: "QUAD"
+      textureKey: "rune"
+      shaderType: "shader"
+      scale: 1.0
+      layer: 1
+    modifiers:
+      shadeless: true
+      randomizeTextureOffset: true
+  - type: "TransformationComponent"
+  - type: "LightSourceComponent"
+    arguments:
+      lightSourceR: 0.4
+      lightSourceG: 0.9
+      lightSourceB: 0.55
+      lightStrength: 0.3
+      lightFallOff: 0.01

@@ -1,9 +1,9 @@
-templateName: "chandelier"
+templateName: "lantern"
 components:
   - type: "RenderComponent"
     arguments:
       meshKey: "QUAD"
-      textureKey: "chandelier"
+      textureKey: "lantern_hanging"
       shaderType: "shader"
       scale: 1.0
       layer: 4
@@ -14,10 +14,10 @@ components:
   - type: "LightSourceComponent"
     arguments:
       lightSourceR: 0.9
-      lightSourceG: 0.7
-      lightSourceB: 0.7
-      lightStrength: 1.0
-      lightFallOff: 0.008
+      lightSourceG: 0.6
+      lightSourceB: 0.4
+      lightStrength: 0.7
+      lightFallOff: 0.02
   - type: "AnimationComponent"
     arguments:
-      speed: 75.0
+      speed: 140.0

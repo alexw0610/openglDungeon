@@ -1,6 +1,6 @@
 #version 450
 
-#define DARKNESS 0.1
+#define DARKNESS 0.2
 #define DEFAULT_SPRITE_SIZE 32
 
 in vec3 vertex;

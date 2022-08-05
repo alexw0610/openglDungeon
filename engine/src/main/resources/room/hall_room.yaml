@@ -4,6 +4,9 @@ wallTextureKey: "wall_aqua_brick"
 roomFloorEntityTemplates:
   chandelier: 0.04
   table: 0.02
+  chest: 0.01
 roomWallEntityTemplates:
+  candelabra: 0.1
+  banner: 0.1
 roomHostileEntityTemplates:
   skeleton: 0.02

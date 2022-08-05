@@ -1,23 +1,22 @@
-templateName: "chandelier"
+templateName: "candelabra"
 components:
   - type: "RenderComponent"
     arguments:
       meshKey: "QUAD"
-      textureKey: "chandelier"
+      textureKey: "candelabra"
       shaderType: "shader"
       scale: 1.0
-      layer: 4
+      layer: 2
     modifiers:
-      shadeless: true
-      perspectiveLayer: 1.05
+      shadeless: false
   - type: "TransformationComponent"
   - type: "LightSourceComponent"
     arguments:
       lightSourceR: 0.9
-      lightSourceG: 0.7
-      lightSourceB: 0.7
+      lightSourceG: 0.4
+      lightSourceB: 0.3
       lightStrength: 1.0
-      lightFallOff: 0.008
+      lightFallOff: 0.01
   - type: "AnimationComponent"
     arguments:
-      speed: 75.0
+      speed: 100.0

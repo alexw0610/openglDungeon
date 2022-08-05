@@ -2,7 +2,8 @@ templateName: "defaultRoom"
 floorTextureKey: "floor_red_plates_debris"
 wallTextureKey: "wall_aqua_brick"
 roomFloorEntityTemplates:
-  lichenMushroom: 0.05
+  lantern: 0.025
+  rune: 0.005
+  pot: 0.01
 roomWallEntityTemplates:
-  window: 0.17
 roomHostileEntityTemplates:
