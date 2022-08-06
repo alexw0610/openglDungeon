@@ -55,8 +55,7 @@ public class MouseHandler {
     }
 
     public Vector2d getMousePositionWorldSpace() {
-        Vector2d clipSpaceMouse = getMousePositionClipSpace().mul(2).div(RenderService.cameraPosZ);
-        return new Vector2d(RenderService.cameraPosX - clipSpaceMouse.x(), RenderService.cameraPosY + clipSpaceMouse.y());
+        return getMousePositionWorldSpace(getMousePositionScreenSpace());
     }
 
     public void updateMouseEvent(MouseEvent mouseEvent) {

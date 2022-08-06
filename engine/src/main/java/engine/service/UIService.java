@@ -1,9 +1,6 @@
 package engine.service;
 
-import engine.component.MobTag;
-import engine.component.PlayerTag;
-import engine.component.StatComponent;
-import engine.component.TransformationComponent;
+import engine.component.*;
 import engine.entity.Entity;
 import engine.enums.Color;
 import engine.handler.EntityHandler;
@@ -13,12 +10,14 @@ import engine.object.ui.HealthBar;
 import engine.object.ui.UIElement;
 import engine.object.ui.UIInventoryElement;
 import engine.object.ui.UIText;
+import engine.service.util.CollisionUtil;
 import engine.service.util.CoordinateConverter;
 import org.apache.commons.lang3.StringUtils;
 import org.joml.Intersectiond;
 import org.joml.Vector2d;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class UIService {
 
@@ -48,6 +47,7 @@ public class UIService {
         }
         generateMobTagUI();
         processUIMouseOver();
+        processEntityMouseOver();
         Map<Integer, List<UIDrawable>> drawOrderMap = generateDrawOrderMap();
         renderItems(drawOrderMap);
         currentUiElements.clear();
@@ -95,11 +95,30 @@ public class UIService {
         for (UIElement uiElement : currentUiElements) {
             if (isMouseOver(currentMousePosition, uiElement)) {
                 if (StringUtils.isNotBlank(uiElement.getTooltip())) {
-                    generateTooltip(uiElement);
+                    generateUiTooltip(uiElement);
                     break;
                 }
             }
         }
+    }
+
+    private void processEntityMouseOver() {
+        generateLootableTooltip();
+    }
+
+    private void generateLootableTooltip() {
+        List<Entity> hoveredEntities = EntityHandler.getInstance().getAllEntitiesWithComponents(InventoryComponent.class, CollisionComponent.class, TransformationComponent.class);
+        Vector2d mousePositionClipSpace = MouseHandler.getInstance().getMousePositionClipSpace();
+        Vector2d mousePositionWorldSpace = MouseHandler.getInstance().getMousePositionWorldSpace();
+        hoveredEntities = hoveredEntities.stream()
+                .filter(entity -> (!entity.hasComponentOfType(StatComponent.class) || entity.getComponentOfType(StatComponent.class).isDead())
+                        && !entity.getComponentOfType(InventoryComponent.class).getItems().isEmpty()
+                        && CollisionUtil.checkInside(mousePositionWorldSpace,
+                        entity.getComponentOfType(CollisionComponent.class).getHitBox(),
+                        entity.getComponentOfType(TransformationComponent.class).getPosition()))
+                .collect(Collectors.toList());
+        hoveredEntities.forEach(entity -> generateUiTooltip("Loot", mousePositionClipSpace.x(), mousePositionClipSpace.y()));
+
     }
 
     public boolean isMouseOver(Vector2d currentMousePosition, UIElement uiElement) {
@@ -110,15 +129,19 @@ public class UIService {
                 uiElement.getPosTopLeftY());
     }
 
-    private void generateTooltip(UIElement uiElement) {
-        UIText tooltip = new UIText(uiElement.getTooltip()).centered().fontSize(0.0007).spacing(1.15).layer(0).fixedSize(true);
+    private void generateUiTooltip(UIElement uiElement) {
+        generateUiTooltip(uiElement.getTooltip(), uiElement.getScreenPositionX(), (uiElement.getScreenPositionY() - uiElement.getHeight() / 2));
+    }
+
+    private void generateUiTooltip(String tooltipText, double screenPositionX, double screenPositionY) {
+        UIText tooltip = new UIText(tooltipText).centered().fontSize(0.0007).spacing(1.15).layer(0).fixedSize(true);
         tooltip.setColor(Color.WHITE);
-        tooltip.setScreenPosition(new Vector2d(uiElement.getScreenPositionX(), uiElement.getScreenPositionY() - uiElement.getHeight() / 2));
+        tooltip.setScreenPosition(new Vector2d(screenPositionX, screenPositionY));
         UIElement tooltipBackground = new UIElement(tooltip.getScreenPosition().x(),
                 tooltip.getScreenPosition().y(),
                 tooltip.getFontSize() * tooltip.getTotalWidth() * tooltip.getSpacing(),
                 0.035);
-        tooltipBackground.setColor(Color.BLACK.value());
+        tooltipBackground.setColor(Color.PURPLE.value());
         tooltipBackground.setLayer(1);
         tooltipBackground.setFixedSize(true);
         currentUITextElements.add(tooltip);

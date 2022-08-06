@@ -151,6 +151,21 @@ public class TileMap {
                                     if (entity.getComponentOfType(CollisionComponent.class) != null && entity.getComponentOfType(CollisionComponent.class).isObstructsMovement()) {
                                         this.navMap.getTile(new Vector2i(x, y)).setObstructed(true);
                                     }
+                                    InventoryComponent inventoryComponent = entity.getComponentOfType(InventoryComponent.class);
+                                    if (inventoryComponent != null && StringUtils.isNotBlank(inventoryComponent.getLootTable())) {
+                                        LootTableTemplate lootTable = LootTableTemplateHandler.getInstance().getObject(inventoryComponent.getLootTable());
+                                        for (int i = 0; i < inventoryComponent.getInventorySize(); i++) {
+                                            float rndLoot = random.nextFloat();
+                                            float totalLoot = 0;
+                                            for (Map.Entry<String, Double> loot : lootTable.getLootMap().entrySet()) {
+                                                totalLoot += loot.getValue();
+                                                if (rndLoot <= totalLoot) {
+                                                    inventoryComponent.getItems().add((ItemComponent) ComponentBuilder.fromTemplate(loot.getKey()));
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    }
                                     break;
                                 }
                             }
