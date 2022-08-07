@@ -13,6 +13,7 @@ public class ItemComponent implements Component {
     private ItemType itemType;
     private String itemTexture;
     private String itemBackdrop;
+    private int merchantPrice;
 
     public ItemComponent(String itemName, String itemType, String itemTexture) {
         this.itemId = RandomStringUtils.randomAlphanumeric(16);
@@ -68,6 +69,14 @@ public class ItemComponent implements Component {
 
     public void setItemBackdrop(String itemBackdrop) {
         this.itemBackdrop = itemBackdrop;
+    }
+
+    public int getMerchantPrice() {
+        return merchantPrice;
+    }
+
+    public void setMerchantPrice(Integer merchantPrice) {
+        this.merchantPrice = merchantPrice;
     }
 
     @Override

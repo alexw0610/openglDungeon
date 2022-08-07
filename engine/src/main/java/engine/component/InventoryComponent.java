@@ -10,6 +10,7 @@ public class InventoryComponent implements Component {
     private List<ItemComponent> items;
     private double pickUpRange;
     private String lootTable;
+    private int currency;
 
     public InventoryComponent(Integer inventorySize, Double pickUpRange) {
         this.inventorySize = inventorySize;
@@ -47,5 +48,13 @@ public class InventoryComponent implements Component {
 
     public void setLootTable(String lootTable) {
         this.lootTable = lootTable;
+    }
+
+    public int getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(int currency) {
+        this.currency = currency;
     }
 }
