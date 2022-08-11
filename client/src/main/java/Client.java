@@ -7,9 +7,11 @@ import engine.entity.ComponentBuilder;
 import engine.entity.Entity;
 import engine.entity.EntityBuilder;
 import engine.handler.EntityHandler;
+import engine.handler.EventHandler;
 import engine.handler.NavHandler;
 import engine.service.ZoneGenerator;
 import exception.UDPServerException;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.joml.Vector2d;
 import processor.CharacterUpdateSender;
@@ -34,12 +36,14 @@ public class Client {
     private static final String SERVER_UDP_PORT = "UDP_LISTENING_PORT";
     private static final String SERVER_TCP_PORT = "TCP_LISTENING_PORT";
     private static final String CONNECTION_ID = "CONNECTION_ID";
+    private static final String CHARACTER_ID = "CHARACTER_ID";
     private static final String DEFAULT_UDP_PORT = "defaultUDPPort";
 
     private static String serverUdpUpdatePort;
     private static String serverTcpUpdatePort;
     private static String serverUdpUpdateHost;
     private static int connectionId;
+    private static String characterId;
     private static byte[] encryptionKey;
     private static Engine engine;
 
@@ -49,20 +53,8 @@ public class Client {
         engine.start(offlineMode, false);
         NavHandler.setInstance(engine.getNavHandler());
         EntityHandler.setInstance(engine.getEntityHandler());
+        EventHandler.setInstance(engine.getEventHandler());
         Vector2d startPosition = ZoneGenerator.generate("1");
-        Entity player = EntityBuilder.builder()
-                .fromTemplate("player")
-                .at(startPosition.x(), startPosition.y())
-                .buildAndInstantiate();
-        player.getComponentOfType(StatComponent.class).setEntityName(applicationProperties.getProperty("characterName"));
-        player.getComponentOfType(InventoryComponent.class).getItems().add((ItemComponent) ComponentBuilder.fromTemplate("potionItem"));
-        player.getComponentOfType(InventoryComponent.class).getItems().add((ItemComponent) ComponentBuilder.fromTemplate("rottingFlesh"));
-        player.getComponentOfType(InventoryComponent.class).getItems().add((ItemComponent) ComponentBuilder.fromTemplate("crackedBones"));
-        EntityBuilder.builder()
-                .withComponent(new TransformationComponent())
-                .withComponent(new CameraComponent())
-                .at(startPosition.x(), startPosition.y())
-                .buildAndInstantiate();
         System.out.println("Engine startup complete!");
         if (!offlineMode) {
             try {
@@ -74,6 +66,19 @@ public class Client {
                 System.exit(1);
             }
         }
+        Entity player = EntityBuilder.builder()
+                .fromTemplate("player")
+                .at(startPosition.x(), startPosition.y())
+                .buildAndInstantiate(StringUtils.isBlank(characterId) ? RandomStringUtils.randomAlphanumeric(16) : characterId);
+        player.getComponentOfType(StatComponent.class).setEntityName(applicationProperties.getProperty("characterName"));
+        player.getComponentOfType(InventoryComponent.class).getItems().add((ItemComponent) ComponentBuilder.fromTemplate("potionItem"));
+        player.getComponentOfType(InventoryComponent.class).getItems().add((ItemComponent) ComponentBuilder.fromTemplate("rottingFlesh"));
+        player.getComponentOfType(InventoryComponent.class).getItems().add((ItemComponent) ComponentBuilder.fromTemplate("crackedBones"));
+        EntityBuilder.builder()
+                .withComponent(new TransformationComponent())
+                .withComponent(new CameraComponent())
+                .at(startPosition.x(), startPosition.y())
+                .buildAndInstantiate();
     }
 
     private static void establishServerConnection() throws UDPServerException {
@@ -128,6 +133,7 @@ public class Client {
         serverTcpUpdatePort = getParameterOrExit(genericResponse.getResponseParameters(), SERVER_TCP_PORT);
         serverUdpUpdateHost = applicationProperties.getProperty("serverHost");
         connectionId = Integer.parseInt(getParameterOrExit(genericResponse.getResponseParameters(), CONNECTION_ID));
+        characterId = getParameterOrExit(genericResponse.getResponseParameters(), CHARACTER_ID);
     }
 
     private static String getParameterOrExit(Map<String, String> responseParameters, String parameterName) {

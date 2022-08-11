@@ -15,7 +15,8 @@ public class AttackSystem {
     public static void processEntity(Entity entity) {
         AttackComponent attackComponent = entity.getComponentOfType(AttackComponent.class);
         TransformationComponent transformationComponent = entity.getComponentOfType(TransformationComponent.class);
-        List<Entity> attackableEntities = EntityHandler.getInstance().getAllEntitiesWithComponents(StatComponent.class, CollisionComponent.class, attackComponent.getTargetComponentConstraint());
+        List<Entity> attackableEntities = EntityHandler.getInstance()
+                .getAllEntitiesWithComponents(StatComponent.class, CollisionComponent.class, attackComponent.getTargetComponentConstraint());
         if (attackComponent.isAoE()) {
             for (Entity attackableEntity : attackableEntities.stream().filter(e -> !e.getComponentOfType(StatComponent.class).isDead()).collect(Collectors.toList())) {
                 if (CollisionUtil.checkCollision(transformationComponent.getPosition(),

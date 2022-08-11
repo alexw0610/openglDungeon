@@ -2,10 +2,7 @@ package engine;
 
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLEventListener;
-import engine.handler.EntityHandler;
-import engine.handler.KeyHandler;
-import engine.handler.MouseHandler;
-import engine.handler.NavHandler;
+import engine.handler.*;
 
 public class Display implements GLEventListener {
     private final Engine engine;
@@ -19,6 +16,7 @@ public class Display implements GLEventListener {
     public void init(GLAutoDrawable glAutoDrawable) {
         this.engine.setEntityHandler(EntityHandler.getInstance());
         this.engine.setNavHandler(NavHandler.getInstance());
+        this.engine.setEventHandler(EventHandler.getInstance());
         this.inputListener.setKeyHandler(KeyHandler.getInstance());
         this.inputListener.setMouseHandler(MouseHandler.getInstance());
         this.engine.setStarted(true);

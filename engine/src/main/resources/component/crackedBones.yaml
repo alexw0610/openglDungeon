@@ -3,6 +3,7 @@ type: "ItemComponent"
 arguments:
   itemName: "Pile of cracked bones"
   itemType: "Basic"
+  itemTypeId: 1
   itemTexture: "pile_of_cracked_bones"
 modifiers:
   itemBackdrop: "default_item_backdrop"

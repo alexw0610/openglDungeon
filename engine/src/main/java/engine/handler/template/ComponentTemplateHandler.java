@@ -16,6 +16,7 @@ public class ComponentTemplateHandler implements Handler<ComponentTemplate> {
     private static final ThreadLocal<ComponentTemplateHandler> INSTANCE = ThreadLocal.withInitial(ComponentTemplateHandler::new);
     public static final String COMPONENT_TEMPLATE_FOLDER = "component/";
     private final Map<String, ComponentTemplate> templateMap = new HashMap<>();
+    private final Map<Integer, String> itemTypeIdMap = new HashMap<>();
 
     public static ComponentTemplateHandler getInstance() {
         return INSTANCE.get();
@@ -30,13 +31,21 @@ public class ComponentTemplateHandler implements Handler<ComponentTemplate> {
                 JarEntry entry = entries.nextElement();
                 if (entry.getName().startsWith(COMPONENT_TEMPLATE_FOLDER) && entry.getName().endsWith(".yaml")) {
                     String filename = entry.getName().split("/")[1];
-                    addObject(filename.split("\\.")[0], YamlLoader.load(ComponentTemplate.class, COMPONENT_TEMPLATE_FOLDER + filename));
+                    ComponentTemplate componentTemplate = YamlLoader.load(ComponentTemplate.class, COMPONENT_TEMPLATE_FOLDER + filename);
+                    addObject(componentTemplate.getTemplateName(), componentTemplate);
+                    if (componentTemplate.getType().equals("ItemComponent")) {
+                        this.itemTypeIdMap.put((Integer) componentTemplate.getArguments().get("itemTypeId"), componentTemplate.getTemplateName());
+                    }
                 }
             }
         } catch (Exception e) {
             File templateDirectory = new File(Thread.currentThread().getContextClassLoader().getResource(COMPONENT_TEMPLATE_FOLDER).getPath());
             for (File file : templateDirectory.listFiles()) {
-                addObject(file.getName().split("\\.")[0], YamlLoader.load(ComponentTemplate.class, COMPONENT_TEMPLATE_FOLDER + file.getName()));
+                ComponentTemplate componentTemplate = YamlLoader.load(ComponentTemplate.class, COMPONENT_TEMPLATE_FOLDER + file.getName());
+                addObject(componentTemplate.getTemplateName(), componentTemplate);
+                if (componentTemplate.getType().equals("ItemComponent")) {
+                    this.itemTypeIdMap.put((Integer) componentTemplate.getArguments().get("itemTypeId"), componentTemplate.getTemplateName());
+                }
             }
         }
     }
@@ -63,5 +72,9 @@ public class ComponentTemplateHandler implements Handler<ComponentTemplate> {
     @Override
     public void removeObject(String key) {
         this.templateMap.remove(key);
+    }
+
+    public String getNameForItemTypeId(int itemTypeId) {
+        return this.itemTypeIdMap.get(itemTypeId);
     }
 }

@@ -7,12 +7,14 @@ public class Event<T extends Component> {
 
     private EventType eventType;
     private T component;
-    private String createdByEntity;
+    private String targetEntity;
+    private String sourceEntity;
 
-    public Event(EventType eventType, T component, String createdByEntity) {
+    public Event(EventType eventType, T component, String sourceEntity, String targetEntity) {
         this.eventType = eventType;
         this.component = component;
-        this.createdByEntity = createdByEntity;
+        this.sourceEntity = sourceEntity;
+        this.targetEntity = targetEntity;
     }
 
     public EventType getEventType() {
@@ -31,11 +33,19 @@ public class Event<T extends Component> {
         this.component = component;
     }
 
-    public String getCreatedByEntity() {
-        return createdByEntity;
+    public String getTargetEntity() {
+        return targetEntity;
     }
 
-    public void setCreatedByEntity(String createdByEntity) {
-        this.createdByEntity = createdByEntity;
+    public void setTargetEntity(String targetEntity) {
+        this.targetEntity = targetEntity;
+    }
+
+    public String getSourceEntity() {
+        return sourceEntity;
+    }
+
+    public void setSourceEntity(String sourceEntity) {
+        this.sourceEntity = sourceEntity;
     }
 }

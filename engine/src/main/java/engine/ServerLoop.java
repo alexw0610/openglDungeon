@@ -1,6 +1,7 @@
 package engine;
 
 import engine.handler.EntityHandler;
+import engine.handler.EventHandler;
 import engine.handler.NavHandler;
 
 public class ServerLoop implements Runnable {
@@ -28,6 +29,7 @@ public class ServerLoop implements Runnable {
     private void setup() {
         this.engine.setEntityHandler(EntityHandler.getInstance());
         this.engine.setNavHandler(NavHandler.getInstance());
+        this.engine.setEventHandler(EventHandler.getInstance());
         this.engine.setStarted(true);
     }
 

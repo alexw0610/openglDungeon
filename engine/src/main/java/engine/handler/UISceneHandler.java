@@ -57,7 +57,7 @@ public class UISceneHandler {
             this.generatedInventories.put(entityId,
                     new UIInventoryElement(EntityHandler.getInstance()
                             .getEntityWithId(entityId)
-                            .getComponentOfType(InventoryComponent.class)));
+                            .getComponentOfType(InventoryComponent.class), entityId));
         }
     }
 

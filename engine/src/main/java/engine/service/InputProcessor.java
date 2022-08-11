@@ -6,10 +6,8 @@ import engine.component.*;
 import engine.entity.ComponentBuilder;
 import engine.entity.Entity;
 import engine.entity.EntityBuilder;
-import engine.handler.EntityHandler;
-import engine.handler.KeyHandler;
-import engine.handler.MouseHandler;
-import engine.handler.UISceneHandler;
+import engine.enums.EventType;
+import engine.handler.*;
 import engine.object.ui.UIElement;
 import engine.object.ui.UIInventoryElement;
 import engine.service.util.CollisionUtil;
@@ -69,6 +67,12 @@ public class InputProcessor {
                             UIInventoryElement.InventorySlot pickedItem = UISceneHandler.getInstance().getPickedItem();
                             pickedItem.getInventoryComponent().getItems().remove(pickedItem.getItemComponent());
                             inventorySlot.getInventoryComponent().getItems().add(pickedItem.getItemComponent());
+                            if (!pickedItem.getUiInventoryElement().getParentEntityId().equals(uiInventoryElement.getParentEntityId())) {
+                                EventHandler.getInstance().addEvent(EventType.INVENTORY_ITEM_MOVED,
+                                        pickedItem.getItemComponent(),
+                                        pickedItem.getUiInventoryElement().getParentEntityId(),
+                                        uiInventoryElement.getParentEntityId());
+                            }
                             uiInventoryElement.reload();
                             pickedItem.getUiInventoryElement().reload();
                             UISceneHandler.getInstance().setPickedItem(null);

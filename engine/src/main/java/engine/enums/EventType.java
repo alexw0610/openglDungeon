@@ -2,9 +2,7 @@ package engine.enums;
 
 public enum EventType {
 
-    NEW,
-    REMOVE,
-    MODIFY;
+    INVENTORY_ITEM_MOVED
 
 }
 

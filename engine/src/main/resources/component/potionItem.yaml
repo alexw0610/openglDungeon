@@ -3,6 +3,7 @@ type: "ItemComponent"
 arguments:
   itemName: "Health Potion"
   itemType: "Consumable"
+  itemTypeId: 0
   itemTexture: "potion"
 modifiers:
   itemBackdrop: "default_item_backdrop"

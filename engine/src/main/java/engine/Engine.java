@@ -41,6 +41,7 @@ public class Engine {
 
     private EntityHandler entityHandler;
     private NavHandler navHandler;
+    private EventHandler eventHandler;
 
     private boolean started = false;
 
@@ -198,7 +199,6 @@ public class Engine {
             }
             InputProcessor.processInput();
             UIService.getInstance().updateUI();
-            EventHandler.getInstance().clearAllEvents();
 
         }
         this.renderingTime = System.nanoTime() - sectionStartTime;
@@ -255,6 +255,14 @@ public class Engine {
 
     public EntityHandler getEntityHandler() {
         return this.entityHandler;
+    }
+
+    public EventHandler getEventHandler() {
+        return eventHandler;
+    }
+
+    public void setEventHandler(EventHandler eventHandler) {
+        this.eventHandler = eventHandler;
     }
 
     public NavHandler getNavHandler() {

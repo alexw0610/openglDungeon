@@ -18,9 +18,11 @@ public class UIInventoryElement {
     UIElement inventoryBackground;
     InventorySlot[] inventorySlots;
     private double xOffset;
+    private String parentEntityId;
 
-    public UIInventoryElement(InventoryComponent inventoryComponent) {
+    public UIInventoryElement(InventoryComponent inventoryComponent, String parentEntityId) {
         this.inventoryComponent = inventoryComponent;
+        this.parentEntityId = parentEntityId;
         generateUIInventoryElement();
     }
 
@@ -96,6 +98,14 @@ public class UIInventoryElement {
 
     public void reload() {
         this.generateUIInventoryElement();
+    }
+
+    public String getParentEntityId() {
+        return parentEntityId;
+    }
+
+    public void setParentEntityId(String parentEntityId) {
+        this.parentEntityId = parentEntityId;
     }
 
     public static class InventorySlot {

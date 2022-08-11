@@ -6,6 +6,7 @@ import engine.object.Event;
 
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 public class EventHandler {
@@ -15,22 +16,32 @@ public class EventHandler {
         return INSTANCE.get();
     }
 
-    Map<Class<? extends Component>, LinkedList<Event<? extends Component>>> eventMap = new HashMap<>();
+    public static void setInstance(EventHandler eventHandler) {
+        INSTANCE.set(eventHandler);
+    }
+
+    Map<EventType, LinkedList<Event<? extends Component>>> eventMap = new HashMap<>();
 
     private EventHandler() {
     }
 
-    public void addEvent(EventType eventType, Component component, String createdByEntity) {
-        if (!eventMap.containsKey(component.getClass())) {
-            eventMap.put(component.getClass(), new LinkedList<>());
+    public void addEvent(EventType eventType, Component component, String sourceEntity, String targetEntity) {
+        if (!eventMap.containsKey(eventType)) {
+            eventMap.put(eventType, new LinkedList<>());
         }
-        eventMap.get(component.getClass()).add(new Event<>(eventType, component, createdByEntity));
+        eventMap.get(eventType).add(new Event<>(eventType, component, sourceEntity, targetEntity));
     }
 
-    public <T extends Component> LinkedList<Event<T>> getEventsForComponent(Class<T> componentType) {
-        if (this.eventMap.containsKey(componentType)) {
-            LinkedList<? extends Event<?>> list = this.eventMap.get(componentType);
-            return (LinkedList<Event<T>>) list;
+    public List<Event<? extends Component>> getEventsForType(EventType eventType) {
+        if (this.eventMap.containsKey(eventType)) {
+            return this.eventMap.get(eventType);
+        }
+        return null;
+    }
+
+    public Event<? extends Component> pollEventForType(EventType eventType) {
+        if (this.eventMap.containsKey(eventType)) {
+            return this.eventMap.get(eventType).poll();
         }
         return null;
     }
