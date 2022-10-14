@@ -1,6 +1,5 @@
 package engine.service;
 
-import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL4;
 import com.jogamp.opengl.GLContext;
 import engine.component.RenderComponent;
@@ -18,7 +17,6 @@ import engine.object.ui.UIText;
 import org.joml.Vector2d;
 import org.joml.Vector3d;
 
-import java.nio.ByteBuffer;
 import java.nio.DoubleBuffer;
 
 import static engine.EngineConstants.WINDOW_HEIGHT;
@@ -147,15 +145,8 @@ public class RenderService {
         switchRenderMode(RenderMode.UI);
         shaderHandler.bindShaderOfType(ShaderType.UI_SHADER.value());
         textureHandler.bindTextureWithKey(uiElement.getTextureKey(), gl.GL_TEXTURE0);
-        updateUIUbo(uiElement.getScreenPositionX(),
-                uiElement.getScreenPositionY(),
-                1,
-                0, 0, 0,
-                true, uiElement.isFixedSize(),
-                uiElement.getWidth(), uiElement.getHeight(),
-                uiElement.getLayer(),
-                uiElement.getColor().getRed(), uiElement.getColor().getGreen(), uiElement.getColor().getBlue());
-        drawCall(MeshHandler.getInstance().getMeshForKey(PrimitiveMeshShape.QUAD), gl.GL_TRIANGLES);
+        updateUIUbo(uiElement.getScreenPositionX(), uiElement.getScreenPositionY(), 1, 0, 0, 0, true, uiElement.isFixedSize(), uiElement.getWidth(), uiElement.getHeight(), uiElement.getLayer(), uiElement.getColor().getRed(), uiElement.getColor().getGreen(), uiElement.getColor().getBlue());
+        drawCall(MeshHandler.getInstance().getMeshForKey(PrimitiveMeshShape.QUAD));
         entitiesRendered++;
 
     }
@@ -168,16 +159,8 @@ public class RenderService {
         char[] characters = uiText.getCharacters();
         for (int i = 0, charactersLength = characters.length; i < charactersLength; i++) {
             char character = characters[i];
-            updateUIUbo(
-                    uiText.getScreenPosition().x() + (uiText.getCharacterOffsets()[2 * i] * uiText.getSpacing() * uiText.getFontSize()),
-                    uiText.getScreenPosition().y() + (uiText.getCharacterOffsets()[(2 * i) + 1] * uiText.getFontSize()),
-                    uiText.getFontSize(),
-                    0, 0, 0,
-                    true, uiText.isFixedSize(),
-                    1, 1,
-                    uiText.getLayer(),
-                    uiText.getColor().getRed(), uiText.getColor().getGreen(), uiText.getColor().getBlue());
-            drawCall(characterMeshHandler.getMeshForKey(character), gl.GL_TRIANGLES);
+            updateUIUbo(uiText.getScreenPosition().x() + (uiText.getCharacterOffsets()[2 * i] * uiText.getSpacing() * uiText.getFontSize()), uiText.getScreenPosition().y() + (uiText.getCharacterOffsets()[(2 * i) + 1] * uiText.getFontSize()), uiText.getFontSize(), 0, 0, 0, true, uiText.isFixedSize(), 1, 1, uiText.getLayer(), uiText.getColor().getRed(), uiText.getColor().getGreen(), uiText.getColor().getBlue());
+            drawCall(characterMeshHandler.getMeshForKey(character));
             entitiesRendered++;
         }
     }
@@ -195,63 +178,37 @@ public class RenderService {
         } else {
             textureHandler.bindTextureWithKey(TextureKey.DEFAULT.value(), gl.GL_TEXTURE0);
         }
-        updateUbo(positionWorldSpace.x(),
-                positionWorldSpace.y(),
-                renderComponent.getScale(),
-                renderComponent.getTextureOffSetX(),
-                renderComponent.getTextureOffSetY(),
-                renderComponent.getTextureRotation(),
-                renderComponent.isAlwaysVisible(),
-                renderComponent.isShadeless(),
-                renderComponent.isMirrored(),
-                renderComponent.getPerspectiveLayer(),
-                renderComponent.getColorOverride() != null ? renderComponent.getColorOverride().x() : 1,
-                renderComponent.getColorOverride() != null ? renderComponent.getColorOverride().y() : 1,
-                renderComponent.getColorOverride() != null ? renderComponent.getColorOverride().z() : 1);
-        drawCall(meshHandler.getMeshForKey(renderComponent.getMeshKey()), gl.GL_TRIANGLES);
+        updateUbo(positionWorldSpace.x(), positionWorldSpace.y(), renderComponent.getScale(), renderComponent.getTextureOffSetX(), renderComponent.getTextureOffSetY(), renderComponent.getTextureRotation(), renderComponent.isAlwaysVisible(), renderComponent.isShadeless(), renderComponent.isMirrored(), renderComponent.getPerspectiveLayer(), renderComponent.getColorOverride() != null ? renderComponent.getColorOverride().x() : 1, renderComponent.getColorOverride() != null ? renderComponent.getColorOverride().y() : 1, renderComponent.getColorOverride() != null ? renderComponent.getColorOverride().z() : 1);
+        drawCall(meshHandler.getMeshForKey(renderComponent.getMeshKey()));
         entitiesRendered++;
     }
 
     public void renderToViewMap(Mesh mesh) {
-        GL4 gl = GLContext.getCurrent().getGL().getGL4();
         switchRenderMode(RenderMode.VIEW);
         updateUbo(0, 0, 1, 1, 0, 0, false, false, false, 0, 1, 1, 1);
-        drawCall(mesh, gl.GL_TRIANGLES);
+        drawCall(mesh);
         viewMapsRendered++;
     }
 
     public void renderToLightMap(Mesh mesh, Vector2d lightPosition, double lightStrength, double lightFallOff, Vector3d lightColor) {
-        GL4 gl = GLContext.getCurrent().getGL().getGL4();
         switchRenderMode(RenderMode.LIGHT);
         updateLightUbo(lightPosition.x(), lightPosition.y(), 1, lightStrength, lightFallOff, lightColor);
-        drawCall(mesh, gl.GL_TRIANGLES);
+        drawCall(mesh);
         lightsRendered++;
     }
 
-    private void drawCall(Mesh mesh, int GL_RENDER_MODE) {
+    private void drawCall(Mesh mesh) {
         GL4 gl = GLContext.getCurrent().getGL().getGL4();
         gl.glBindVertexArray(mesh.getVaoId());
         gl.glEnableVertexAttribArray(0);
         gl.glEnableVertexAttribArray(1);
-        gl.glDrawElements(GL_RENDER_MODE, mesh.getIndices().length, gl.GL_UNSIGNED_INT, 0);
+        gl.glDrawElements(gl.GL_TRIANGLES, mesh.getIndices().length, gl.GL_UNSIGNED_INT, 0);
         gl.glDisableVertexAttribArray(0);
         gl.glDisableVertexAttribArray(1);
         gl.glBindVertexArray(0);
     }
 
-    private void updateUbo(double x,
-                           double y,
-                           double scale,
-                           double textureOffSetX,
-                           double textureOffSetY,
-                           double textureRotation,
-                           boolean alwaysVisible,
-                           boolean shadeless,
-                           boolean mirrored,
-                           double perspectiveLayer,
-                           double colorROverwrite,
-                           double colorGOverwrite,
-                           double colorBOverwrite) {
+    private void updateUbo(double x, double y, double scale, double textureOffSetX, double textureOffSetY, double textureRotation, boolean alwaysVisible, boolean shadeless, boolean mirrored, double perspectiveLayer, double colorROverwrite, double colorGOverwrite, double colorBOverwrite) {
         GL4 gl = GLContext.getCurrent().getGL().getGL4();
 
         this.uboDataBuffer.clear();
@@ -280,9 +237,7 @@ public class RenderService {
         this.uboDataBuffer.put(18, colorBOverwrite);
 
         gl.glBindBuffer(gl.GL_UNIFORM_BUFFER, this.uniformBuffers[0]);
-        ByteBuffer byteBuffer = gl.glMapBuffer(gl.GL_UNIFORM_BUFFER, GL.GL_WRITE_ONLY);
-        DoubleBuffer doubleBuffer = byteBuffer.asDoubleBuffer();
-        doubleBuffer.put(this.uboDataBuffer);
+        gl.glBufferSubData(gl.GL_UNIFORM_BUFFER, 0, 8L * this.uboDataBuffer.capacity(), this.uboDataBuffer);
         gl.glUnmapBuffer(gl.GL_UNIFORM_BUFFER);
     }
 
@@ -308,26 +263,11 @@ public class RenderService {
         this.lightUboDataBuffer.put(15, 0);
 
         gl.glBindBuffer(gl.GL_UNIFORM_BUFFER, this.uniformBuffers[1]);
-        ByteBuffer byteBuffer = gl.glMapBuffer(gl.GL_UNIFORM_BUFFER, GL.GL_WRITE_ONLY);
-        DoubleBuffer doubleBuffer = byteBuffer.asDoubleBuffer();
-        doubleBuffer.put(this.lightUboDataBuffer);
+        gl.glBufferSubData(gl.GL_UNIFORM_BUFFER, 0, 8L * this.lightUboDataBuffer.capacity(), this.lightUboDataBuffer);
         gl.glUnmapBuffer(gl.GL_UNIFORM_BUFFER);
     }
 
-    private void updateUIUbo(double x,
-                             double y,
-                             double scale,
-                             double textureOffSetX,
-                             double textureOffSetY,
-                             double textureRotation,
-                             boolean alwaysVisible,
-                             boolean fixedSize,
-                             double width,
-                             double height,
-                             double perspectiveLayer,
-                             double colorROverwrite,
-                             double colorGOverwrite,
-                             double colorBOverwrite) {
+    private void updateUIUbo(double x, double y, double scale, double textureOffSetX, double textureOffSetY, double textureRotation, boolean alwaysVisible, boolean fixedSize, double width, double height, double perspectiveLayer, double colorROverwrite, double colorGOverwrite, double colorBOverwrite) {
         GL4 gl = GLContext.getCurrent().getGL().getGL4();
 
         this.UIUboDataBuffer.clear();
@@ -357,9 +297,7 @@ public class RenderService {
         this.UIUboDataBuffer.put(19, perspectiveLayer);
 
         gl.glBindBuffer(gl.GL_UNIFORM_BUFFER, this.uniformBuffers[2]);
-        ByteBuffer byteBuffer = gl.glMapBuffer(gl.GL_UNIFORM_BUFFER, GL.GL_WRITE_ONLY);
-        DoubleBuffer doubleBuffer = byteBuffer.asDoubleBuffer();
-        doubleBuffer.put(this.UIUboDataBuffer);
+        gl.glBufferSubData(gl.GL_UNIFORM_BUFFER, 0, 8L * this.UIUboDataBuffer.capacity(), this.UIUboDataBuffer);
         gl.glUnmapBuffer(gl.GL_UNIFORM_BUFFER);
     }
 

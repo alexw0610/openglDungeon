@@ -48,20 +48,10 @@ public class Texture {
             gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_WRAP_S, gl.GL_REPEAT);
             gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_WRAP_T, gl.GL_REPEAT);
             if (this.useMipmap) {
-                System.out.println("loaded with mipmap");
                 gl.glGenerateMipmap(gl.GL_TEXTURE_2D);
             }
             isLoaded = true;
         }
-    }
-
-    public void unloadTexture() {
-        GL3 gl = GLContext.getCurrentGL().getGL3();
-        gl.glDeleteTextures(1, new int[]{textureId}, 0);
-    }
-
-    public boolean isLoaded() {
-        return isLoaded;
     }
 
     public int getWidth() {
@@ -70,9 +60,5 @@ public class Texture {
 
     public int getHeight() {
         return height;
-    }
-
-    public ByteBuffer getImageBuffer() {
-        return textureBuffer;
     }
 }

@@ -21,11 +21,10 @@ public class Edge {
         return b;
     }
 
-    public Mesh toMesh() {
-        float[] vertices = new float[]{(float) a.x(), (float) a.y(), (float) 0,
-                (float) b.x(), (float) b.y(), (float) 0};
-        int[] indices = new int[]{0, 1};
-        return new Mesh(vertices, indices, vertices);
+    public Edge addVector(Vector2d vector2d) {
+        this.a.add(vector2d);
+        this.b.add(vector2d);
+        return this;
     }
 
     @Override

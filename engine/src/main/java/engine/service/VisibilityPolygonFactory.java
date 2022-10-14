@@ -20,6 +20,7 @@ import java.util.stream.Stream;
 
 public class VisibilityPolygonFactory {
 
+    private static final Vector2d VECTOR_UP = new Vector2d(1, 1);
     private static final double ONE_DEGREE_RADIAN = 0.008726646;
 
     public static Mesh generateVisibilityPolygon(Collection<Entity> entities, Vector2d viewPoint, double viewDistance) {
@@ -97,21 +98,20 @@ public class VisibilityPolygonFactory {
     }
 
     private static List<Edge> getObjectEdges(Collection<Entity> entities) {
-        List<Edge> entityEdges =
-                entities.parallelStream()
-                        .unordered()
-                        .flatMap(entity -> {
-                            TransformationComponent transformationComponent = entity.getComponentOfType(TransformationComponent.class);
-                            CollisionComponent collisionComponent = entity.getComponentOfType(CollisionComponent.class);
-                            if (entity.hasComponentOfType(CollisionComponent.class) && entity.hasComponentOfType(VisibleFaceTag.class)) {
-                                return Stream.of(convertEdgeToWorldSpace(collisionComponent.getHitBox().getHitBoxEdges()[0], transformationComponent.getPosition()));
-                            } else if (entity.hasComponentOfType(CollisionComponent.class)) {
-                                return Stream.of(convertEdgesToWorldSpace(collisionComponent.getHitBox().getHitBoxEdges(), transformationComponent.getPosition()));
-                            }
-                            return Stream.empty();
-                        })
-                        .collect(Collectors.toList());
-        return entityEdges.parallelStream().unordered().distinct().collect(Collectors.toList());
+        return entities.parallelStream()
+                .unordered()
+                .flatMap(entity -> {
+                    TransformationComponent transformationComponent = entity.getComponentOfType(TransformationComponent.class);
+                    CollisionComponent collisionComponent = entity.getComponentOfType(CollisionComponent.class);
+                    if (entity.hasComponentOfType(CollisionComponent.class) && entity.hasComponentOfType(VisibleFaceTag.class)) {
+                        return Stream.of(convertEdgeToWorldSpace(collisionComponent.getHitBox().getHitBoxEdges()[0], transformationComponent.getPosition()));
+                    } else if (entity.hasComponentOfType(CollisionComponent.class)) {
+                        return Stream.of(convertEdgesToWorldSpace(collisionComponent.getHitBox().getHitBoxEdges(), transformationComponent.getPosition()));
+                    }
+                    return Stream.empty();
+                })
+                .distinct()
+                .collect(Collectors.toList());
     }
 
     private static Edge[] convertEdgesToWorldSpace(Edge[] edges, Vector2d position) {
@@ -123,21 +123,15 @@ public class VisibilityPolygonFactory {
     }
 
     private static Edge convertEdgeToWorldSpace(Edge edge, Vector2d position) {
-        return new Edge(convertVectorToWorldSpace(edge.getA(), position),
-                convertVectorToWorldSpace(edge.getB(), position));
-    }
-
-    private static Vector2d convertVectorToWorldSpace(Vector2d vector, Vector2d position) {
-        return new Vector2d(vector.x() + position.x(), vector.y() + position.y());
+        return edge.addVector(position);
     }
 
     private static List<Vector2d> sortClockwise(List<Vector2d> visibilityPolygonVertices, Vector2d viewPoint) {
         return visibilityPolygonVertices
                 .stream()
                 .sorted((v1, v2) -> {
-                    Vector2d up = new Vector2d(1, 1);
-                    double angleA = new Vector2d(v1.x(), v1.y()).sub(viewPoint).angle(up);
-                    double angleB = new Vector2d(v2.x(), v2.y()).sub(viewPoint).angle(up);
+                    double angleA = new Vector2d(v1.x(), v1.y()).sub(viewPoint).angle(VECTOR_UP);
+                    double angleB = new Vector2d(v2.x(), v2.y()).sub(viewPoint).angle(VECTOR_UP);
                     return Double.compare(angleA, angleB);
                 })
                 .collect(Collectors.toList());

@@ -17,8 +17,10 @@ public class TextureLoader {
     public static Texture loadTexture(String textureName) {
         BufferedImage textureImage;
         try {
-            System.out.println("loading texture " + textureName);
             InputStream resourceAsStream = TextureLoader.class.getClassLoader().getResourceAsStream(RESOURCE_TEXTURE_SUBFOLDER + textureName + DEFAULT_TEXTURE_FILE_EXTENSION);
+            if (resourceAsStream == null) {
+                throw new MissingResourceException("The specified Texture cant be found (or opened) in the resource path. ", TextureLoader.class.getName(), textureName);
+            }
             textureImage = ImageIO.read(resourceAsStream);
         } catch (IOException e) {
             throw new MissingResourceException("The specified Texture cant be found (or opened) in the resource path. " + e, TextureLoader.class.getName(), textureName);
@@ -45,6 +47,9 @@ public class TextureLoader {
         BufferedImage textureImage;
         try {
             InputStream resourceAsStream = TextureLoader.class.getClassLoader().getResourceAsStream(RESOURCE_TEXTURE_SUBFOLDER + textureName + DEFAULT_TEXTURE_FILE_EXTENSION);
+            if (resourceAsStream == null) {
+                throw new MissingResourceException("The specified Texture cant be found (or opened) in the resource path. ", TextureLoader.class.getName(), textureName);
+            }
             textureImage = ImageIO.read(resourceAsStream);
         } catch (IOException e) {
             throw new MissingResourceException("The specified Texture cant be found (or opened) in the resource path. " + e, TextureLoader.class.getName(), textureName);
