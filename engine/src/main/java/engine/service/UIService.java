@@ -42,8 +42,8 @@ public class UIService {
             currentUiElements.add(pickedItem);
         }
         for (UIInventoryElement inventoryElement : UISceneHandler.getInstance().getActiveInventories()) {
-            currentUiElements.add(inventoryElement.getInventoryBackground());
-            currentUiElements.addAll(inventoryElement.getCopyOfItemsToDisplay());
+            currentUiElements.addAll(inventoryElement.getCopyOfElementsToDisplay());
+            currentUITextElements.addAll(inventoryElement.getCopyOfTextElementsToDisplay());
         }
         generateMobTagUI();
         processUIMouseOver();

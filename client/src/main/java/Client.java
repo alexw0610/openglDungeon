@@ -2,8 +2,9 @@ import dto.ssl.AuthenticationRequest;
 import dto.ssl.GenericResponse;
 import dto.ssl.ReadyForReceivingRequest;
 import engine.Engine;
-import engine.component.*;
-import engine.entity.ComponentBuilder;
+import engine.component.CameraComponent;
+import engine.component.StatComponent;
+import engine.component.TransformationComponent;
 import engine.entity.Entity;
 import engine.entity.EntityBuilder;
 import engine.handler.EntityHandler;
@@ -14,9 +15,10 @@ import exception.UDPServerException;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.joml.Vector2d;
-import processor.CharacterUpdateSender;
 import processor.InstanceServerConnection;
-import processor.ServerUpdateProcessor;
+import processor.SSLServerConnection;
+import processor.udp.CharacterUpdateSender;
+import processor.udp.ServerUpdateProcessor;
 import udp.UdpSocket;
 import udp.UpdateListener;
 import udp.UpdateSender;
@@ -71,9 +73,6 @@ public class Client {
                 .at(startPosition.x(), startPosition.y())
                 .buildAndInstantiate(StringUtils.isBlank(characterId) ? RandomStringUtils.randomAlphanumeric(16) : characterId);
         player.getComponentOfType(StatComponent.class).setEntityName(applicationProperties.getProperty("characterName"));
-        player.getComponentOfType(InventoryComponent.class).getItems().add((ItemComponent) ComponentBuilder.fromTemplate("potionItem"));
-        player.getComponentOfType(InventoryComponent.class).getItems().add((ItemComponent) ComponentBuilder.fromTemplate("rottingFlesh"));
-        player.getComponentOfType(InventoryComponent.class).getItems().add((ItemComponent) ComponentBuilder.fromTemplate("crackedBones"));
         EntityBuilder.builder()
                 .withComponent(new TransformationComponent())
                 .withComponent(new CameraComponent())

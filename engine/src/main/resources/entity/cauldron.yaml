@@ -1,0 +1,26 @@
+templateName: "cauldron"
+components:
+  - type: "RenderComponent"
+    arguments:
+      meshKey: "QUAD"
+      textureKey: "cauldron"
+      shaderType: "shader"
+      scale: 1.2
+      layer: 1
+    modifiers:
+      randomizeTextureOffset: true
+  - type: "TransformationComponent"
+  - type: "CollisionComponent"
+    arguments:
+      hitBoxType: "AABB"
+      hitBoxSize: 0.25
+  - type: "LightSourceComponent"
+    arguments:
+      lightSourceR: 0.9
+      lightSourceG: 0.6
+      lightSourceB: 0.4
+      lightStrength: 1.0
+      lightFallOff: 0.001
+  - type: "AnimationComponent"
+    arguments:
+      speed: 110.0

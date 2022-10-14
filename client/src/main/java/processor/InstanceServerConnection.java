@@ -6,12 +6,15 @@ import dto.tcp.TcpEncryptionWrapper;
 import engine.Engine;
 import exception.EncryptionException;
 import org.apache.commons.lang3.RandomStringUtils;
+import processor.tcp.InstanceUpdateListener;
+import processor.tcp.InstanceUpdateSender;
 import security.EncryptionHandler;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.concurrent.*;
 
 public class InstanceServerConnection implements Runnable {
     private final byte[] encryptionKey;
@@ -67,8 +70,16 @@ public class InstanceServerConnection implements Runnable {
         System.out.println("TCP authentication finished");
         InstanceUpdateListener instanceUpdateListener = new InstanceUpdateListener(encryptionHandler, objectInputStream, engine);
         new Thread(instanceUpdateListener).start();
+
+        ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
         InstanceUpdateSender instanceUpdateSender = new InstanceUpdateSender(encryptionHandler, objectOutputStream, engine, connectionId);
-        new Thread(instanceUpdateSender).start();
+        ScheduledFuture<?> result = executor.scheduleAtFixedRate(instanceUpdateSender, 0, 1, TimeUnit.SECONDS);
+        try {
+            result.get();
+        } catch (InterruptedException | ExecutionException e) {
+            System.err.println("Server connection closed erroneous! Error: " + e.getMessage());
+            System.exit(1);
+        }
     }
 
     private void createObjectIOStreams() throws IOException {

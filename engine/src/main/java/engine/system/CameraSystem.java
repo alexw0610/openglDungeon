@@ -46,9 +46,14 @@ public class CameraSystem {
             TransformationComponent targetTransform = cameraTarget.getComponentOfType(TransformationComponent.class);
             Vector2d source = new Vector2d(transformationComponent.getPositionX(), transformationComponent.getPositionY());
             Vector2d target = new Vector2d(targetTransform.getPositionX(), targetTransform.getPositionY());
-            source.lerp(target, Math.max(Math.pow(source.distance(target), 1), 0.1) * (Engine.stepTimeDelta) * LERP_SPEED);
-            transformationComponent.setPositionX(source.x());
-            transformationComponent.setPositionY(source.y());
+            if (source.distance(target) > 10) {
+                transformationComponent.setPositionX(target.x());
+                transformationComponent.setPositionY(target.y());
+            } else {
+                source.lerp(target, Math.max(Math.pow(source.distance(target), 1), 0.1) * (Engine.stepTimeDelta) * LERP_SPEED);
+                transformationComponent.setPositionX(source.x());
+                transformationComponent.setPositionY(source.y());
+            }
         }
         RenderService.cameraPosX = transformationComponent.getPositionX();
         RenderService.cameraPosY = transformationComponent.getPositionY();

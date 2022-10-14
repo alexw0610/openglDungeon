@@ -31,12 +31,14 @@ public class UISceneHandler {
                 this.activeTargetInventory = null;
             } else {
                 this.activePlayerInventory = this.generatedInventories.get(entityId);
+                this.activePlayerInventory.reload();
             }
         } else {
             if (this.activeTargetInventory != null) {
                 this.activeTargetInventory = null;
             } else {
                 this.activeTargetInventory = this.generatedInventories.get(entityId);
+                this.activeTargetInventory.reload();
             }
         }
     }

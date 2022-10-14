@@ -1,0 +1,18 @@
+templateName: "merchant"
+extendedTemplate: "humanoid"
+components:
+  - type: "RenderComponent"
+    arguments:
+      meshKey: "QUAD"
+      textureKey: "chest"
+      shaderType: "shader"
+      scale: 1.0
+      layer: 2
+    modifiers:
+      shadeless: false
+  - type: "MerchantTag"
+  - type: "InventoryComponent"
+    arguments:
+      inventorySize: 8
+      pickUpRange: 0.0
+  - type: "SynchronizedTag"

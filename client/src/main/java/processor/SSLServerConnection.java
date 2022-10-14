@@ -1,3 +1,5 @@
+package processor;
+
 import dto.Request;
 import dto.ssl.GenericResponse;
 import exception.TrustStoreException;

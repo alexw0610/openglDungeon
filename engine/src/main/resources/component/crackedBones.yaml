@@ -7,4 +7,4 @@ arguments:
   itemTexture: "pile_of_cracked_bones"
 modifiers:
   itemBackdrop: "default_item_backdrop"
-  merchantPrice: 10
+  merchantPrice: 1

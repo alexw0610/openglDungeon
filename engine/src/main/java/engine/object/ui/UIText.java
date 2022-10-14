@@ -6,6 +6,7 @@ import org.joml.Vector2d;
 import org.joml.Vector2f;
 
 public class UIText {
+    String content;
     private final char[] characters;
     private final float[] characterOffsets;
     private final float totalWidth;
@@ -17,6 +18,7 @@ public class UIText {
     private boolean fixedSize;
 
     public UIText(String content) {
+        this.content = content;
         this.fixedSize = false;
         this.characters = new char[content.length()];
         this.characterOffsets = new float[content.length() * 2];
@@ -113,5 +115,17 @@ public class UIText {
 
     public float getTotalWidth() {
         return totalWidth;
+    }
+
+
+    public UIText clone() {
+        UIText clone = new UIText(this.content);
+        clone.setScreenPosition(new Vector2d(this.getScreenPosition().x(), this.getScreenPosition().y()));
+        clone.setColor(this.getColor());
+        clone.setFixedSize(this.isFixedSize());
+        clone.setLayer(this.getLayer());
+        clone.fontSize = fontSize;
+        clone.spacing = spacing;
+        return clone;
     }
 }

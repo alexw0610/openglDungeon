@@ -1,6 +1,10 @@
 package engine.service;
 
+import engine.EngineConstants;
+import engine.component.SynchronizedTag;
+import engine.entity.Entity;
 import engine.entity.EntityBuilder;
+import engine.handler.EntityHandler;
 import engine.handler.NavHandler;
 import engine.handler.template.RoomTemplateHandler;
 import engine.handler.template.ZoneTemplateHandler;
@@ -41,10 +45,15 @@ public class ZoneGenerator {
             }
         }
         tileMap.initMap(new Random(template.getZoneId()));
-        for (EntityInstanceTemplate entity : template.getEntities()) {
-            EntityBuilder.builder().fromTemplate(entity.getTemplateName())
-                    .at(entity.getX(), entity.getY())
-                    .buildAndInstantiate(DUNGEON_ENTITY_PREFIX + RandomStringUtils.randomAlphanumeric(8));
+        for (EntityInstanceTemplate entityTemplate : template.getEntities()) {
+            Entity entity = EntityBuilder.builder().fromTemplate(entityTemplate.getTemplateName())
+                    .at(entityTemplate.getX(), entityTemplate.getY())
+                    .build();
+            if (EngineConstants.INSTANCE.isOfflineMode() || EngineConstants.INSTANCE.isServerMode()) {
+                EntityHandler.getInstance().addObject(DUNGEON_ENTITY_PREFIX + RandomStringUtils.randomAlphanumeric(8), entity);
+            } else if (!entity.hasComponentOfType(SynchronizedTag.class)) {
+                EntityHandler.getInstance().addObject(DUNGEON_ENTITY_PREFIX + RandomStringUtils.randomAlphanumeric(8), entity);
+            }
         }
         NavHandler.getInstance().setNavMap(tileMap.getNavMap());
         return new Vector2d(template.getSpawnPointX(), template.getSpawnPointY());

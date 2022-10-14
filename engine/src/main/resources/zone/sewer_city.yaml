@@ -10,6 +10,12 @@ zoneWallIdMappings:
   1: "wall_aqua_brick"
   2: "wall_aqua_brick"
 entities:
+  - templateName: "cauldron"
+    x: 19.5
+    y: 13
+  - templateName: "merchant"
+    x: 11
+    y: 15
   - templateName: "chandelier"
     x: 11.5
     y: 15.5

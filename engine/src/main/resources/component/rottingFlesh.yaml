@@ -7,3 +7,4 @@ arguments:
   itemTexture: "rotting_chunk_of_flesh"
 modifiers:
   itemBackdrop: "default_item_backdrop"
+  merchantPrice: 1

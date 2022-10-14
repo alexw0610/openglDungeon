@@ -7,3 +7,4 @@ arguments:
   itemTexture: "potion"
 modifiers:
   itemBackdrop: "default_item_backdrop"
+  merchantPrice: 3

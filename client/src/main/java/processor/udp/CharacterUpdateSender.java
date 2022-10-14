@@ -1,4 +1,4 @@
-package processor;
+package processor.udp;
 
 import dto.udp.PlayerUpdateDto;
 import engine.Engine;
