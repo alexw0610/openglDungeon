@@ -15,7 +15,7 @@ public class UIInventoryElement {
 
     private static final double ITEM_SCALE = 0.08;
     private static final double SYMBOL_SIZE = 0.15;
-    private static final double MAX_INVENTORY_SLOT_WIDTH = 8.0;
+    private static final double MAX_INVENTORY_SLOT_WIDTH = 4.0;
 
     InventoryComponent inventoryComponent;
     UIElement inventoryBackground;

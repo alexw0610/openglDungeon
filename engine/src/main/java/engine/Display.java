@@ -3,6 +3,7 @@ package engine;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLEventListener;
 import engine.handler.*;
+import engine.service.RenderService;
 
 public class Display implements GLEventListener {
     private final Engine engine;
@@ -30,5 +31,9 @@ public class Display implements GLEventListener {
     }
 
     public void reshape(GLAutoDrawable glAutoDrawable, int i, int i1, int i2, int i3) {
+        System.out.println("resized");
+        EngineConstants.setWindowWidth(i2);
+        EngineConstants.setWindowHeight(i3);
+        RenderService.reloadRenderService();
     }
 }

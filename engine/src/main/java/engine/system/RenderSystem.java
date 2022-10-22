@@ -8,8 +8,6 @@ import engine.service.RenderService;
 
 public class RenderSystem {
 
-    private static final RenderService renderService = RenderService.getInstance();
-
     public static void processEntity(Entity entity) {
         RenderComponent renderComponent = entity.getComponentOfType(RenderComponent.class);
         TransformationComponent transformationComponent = entity.getComponentOfType(TransformationComponent.class);
@@ -18,7 +16,7 @@ public class RenderSystem {
             renderComponent.setTextureOffSetX(animationComponent.getAnimationFrame());
             renderComponent.setTextureOffSetY(animationComponent.getAnimationRow());
         }
-        renderService.renderComponent(renderComponent, transformationComponent.getPosition());
+        RenderService.getInstance().renderComponent(renderComponent, transformationComponent.getPosition());
     }
 
     public static boolean isResponsibleFor(Entity entity) {

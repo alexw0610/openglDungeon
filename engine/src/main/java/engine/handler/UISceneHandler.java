@@ -35,6 +35,7 @@ public class UISceneHandler {
             }
         } else {
             if (this.activeTargetInventory != null) {
+                this.activePlayerInventory = null;
                 this.activeTargetInventory = null;
             } else {
                 this.activeTargetInventory = this.generatedInventories.get(entityId);

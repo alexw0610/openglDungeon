@@ -2,8 +2,8 @@ package engine;
 
 public class EngineConstants {
     public static final String TITLE = "openglDungeon";
-    public static final double WINDOW_WIDTH = 1280;
-    public static final double WINDOW_HEIGHT = 960;
+    public static double WINDOW_WIDTH = 1280;
+    public static double WINDOW_HEIGHT = 960;
     public static final boolean FULLSCREEN = false;
     public static final int FPS = 500;
     public static final double INERTIA = 0.00001;
@@ -43,5 +43,13 @@ public class EngineConstants {
 
     public static double getAspectRatio() {
         return WINDOW_WIDTH / WINDOW_HEIGHT;
+    }
+
+    public static void setWindowWidth(double windowWidth) {
+        WINDOW_WIDTH = windowWidth;
+    }
+
+    public static void setWindowHeight(double windowHeight) {
+        WINDOW_HEIGHT = windowHeight;
     }
 }

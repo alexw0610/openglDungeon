@@ -19,7 +19,6 @@ import java.util.stream.Collectors;
 
 public class ViewSourceSystem {
 
-    private static final RenderService renderService = RenderService.getInstance();
     public static final String VIEW_POLYGON_KEY_PREFIX = "viewPolygon_";
 
     public static void processEntity(Entity entity) {
@@ -37,7 +36,7 @@ public class ViewSourceSystem {
                 .collect(Collectors.toList());
         for (Mesh mesh : meshes) {
             MeshHandler.getInstance().addMesh(VIEW_POLYGON_KEY_PREFIX + RandomStringUtils.randomAlphanumeric(8), mesh);
-            renderService.renderToViewMap(mesh);
+            RenderService.getInstance().renderToViewMap(mesh);
         }
     }
 

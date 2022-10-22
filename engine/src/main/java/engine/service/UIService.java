@@ -41,6 +41,7 @@ public class UIService {
             pickedItem.setLayer(10);
             currentUiElements.add(pickedItem);
         }
+        
         for (UIInventoryElement inventoryElement : UISceneHandler.getInstance().getActiveInventories()) {
             currentUiElements.addAll(inventoryElement.getCopyOfElementsToDisplay());
             currentUITextElements.addAll(inventoryElement.getCopyOfTextElementsToDisplay());
@@ -48,6 +49,7 @@ public class UIService {
         generateMobTagUI();
         processUIMouseOver();
         processEntityMouseOver();
+
         Map<Integer, List<UIDrawable>> drawOrderMap = generateDrawOrderMap();
         renderItems(drawOrderMap);
         currentUiElements.clear();

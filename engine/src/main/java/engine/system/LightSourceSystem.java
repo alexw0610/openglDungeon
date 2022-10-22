@@ -16,7 +16,6 @@ import java.util.List;
 
 public class LightSourceSystem {
 
-    private static final RenderService renderService = RenderService.getInstance();
     public static final String LIGHT_POLYGON_KEY_PREFIX = "lightSourcePolygon_";
 
     public static void processEntity(Entity entity) {
@@ -28,7 +27,7 @@ public class LightSourceSystem {
             entities.remove(entity);
             Mesh mesh = VisibilityPolygonFactory.generateVisibilityPolygon(entities, transformationComponent.getPosition(), 10);
             MeshHandler.getInstance().addMesh(LIGHT_POLYGON_KEY_PREFIX + RandomStringUtils.randomAlphanumeric(8), mesh);
-            renderService.renderToLightMap(mesh, transformationComponent.getPosition(), lightSourceComponent.getLightStrength(), lightSourceComponent.getLightFallOff(), lightSourceComponent.getLightColor());
+            RenderService.getInstance().renderToLightMap(mesh, transformationComponent.getPosition(), lightSourceComponent.getLightStrength(), lightSourceComponent.getLightFallOff(), lightSourceComponent.getLightColor());
         }
     }
 

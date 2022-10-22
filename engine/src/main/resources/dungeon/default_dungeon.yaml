@@ -1,8 +1,8 @@
 templateName: "defaultDungeon"
 dungeonRoomTemplates:
-  loot_room: 0.2
+  loot_room: 0.1
   default_room: 0.6
-  hall_room: 0.5
+  hall_room: 0.4
 globalEntities:
   - templateName: "sewerPortal"
     maxAmount: 1

@@ -14,7 +14,7 @@ components:
       hitBoxSize: 0.4
   - type: "InventoryComponent"
     arguments:
-      inventorySize: 5
+      inventorySize: 8
       pickUpRange: 0.0
     modifiers:
       lootTable: "basicLootTable"

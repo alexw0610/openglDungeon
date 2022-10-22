@@ -13,6 +13,6 @@ components:
   - type: "MerchantTag"
   - type: "InventoryComponent"
     arguments:
-      inventorySize: 8
+      inventorySize: 16
       pickUpRange: 0.0
   - type: "SynchronizedTag"

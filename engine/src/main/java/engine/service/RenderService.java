@@ -60,6 +60,10 @@ public class RenderService {
         return INSTANCE;
     }
 
+    public static void reloadRenderService() {
+        INSTANCE = new RenderService();
+    }
+
     private RenderService() {
         GL4 gl = GLContext.getCurrent().getGL().getGL4();
         this.uniformBuffers = new int[3];
