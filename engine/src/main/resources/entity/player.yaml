@@ -23,5 +23,7 @@ components:
     arguments:
       inventorySize: 16
       pickUpRange: 0.5
+    modifiers:
+      currency: 10
 
 

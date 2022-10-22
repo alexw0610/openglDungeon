@@ -1,7 +1,7 @@
 templateName: "defaultDungeon"
 dungeonRoomTemplates:
-  loot_room: 0.6
-  default_room: 0.5
+  loot_room: 0.2
+  default_room: 0.6
   hall_room: 0.5
 globalEntities:
   - templateName: "sewerPortal"

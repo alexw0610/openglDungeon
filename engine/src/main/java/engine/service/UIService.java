@@ -153,7 +153,7 @@ public class UIService {
         entities.stream()
                 .filter(entity -> StringUtils.isNotBlank(entity.getComponentOfType(StatComponent.class).getEntityName()))
                 .forEach(this::createdNameplate);
-        entities.forEach(this::createHealthbar);
+        entities.stream().filter(entity -> !entity.getComponentOfType(StatComponent.class).isDead()).forEach(this::createHealthbar);
     }
 
     private void createdNameplate(Entity entity) {

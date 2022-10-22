@@ -54,7 +54,7 @@ public class InventoryComponent implements Component {
         return currency;
     }
 
-    public void setCurrency(int currency) {
+    public void setCurrency(Integer currency) {
         this.currency = currency;
     }
 }

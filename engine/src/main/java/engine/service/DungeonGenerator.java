@@ -31,24 +31,39 @@ public class DungeonGenerator {
     public static Vector2d generate(long seed, String dungeonTemplate) {
         Random random = new Random(seed);
         List<Room> rooms = generateRooms(random, dungeonTemplate);
-        List<Room> mainRooms = getBiggestRoomsNotIntersecting(rooms, 8);
-        List<Edge> paths = Triangulator.triangulateVectorField(mainRooms.stream().map(room -> new Vector2d(room.getRoomPosition())).collect(Collectors.toList()), MAP_SIZE);
-        paths = MinimumSpanningTree.getMinimumSpanningTreeEdges(paths);
-        List<Room> corridors = generateCorridors(paths, random);
+        List<Room> mainRooms = pickMainRooms(rooms, 8);
+        List<Room> corridors = generateCorridorsBetweenRooms(random, mainRooms);
         rooms.removeAll(mainRooms);
-        List<Room> sideRooms = getSideRooms(rooms, corridors, mainRooms, 8);
-        TileMap tileMap = new TileMap(MAP_SIZE, seed);
-        mainRooms.forEach(tileMap::addRoom);
-        sideRooms.forEach(tileMap::addRoom);
-        corridors.forEach(tileMap::addRoom);
-        Room startRoom = mainRooms.stream().min(Comparator.comparingInt(r -> r.getRoomPosition().x() + r.getRoomPosition().y())).orElse(mainRooms.get(0));
+        List<Room> sideRooms = pickSideRooms(rooms, corridors, mainRooms, 8);
+        TileMap tileMap = createTileMap(seed, mainRooms, corridors, sideRooms);
+        Room startRoom = getStartRoom(mainRooms);
         tileMap.initMap(random);
         tileMap.generateGlobalEntities(dungeonTemplate, mainRooms, random);
         NavHandler.getInstance().setNavMap(tileMap.getNavMap());
         return new Vector2d(startRoom.getRoomPosition().x(), startRoom.getRoomPosition().y());
     }
 
-    private static List<Room> getSideRooms(List<Room> rooms, List<Room> corridors, List<Room> mainRooms, int amount) {
+    private static List<Room> generateCorridorsBetweenRooms(Random random, List<Room> mainRooms) {
+        List<Room> corridors;
+        List<Edge> paths = Triangulator.triangulateVectorField(mainRooms.stream().map(room -> new Vector2d(room.getRoomPosition())).collect(Collectors.toList()), MAP_SIZE);
+        paths = MinimumSpanningTree.getMinimumSpanningTreeEdges(paths);
+        corridors = generateCorridors(paths, random);
+        return corridors;
+    }
+
+    private static TileMap createTileMap(long seed, List<Room> mainRooms, List<Room> corridors, List<Room> sideRooms) {
+        TileMap tileMap = new TileMap(MAP_SIZE, seed);
+        mainRooms.forEach(tileMap::addRoom);
+        sideRooms.forEach(tileMap::addRoom);
+        corridors.forEach(tileMap::addRoom);
+        return tileMap;
+    }
+
+    private static Room getStartRoom(List<Room> mainRooms) {
+        return mainRooms.stream().min(Comparator.comparingInt(r -> r.getRoomPosition().x() + r.getRoomPosition().y())).orElse(mainRooms.get(0));
+    }
+
+    private static List<Room> pickSideRooms(List<Room> rooms, List<Room> corridors, List<Room> mainRooms, int amount) {
         List<Room> sideRooms = new ArrayList<>();
         boolean emptyPass = false;
         while (sideRooms.size() < amount && !emptyPass) {
@@ -178,7 +193,7 @@ public class DungeonGenerator {
         return !(roomSize > MAX_ROOM_SIZE) && !(roomSize < MIN_ROOM_SIZE);
     }
 
-    private static List<Room> getBiggestRoomsNotIntersecting(List<Room> rooms, int amount) {
+    private static List<Room> pickMainRooms(List<Room> rooms, int amount) {
         List<Room> selection = new ArrayList<>();
         List<Room> sortedRooms = rooms.stream().sorted(Comparator.reverseOrder()).collect(Collectors.toList());
         int count = 0;
