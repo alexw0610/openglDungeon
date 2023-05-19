@@ -5,5 +5,5 @@ arguments:
 modifiers:
   aoE: true
   damage: 12.0
-  range: 1.0
-  knockback: 15.0
+  range: 1.5
+  knockback: 10.0

@@ -27,6 +27,7 @@ layout (std140, column_major, binding = 2) uniform UBO{
     uniform dvec2 transformationOverride;
     uniform dvec3 colorOverride;
     uniform double perspectiveLayer;
+    uniform double isClipSpace;
 } ubo;
 
 void main()
@@ -41,18 +42,23 @@ void main()
     textureUv = vec2(textureIn.x,textureIn.y);
 
     vec3 position = vec3(vertexIn.x,vertexIn.y,vertexIn.z);
+
     //Transform the object
-        position = vec3(vertexIn.x * (ubo.transformationOverride.x), vertexIn.y * (ubo.transformationOverride.y), 0);
-    //Scale the object
-        position = vec3(position.x * ubo.objectScale, position.y * ubo.objectScale, 0);
-    //Translate the object
-        position = position + vec3(ubo.objectPosition.x, ubo.objectPosition.y, 0);
+    position = vec3(vertexIn.x * (ubo.transformationOverride.x), vertexIn.y * (ubo.transformationOverride.y), 0);
+
     //Scale the object to adjust for aspect ratio
-        position =  vec3(position.x, position.y * ubo.aspectRatio.y, position.z);
+    position =  vec3(position.x, position.y * ubo.aspectRatio.y, position.z);
+
+    //Scale the object
+    position = vec3(position.x * ubo.objectScale, position.y * ubo.objectScale, 0);
+
+    //Translate the object
+    position = position + vec3(ubo.objectPosition.x / ubo.aspectRatio.y, ubo.objectPosition.y, 0);
+
     //Scale the object relative to camera zoom
-        if(ubo.fixedSize == 0){
-            position = vec3(position.x * ubo.cameraPosition.z, position.y * ubo.cameraPosition.z, position.z);
-        }
+    if(ubo.fixedSize == 0){
+        position = vec3(position.x * ubo.cameraPosition.z, position.y * ubo.cameraPosition.z, position.z);
+    }
 
     gl_Position = vec4(position, 1);
 }

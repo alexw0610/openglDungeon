@@ -278,7 +278,7 @@ public class RenderService {
         this.UIUboDataBuffer.put(0, RenderService.cameraPosX);
         this.UIUboDataBuffer.put(1, RenderService.cameraPosY);
         this.UIUboDataBuffer.put(2, RenderService.cameraPosZ);
-        this.UIUboDataBuffer.put(3, scale);
+        this.UIUboDataBuffer.put(3, scale / this.aspectRatio.y());
 
         this.UIUboDataBuffer.put(4, x);
         this.UIUboDataBuffer.put(5, y);

@@ -1,15 +1,16 @@
 package engine.service;
 
+import engine.Engine;
+import engine.EngineConstants;
 import engine.component.*;
 import engine.entity.Entity;
 import engine.enums.Color;
+import engine.enums.TextureKey;
 import engine.handler.EntityHandler;
 import engine.handler.MouseHandler;
 import engine.handler.UISceneHandler;
-import engine.object.ui.HealthBar;
-import engine.object.ui.UIElement;
-import engine.object.ui.UIInventoryElement;
-import engine.object.ui.UIText;
+import engine.object.Ability;
+import engine.object.ui.*;
 import engine.service.util.CollisionUtil;
 import engine.service.util.CoordinateConverter;
 import org.apache.commons.lang3.StringUtils;
@@ -41,10 +42,29 @@ public class UIService {
             pickedItem.setLayer(10);
             currentUiElements.add(pickedItem);
         }
-        
+
         for (UIInventoryElement inventoryElement : UISceneHandler.getInstance().getActiveInventories()) {
             currentUiElements.addAll(inventoryElement.getCopyOfElementsToDisplay());
             currentUITextElements.addAll(inventoryElement.getCopyOfTextElementsToDisplay());
+        }
+        for (int i = 0; i < PlayerAbilityBar.SIZE; i++) {
+            if (PlayerAbilityBar.getAbilities().size() > i && PlayerAbilityBar.getAbilities().get(i) != null) {
+                Ability ability = PlayerAbilityBar.getAbilities().get(i);
+                UIElement element = new UIElement(-0.8 + (0.2 * i), -0.9, 0.2, 0.2);
+                element.setTextureKey(ability.getIcon());
+                element.setTooltip(ability.getName());
+                element.setFixedSize(true);
+                element.setColor(Color.WHITE.value());
+                element.setLayer(18);
+                currentUiElements.add(element);
+            } else {
+                UIElement element = new UIElement(-0.8 + (0.2 * i), -0.9, 0.2, 0.2);
+                element.setTextureKey("default_item_backdrop");
+                element.setColor(Color.WHITE.value());
+                element.setLayer(18);
+                element.setFixedSize(true);
+                currentUiElements.add(element);
+            }
         }
         generateMobTagUI();
         processUIMouseOver();
@@ -159,7 +179,7 @@ public class UIService {
     }
 
     private void createdNameplate(Entity entity) {
-        UIText uiText = new UIText(entity.getComponentOfType(StatComponent.class).getEntityName()).centered().fontSize(0.0035).spacing(1.15).layer(20);
+        UIText uiText = new UIText(entity.getComponentOfType(StatComponent.class).getEntityName()).centered().fontSize(0.0035).spacing(1.25).layer(20);
         uiText.setColor(entity.hasComponentOfType(MobTag.class) ? Color.RED : entity.hasComponentOfType(PlayerTag.class) ? Color.YELLOW : Color.GREEN);
         uiText.setScreenPosition(CoordinateConverter.transformWorldSpaceToClipSpace(entity.getComponentOfType(TransformationComponent.class).getPosition().add(0, 0.6)));
         currentUITextElements.add(uiText);

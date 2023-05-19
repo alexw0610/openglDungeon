@@ -1,7 +1,9 @@
 package engine.object.ui;
 
+import engine.EngineConstants;
 import engine.enums.Color;
 import engine.enums.TextureKey;
+import engine.service.RenderService;
 
 public class UIElement implements Cloneable {
 
@@ -17,7 +19,6 @@ public class UIElement implements Cloneable {
     private double height;
     private String tooltip;
     private boolean fixedSize;
-
     private int layer;
     private String color;
 
@@ -48,32 +49,16 @@ public class UIElement implements Cloneable {
         return posTopLeftX;
     }
 
-    public void setPosTopLeftX(double posTopLeftX) {
-        this.posTopLeftX = posTopLeftX;
-    }
-
     public double getPosTopLeftY() {
         return posTopLeftY;
-    }
-
-    public void setPosTopLeftY(double posTopLeftY) {
-        this.posTopLeftY = posTopLeftY;
     }
 
     public double getPosBottomRightX() {
         return posBottomRightX;
     }
 
-    public void setPosBottomRightX(double posBottomRightX) {
-        this.posBottomRightX = posBottomRightX;
-    }
-
     public double getPosBottomRightY() {
         return posBottomRightY;
-    }
-
-    public void setPosBottomRightY(double posBottomRightY) {
-        this.posBottomRightY = posBottomRightY;
     }
 
     public int getLayer() {
@@ -82,10 +67,6 @@ public class UIElement implements Cloneable {
 
     public void setLayer(int layer) {
         this.layer = layer;
-    }
-
-    public String getColorString() {
-        return color;
     }
 
     public void setColor(String color) {
@@ -97,29 +78,31 @@ public class UIElement implements Cloneable {
     }
 
     public double getScreenPositionX() {
-        return (this.posBottomRightX + this.posTopLeftX) / 2;
+        return this.screenPositionX;
     }
 
     public void setScreenPositionX(double screenPositionX) {
         this.posTopLeftX = screenPositionX - this.width / 2;
         this.posBottomRightX = screenPositionX + this.width / 2;
+        this.screenPositionX = screenPositionX;
     }
 
     public double getScreenPositionY() {
-        return (this.posBottomRightY + this.posTopLeftY) / 2;
+        return this.screenPositionY;
     }
 
     public void setScreenPositionY(double screenPositionY) {
-        this.posTopLeftY = screenPositionY + this.height / 2;
-        this.posBottomRightY = screenPositionY - this.height / 2;
+        this.posTopLeftY = screenPositionY + (this.height / 2) * EngineConstants.getAspectRatio();
+        this.posBottomRightY = screenPositionY - (this.height / 2) * EngineConstants.getAspectRatio();
+        this.screenPositionY = screenPositionY;
     }
 
     public double getWidth() {
-        return this.posBottomRightX - this.posTopLeftX;
+        return this.width;
     }
 
     public double getHeight() {
-        return this.posTopLeftY - this.posBottomRightY;
+        return this.height;
     }
 
     public String getTooltip() {

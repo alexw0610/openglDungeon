@@ -34,12 +34,12 @@
             <scope>compile</scope>
         </dependency>
 
-        <dependency>
-            <groupId>org.joml</groupId>
-            <artifactId>joml</artifactId>
-            <version>1.10.2</version>
-            <scope>compile</scope>
-        </dependency>
+            <dependency>
+                <groupId>org.joml</groupId>
+                <artifactId>joml</artifactId>
+                <version>1.10.2</version>
+                <scope>compile</scope>
+            </dependency>
 
         <dependency>
             <groupId>org.joml</groupId>

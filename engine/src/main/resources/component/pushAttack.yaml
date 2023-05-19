@@ -1,0 +1,9 @@
+templateName: "pushAttack"
+type: "AttackComponent"
+arguments:
+  name: "pushAttack"
+modifiers:
+  aoE: true
+  damage: 0.0
+  range: 1.5
+  knockback: 20.0

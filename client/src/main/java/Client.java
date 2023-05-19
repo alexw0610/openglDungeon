@@ -10,6 +10,8 @@ import engine.entity.EntityBuilder;
 import engine.handler.EntityHandler;
 import engine.handler.EventHandler;
 import engine.handler.NavHandler;
+import engine.object.Ability;
+import engine.object.ui.PlayerAbilityBar;
 import engine.service.ZoneGenerator;
 import exception.UDPServerException;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -73,6 +75,7 @@ public class Client {
                 .at(startPosition.x(), startPosition.y())
                 .buildAndInstantiate(StringUtils.isBlank(characterId) ? RandomStringUtils.randomAlphanumeric(16) : characterId);
         player.getComponentOfType(StatComponent.class).setEntityName(applicationProperties.getProperty("characterName"));
+        PlayerAbilityBar.getAbilities().add(new Ability("Push", 0, "potion", "pushAttack"));
         EntityBuilder.builder()
                 .withComponent(new TransformationComponent())
                 .withComponent(new CameraComponent())
