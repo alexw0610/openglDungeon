@@ -1,6 +1,5 @@
 package engine.service.util;
 
-import engine.object.NavMap;
 import org.joml.Vector2d;
 import org.joml.Vector2i;
 
@@ -8,7 +7,7 @@ import java.util.*;
 
 public class Pathfinding {
 
-    public List<Vector2i> getPath(NavMap navMap, Vector2d start, Vector2d target) {
+    /*public List<Vector2i> getPath(NavMap navMap, Vector2d start, Vector2d target) {
         Node startNode = new Node((int) (start.x() + 0.5), (int) (start.y() + 0.5));
         if (!navMap.isWalkable(new Vector2i((int) (start.x() + 0.5), (int) (start.y() + 0.5)))) {
             return Collections.emptyList();
@@ -182,5 +181,5 @@ public class Pathfinding {
         public void setParent(Node parent) {
             this.parent = parent;
         }
-    }
+    }*/
 }

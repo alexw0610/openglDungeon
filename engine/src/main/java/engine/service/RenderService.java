@@ -3,17 +3,13 @@ package engine.service;
 import com.jogamp.opengl.GL4;
 import com.jogamp.opengl.GLContext;
 import engine.component.RenderComponent;
-import engine.enums.PrimitiveMeshShape;
 import engine.enums.RenderMode;
 import engine.enums.ShaderType;
 import engine.enums.TextureKey;
-import engine.handler.CharacterMeshHandler;
 import engine.handler.MeshHandler;
 import engine.handler.ShaderHandler;
 import engine.handler.TextureHandler;
 import engine.object.Mesh;
-import engine.object.ui.UIElement;
-import engine.object.ui.UIText;
 import org.joml.Vector2d;
 import org.joml.Vector3d;
 
@@ -27,7 +23,6 @@ public class RenderService {
     private static RenderService INSTANCE;
 
     private final MeshHandler meshHandler = MeshHandler.getInstance();
-    private final CharacterMeshHandler characterMeshHandler = CharacterMeshHandler.getInstance();
     private final ShaderHandler shaderHandler = ShaderHandler.getInstance();
     private final TextureHandler textureHandler = TextureHandler.getInstance();
 
@@ -141,31 +136,6 @@ public class RenderService {
                     break;
             }
             activeRenderMode = renderMode;
-        }
-    }
-
-    public void renderUI(UIElement uiElement) {
-        GL4 gl = GLContext.getCurrent().getGL().getGL4();
-        switchRenderMode(RenderMode.UI);
-        shaderHandler.bindShaderOfType(ShaderType.UI_SHADER.value());
-        textureHandler.bindTextureWithKey(uiElement.getTextureKey(), gl.GL_TEXTURE0);
-        updateUIUbo(uiElement.getScreenPositionX(), uiElement.getScreenPositionY(), 1, 0, 0, 0, true, uiElement.isFixedSize(), uiElement.getWidth(), uiElement.getHeight(), uiElement.getLayer(), uiElement.getColor().getRed(), uiElement.getColor().getGreen(), uiElement.getColor().getBlue());
-        drawCall(MeshHandler.getInstance().getMeshForKey(PrimitiveMeshShape.QUAD));
-        entitiesRendered++;
-
-    }
-
-    public void renderUI(UIText uiText) {
-        GL4 gl = GLContext.getCurrent().getGL().getGL4();
-        switchRenderMode(RenderMode.UI);
-        shaderHandler.bindShaderOfType(ShaderType.UI_SHADER.value());
-        textureHandler.bindTextureWithKey(TextureKey.FONT.value(), gl.GL_TEXTURE0);
-        char[] characters = uiText.getCharacters();
-        for (int i = 0, charactersLength = characters.length; i < charactersLength; i++) {
-            char character = characters[i];
-            updateUIUbo(uiText.getScreenPosition().x() + (uiText.getCharacterOffsets()[2 * i] * uiText.getSpacing() * uiText.getFontSize()), uiText.getScreenPosition().y() + (uiText.getCharacterOffsets()[(2 * i) + 1] * uiText.getFontSize()), uiText.getFontSize(), 0, 0, 0, true, uiText.isFixedSize(), 1, 1, uiText.getLayer(), uiText.getColor().getRed(), uiText.getColor().getGreen(), uiText.getColor().getBlue());
-            drawCall(characterMeshHandler.getMeshForKey(character));
-            entitiesRendered++;
         }
     }
 

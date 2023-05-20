@@ -16,8 +16,6 @@ public class Display implements GLEventListener {
 
     public void init(GLAutoDrawable glAutoDrawable) {
         this.engine.setEntityHandler(EntityHandler.getInstance());
-        this.engine.setNavHandler(NavHandler.getInstance());
-        this.engine.setEventHandler(EventHandler.getInstance());
         this.inputListener.setKeyHandler(KeyHandler.getInstance());
         this.inputListener.setMouseHandler(MouseHandler.getInstance());
         this.engine.setStarted(true);
@@ -31,7 +29,6 @@ public class Display implements GLEventListener {
     }
 
     public void reshape(GLAutoDrawable glAutoDrawable, int i, int i1, int i2, int i3) {
-        System.out.println("resized");
         EngineConstants.setWindowWidth(i2);
         EngineConstants.setWindowHeight(i3);
         RenderService.reloadRenderService();

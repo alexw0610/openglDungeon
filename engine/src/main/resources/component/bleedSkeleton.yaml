@@ -1,6 +1,0 @@
-templateName: "bleedSkeleton"
-type: "BleedingComponent"
-arguments:
-  r: 1.0
-  g: 0.9
-  b: 0.8

@@ -1,9 +1,0 @@
-templateName: "player_inventory"
-entities:
-  - textureKey: "default"
-    posTopLeftX: -0.6
-    posTopLeftY: 0.5
-    posBottomRightX: 0.6
-    posBottomRightY: -0.5
-    color: "purple"
-    layer: 1

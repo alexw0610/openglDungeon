@@ -1,7 +1,10 @@
 package engine.system;
 
 import engine.Engine;
-import engine.component.*;
+import engine.component.CollisionComponent;
+import engine.component.PhysicsComponent;
+import engine.component.SurfaceTag;
+import engine.component.TransformationComponent;
 import engine.entity.Entity;
 import engine.handler.EntityHandler;
 import engine.service.util.CollisionUtil;
@@ -18,13 +21,12 @@ public class PhysicsSystem {
     public static void processEntity(Entity entity) {
         TransformationComponent transformationComponent = entity.getComponentOfType(TransformationComponent.class);
         PhysicsComponent physicsComponent = entity.getComponentOfType(PhysicsComponent.class);
-        StatComponent statComponent = entity.getComponentOfType(StatComponent.class);
-        applyMoveToTargetMomentum(transformationComponent, physicsComponent, statComponent);
+        applyMoveToTargetMomentum(transformationComponent, physicsComponent);
         applyPhysics(entity, transformationComponent, physicsComponent);
     }
 
-    private static void applyMoveToTargetMomentum(TransformationComponent transformationComponent, PhysicsComponent physicsComponent, StatComponent statComponent) {
-        double movementSpeed = statComponent != null ? statComponent.getMovementSpeed() : 50;
+    private static void applyMoveToTargetMomentum(TransformationComponent transformationComponent, PhysicsComponent physicsComponent) {
+        double movementSpeed = 50;
         Vector2d moveToTarget = physicsComponent.getMoveToTarget();
         if (moveToTarget != null) {
             Vector2d dir = new Vector2d();

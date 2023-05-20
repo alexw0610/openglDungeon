@@ -1,9 +1,0 @@
-templateName: "slashAttack"
-type: "AttackComponent"
-arguments:
-  name: "slashAttack"
-modifiers:
-  aoE: true
-  damage: 12.0
-  range: 1.5
-  knockback: 10.0

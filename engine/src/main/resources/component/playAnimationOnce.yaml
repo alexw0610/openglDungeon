@@ -1,6 +1,0 @@
-templateName: "playAnimationOnce"
-type: "AnimationComponent"
-arguments:
-  animationSpeed: 75.0
-  animationContinuous: false
-  animationLength: 7.0

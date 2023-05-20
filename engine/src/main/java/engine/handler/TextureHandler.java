@@ -24,7 +24,7 @@ public class TextureHandler {
 
     private TextureHandler() {
         ByteBuffer defaultBuffer = ByteBuffer.allocate(4);
-        defaultBuffer.put(new byte[]{(byte) 255, (byte) 255, (byte) 255, (byte) 255});
+        defaultBuffer.put(new byte[]{(byte) 255, (byte) 0, (byte) 0, (byte) 255});
         defaultBuffer.flip();
         Texture defaultTexture = new Texture(1, 1, defaultBuffer);
         loadedTextureMap.put(TextureKey.DEFAULT.value(), defaultTexture);

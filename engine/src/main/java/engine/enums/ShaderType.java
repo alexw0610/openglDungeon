@@ -3,8 +3,7 @@ package engine.enums;
 public enum ShaderType {
     DEFAULT("shader"),
     VIEW_POLYGON_SHADER("viewPolygonShader"),
-    LIGHT_POLYGON_SHADER("lightPolygonShader"),
-    UI_SHADER("UIShader");
+    LIGHT_POLYGON_SHADER("lightPolygonShader");
 
     public final String shaderKey;
 

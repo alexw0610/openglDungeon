@@ -1,7 +1,6 @@
 package engine.system;
 
 import engine.Engine;
-import engine.EngineConstants;
 import engine.component.CollisionComponent;
 import engine.component.Component;
 import engine.component.SurfaceTag;
@@ -33,17 +32,13 @@ public class CollisionSystem {
             if (!collisions.isEmpty()) {
                 if (StringUtils.isNotBlank(collisionComponent.getSelfApplyComponents())) {
                     Component component = ComponentBuilder.fromTemplate(collisionComponent.getSelfApplyComponents());
-                    if (EngineConstants.INSTANCE.isServerMode() || EngineConstants.INSTANCE.isOfflineMode() || component.isLocal()) {
-                        entity.addComponent(component);
-                    }
+                    entity.addComponent(component);
                 }
             }
             for (Entity collision : collisions) {
                 if (StringUtils.isNotBlank(collisionComponent.getOtherApplyComponents())) {
                     Component component = ComponentBuilder.fromTemplate(collisionComponent.getOtherApplyComponents());
-                    if (EngineConstants.INSTANCE.isServerMode() || EngineConstants.INSTANCE.isOfflineMode() || component.isLocal()) {
-                        collision.addComponent(component);
-                    }
+                    collision.addComponent(component);
                 }
                 Vector2d collisionVector = new Vector2d();
                 TransformationComponent collisionTransformation = collision.getComponentOfType(TransformationComponent.class);

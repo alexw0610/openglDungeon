@@ -51,14 +51,15 @@ void main(){
     vec3 basePixel = vec3(.007, .004, .006);
     if(viewArea.a > 0 || alwaysVisible == 1){
         basePixel = pixelColor.rgb * DARKNESS;
-        if(lightArea.a > 0 ){
-            if(shadeless == 1){
-                basePixel = pixelColor.rgb;
-            }else {
-                basePixel = basePixel + pixelColor.rgb * lightArea.rgb;
-            }
+        if(shadeless == 1){
+            basePixel = pixelColor.rgb;
         }
-        basePixel = basePixel * viewArea.r;
+        else if(lightArea.a > 0 ){
+             basePixel = basePixel + pixelColor.rgb * lightArea.rgb;
+        }
+        if(viewArea.a > 0){
+            basePixel = basePixel * viewArea.r;
+        }
         fragColor = vec4(basePixel, pixelColor.a);
     }else{
         fragColor = vec4(basePixel, 0);

@@ -1,4 +1,0 @@
-templateName: "selfDestruct"
-type: "DestructionComponent"
-arguments:
-  timer: 0.0
