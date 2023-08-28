@@ -16,6 +16,7 @@ public class Display implements GLEventListener {
 
     public void init(GLAutoDrawable glAutoDrawable) {
         this.engine.setEntityHandler(EntityHandler.getInstance());
+        this.engine.setUiHandler(UIHandler.getInstance());
         this.inputListener.setKeyHandler(KeyHandler.getInstance());
         this.inputListener.setMouseHandler(MouseHandler.getInstance());
         this.engine.setStarted(true);

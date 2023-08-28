@@ -1,0 +1,34 @@
+templateName: "projectile_alien_boss"
+components:
+  - type: "base.TransformationComponent"
+  - type: "base.RenderComponent"
+    arguments:
+      meshKey: "QUAD"
+      textureKey: "alien_boss_projectile"
+      shaderType: "shader"
+      scale: 1.0
+      layer: 5
+    modifiers:
+      alwaysVisible: false
+      shadeless: true
+  - type: "base.AnimationComponent"
+    arguments:
+      animationSpeed: 100.0
+      animationContinuous: true
+      animationLength: 2
+  - type: "ProjectileComponent"
+    modifiers:
+        onCollisionAttack: "hitAttackAlienGlub"
+        speed: 3.5
+  - type: "base.CollisionComponent"
+    arguments:
+      hitBoxType: "CIRCLE"
+      hitBoxSize: 0.25
+      obstructsMovement: false
+  - type: "base.LightSourceComponent"
+    arguments:
+      lightColorR: 0.8
+      lightColorG: 2.2
+      lightColorB: 0.4
+      lightStrength: 1.5
+      lightFallOff: 0.3

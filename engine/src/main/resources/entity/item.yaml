@@ -1,0 +1,25 @@
+templateName: "item"
+components:
+  - type: "base.TransformationComponent"
+  - type: "base.RenderComponent"
+    arguments:
+      meshKey: "QUAD"
+      textureKey: "xp"
+      shaderType: "shader"
+      scale: 1.0
+      layer: 5
+    modifiers:
+      alwaysVisible: false
+      shadeless: true
+  - type: "base.AnimationComponent"
+    arguments:
+      animationSpeed: 100.0
+      animationContinuous: true
+      animationLength: 3
+  - type: "tag.ItemTag"
+  - type: "base.PhysicsComponent"
+  - type: "base.CollisionComponent"
+    arguments:
+      hitBoxType: "AABB"
+      hitBoxSize: 1.0
+      obstructsMovement: false

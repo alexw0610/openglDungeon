@@ -3,62 +3,59 @@
 layout (location=0) in vec3 vertexIn;
 layout (location=1) in vec2 textureIn;
 
-out vec3 vertex;
 out vec2 textureUv;
-out double engineTick;
-out double textureOffSetX;
-out double textureOffSetY;
-out double alwaysVisible;
 out double fixedSize;
-out vec3 colorOverride;
+out double spriteSize;
+out vec3 color;
 
 
 layout (std140, column_major, binding = 2) uniform UBO{
-    uniform dvec3 cameraPosition;
-    uniform double objectScale;
     uniform dvec2 objectPosition;
-    uniform double textureOffSetX;
-    uniform double textureOffSetY;
     uniform dvec2 aspectRatio;
-    uniform double textureRotation;
-    uniform double engineTick;
-    uniform double alwaysVisible;
+    uniform double objectScale;
     uniform double fixedSize;
-    uniform dvec2 transformationOverride;
-    uniform dvec3 colorOverride;
-    uniform double perspectiveLayer;
-    uniform double isClipSpace;
+    uniform double width;
+    uniform double height;
+    uniform double textureX;
+    uniform double textureY;
+    uniform double textureWidth;
+    uniform double textureHeight;
+    uniform dvec3 color;
+    uniform double spriteSize;
 } ubo;
 
 void main()
 {
-    vertex = vertexIn;
-    engineTick = ubo.engineTick;
-    textureOffSetX = ubo.textureOffSetX;
-    textureOffSetY = ubo.textureOffSetY;
-    alwaysVisible = ubo.alwaysVisible;
     fixedSize = ubo.fixedSize;
-    colorOverride = vec3(ubo.colorOverride);
+    spriteSize = ubo.spriteSize;
     textureUv = vec2(textureIn.x,textureIn.y);
+    color = vec3(ubo.color.rgb);
 
     vec3 position = vec3(vertexIn.x,vertexIn.y,vertexIn.z);
 
-    //Transform the object
-    position = vec3(vertexIn.x * (ubo.transformationOverride.x), vertexIn.y * (ubo.transformationOverride.y), 0);
+    if(position.x < 0){
+        if(position.y < 0){
+            position = vec3(ubo.objectPosition.x, ubo.objectPosition.y, vertexIn.z);
+            textureUv = vec2(ubo.textureX, ubo.textureY + ubo.textureHeight);
+        }else{
+            position = vec3(ubo.objectPosition.x, ubo.objectPosition.y + ubo.height, vertexIn.z);
+            textureUv = vec2(ubo.textureX, ubo.textureY);
+        }
+    }else {
+        if(position.y < 0){
+            position = vec3(ubo.objectPosition.x + ubo.width, ubo.objectPosition.y, vertexIn.z);
+            textureUv = vec2(ubo.textureX + ubo.textureWidth, ubo.textureY + ubo.textureHeight);
+        }else{
+            position = vec3(ubo.objectPosition.x + ubo.width, ubo.objectPosition.y + ubo.height, vertexIn.z);
+            textureUv = vec2(ubo.textureX + ubo.textureWidth, ubo.textureY);
+        }
+    }
 
     //Scale the object to adjust for aspect ratio
     position =  vec3(position.x, position.y * ubo.aspectRatio.y, position.z);
 
     //Scale the object
     position = vec3(position.x * ubo.objectScale, position.y * ubo.objectScale, 0);
-
-    //Translate the object
-    position = position + vec3(ubo.objectPosition.x / ubo.aspectRatio.y, ubo.objectPosition.y, 0);
-
-    //Scale the object relative to camera zoom
-    if(ubo.fixedSize == 0){
-        position = vec3(position.x * ubo.cameraPosition.z, position.y * ubo.cameraPosition.z, position.z);
-    }
 
     gl_Position = vec4(position, 1);
 }

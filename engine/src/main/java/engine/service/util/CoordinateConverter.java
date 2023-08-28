@@ -6,7 +6,8 @@ import org.joml.Vector2d;
 public class CoordinateConverter {
 
     public static Vector2d transformWorldSpaceToClipSpace(Vector2d worldSpacePosition) {
-        return worldSpacePosition
-                .sub(new Vector2d(RenderService.cameraPosX, RenderService.cameraPosY));
+        return (worldSpacePosition.sub(new Vector2d(RenderService.cameraPosX, RenderService.cameraPosY)))
+                .mul(RenderService.getInstance().getAspectRatio().y())
+                .mul(RenderService.cameraPosZ);
     }
 }

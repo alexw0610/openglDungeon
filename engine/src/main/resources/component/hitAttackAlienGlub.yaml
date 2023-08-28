@@ -1,0 +1,11 @@
+templateName: "hitAttackAlienGlub"
+type: "AttackComponent"
+arguments:
+  name: "hitAttackAlienGlub"
+modifiers:
+  aoE: false
+  singleTarget: true
+  damage: 8.0
+  range: 1.0
+  knockback: 0.0
+  texture: "slash_alien"

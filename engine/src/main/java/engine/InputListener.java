@@ -52,6 +52,7 @@ public class InputListener implements KeyListener, MouseListener {
 
     @Override
     public void mouseDragged(MouseEvent e) {
+        mouseHandler.updateMouseEvent(e);
     }
 
     @Override

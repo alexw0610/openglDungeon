@@ -1,0 +1,11 @@
+templateName: "bombExplosion"
+type: "AttackComponent"
+arguments:
+  name: "bombExplosion"
+modifiers:
+  aoE: true
+  damage: 8.0
+  range: 2.0
+  knockback: 450.0
+  texture: "explosion"
+  affectsTerrain: true

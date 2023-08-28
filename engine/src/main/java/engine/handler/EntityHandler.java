@@ -1,17 +1,19 @@
 package engine.handler;
 
+import engine.component.internal.CreatedAtComponent;
 import engine.entity.Entity;
+import engine.object.generation.World;
+import engine.service.RenderService;
 import org.apache.commons.lang3.RandomStringUtils;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class EntityHandler implements Handler<Entity> {
     private static final ThreadLocal<EntityHandler> INSTANCE = ThreadLocal.withInitial(EntityHandler::new);
     private final Map<String, Entity> objects = new HashMap<>();
+
+    private World world;
 
     private EntityHandler() {
     }
@@ -62,6 +64,7 @@ public class EntityHandler implements Handler<Entity> {
     public void addObject(String key, Entity object) {
         synchronized (this.objects) {
             object.setEntityId(key);
+            object.addComponent(new CreatedAtComponent(RenderService.renderTick));
             this.objects.put(key, object);
         }
     }
@@ -71,6 +74,7 @@ public class EntityHandler implements Handler<Entity> {
         synchronized (this.objects) {
             String key = RandomStringUtils.randomAlphanumeric(16);
             object.setEntityId(key);
+            object.addComponent(new CreatedAtComponent(RenderService.renderTick));
             this.objects.put(key, object);
         }
     }
@@ -88,6 +92,12 @@ public class EntityHandler implements Handler<Entity> {
         }
     }
 
+    public void removeAllObjectsWithoutPrefix(String... prefix) {
+        for (String key : this.objects.keySet().stream().filter(key -> Arrays.stream(prefix).noneMatch(key::startsWith)).collect(Collectors.toList())) {
+            removeObject(key);
+        }
+    }
+
     public List<Entity> getObjectsWithPrefix(String prefix) {
         List<Entity> entitiesToReturn = new ArrayList<>();
         synchronized (this.objects) {
@@ -98,17 +108,15 @@ public class EntityHandler implements Handler<Entity> {
         return entitiesToReturn;
     }
 
-    public List<Entity> getGlobalObjects() {
-        List<Entity> entitiesToReturn = new ArrayList<>();
-        synchronized (this.objects) {
-            for (String key : this.objects.keySet().stream().filter(key -> key.contains("_GLOBAL_")).collect(Collectors.toList())) {
-                entitiesToReturn.add(this.objects.get(key));
-            }
-        }
-        return entitiesToReturn;
-    }
-
     public double getEntityCount() {
         return this.objects.size();
+    }
+
+    public World getWorld() {
+        return world;
+    }
+
+    public void setWorld(World world) {
+        this.world = world;
     }
 }

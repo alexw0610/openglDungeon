@@ -2,7 +2,7 @@ package engine.service;
 
 import com.jogamp.newt.event.KeyEvent;
 import com.jogamp.newt.event.MouseEvent;
-import engine.component.TransformationComponent;
+import engine.component.base.TransformationComponent;
 import engine.entity.Entity;
 
 public class InputProcessor {

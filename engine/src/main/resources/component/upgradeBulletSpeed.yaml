@@ -1,0 +1,8 @@
+templateName: "upgradeBulletVelocity"
+type: "UpgradeComponent"
+modifiers:
+  upgradeTitle: "Bullet Upgrade: Velocity"
+  upgradeRarity: "Epic"
+  toolTip: "Increases your bullet velocity by 15 percent."
+  upgradeType: "bulletVelocity"
+  modifierValue: 1.15

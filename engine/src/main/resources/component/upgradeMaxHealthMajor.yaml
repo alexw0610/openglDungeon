@@ -1,0 +1,8 @@
+templateName: "upgradeMaxHealthMajor"
+type: "UpgradeComponent"
+modifiers:
+  upgradeTitle: "Stat Upgrade: Major Health"
+  upgradeRarity: "Rare"
+  toolTip: "Increases your maximum health points by 40."
+  upgradeType: "maxHealth"
+  modifierValue: 40.0

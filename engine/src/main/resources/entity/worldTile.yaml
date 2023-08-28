@@ -1,0 +1,25 @@
+templateName: "worldTile"
+components:
+  - type: "base.TransformationComponent"
+  - type: "base.RenderComponent"
+    arguments:
+      meshKey: "QUAD"
+      textureKey: "stone"
+      shaderType: "shader"
+      scale: 1.0
+      layer: 2
+    modifiers:
+      alwaysVisible: true
+      shadeless: false
+  - type: "base.CollisionComponent"
+    arguments:
+      hitBoxType: "AABB"
+      hitBoxSize: 0.5
+  - type: "tag.ShadowCastTag"
+  - type: "StatComponent"
+    modifiers:
+      currentHealthPoints: 10.0
+      maxHealthPoints: 10.0
+      movementSpeed: 0.0
+  - type: "tag.TerrainTag"
+  - type: "tag.ViewBlockingTag"

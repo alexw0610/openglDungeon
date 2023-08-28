@@ -10,7 +10,7 @@ out double textureOffSetX;
 out double textureOffSetY;
 out double alwaysVisible;
 out double shadeless;
-out vec3 colorOverride;
+out double spriteSize;
 
 
 layout (std140, column_major) uniform UBO{
@@ -26,7 +26,7 @@ layout (std140, column_major) uniform UBO{
     uniform double shadeless;
     uniform double mirrored;
     uniform double perspectiveLayer;
-    uniform dvec3 colorOverride;
+    uniform double spriteSize;
 } ubo;
 
 void main()
@@ -37,7 +37,7 @@ void main()
     textureOffSetY = ubo.textureOffSetY;
     alwaysVisible = ubo.alwaysVisible;
     shadeless = ubo.shadeless;
-    colorOverride = vec3(ubo.colorOverride);
+    spriteSize = ubo.spriteSize;
 
     //Rotate the texture coordinates
     vec2 textureCentered = vec2((textureIn.x - 0.5) * ubo.mirrored, textureIn.y - 0.5);
@@ -45,10 +45,16 @@ void main()
         (textureCentered.x * cos(radians(float(ubo.textureRotation)))) - (textureCentered.y * sin(radians(float(ubo.textureRotation)))),
         (textureCentered.x * sin(radians(float(ubo.textureRotation)))) + (textureCentered.y * cos(radians(float(ubo.textureRotation))))
     );
-    textureUv = vec2((rotatedTexture.x) + 0.5,rotatedTexture.y + 0.5);
+    textureUv = vec2((textureCentered.x) + 0.5,textureCentered.y + 0.5);
+
+    //object rotated
+    vec2 objectRotated = vec2(
+        (vertexIn.x * cos(radians(float(ubo.textureRotation)))) - (vertexIn.y * sin(radians(float(ubo.textureRotation)))),
+        (vertexIn.x * sin(radians(float(ubo.textureRotation)))) + (vertexIn.y * cos(radians(float(ubo.textureRotation))))
+    );
 
     //Scale the object
-    vec3 objectScaled = vec3(vertexIn.x * ubo.objectScale, vertexIn.y * ubo.objectScale, 0);
+    vec3 objectScaled = vec3(objectRotated.x * ubo.objectScale, objectRotated.y * ubo.objectScale, 0);
 
     //Translate the object
     vec3 objectPositionTranslated = objectScaled + vec3(ubo.objectPosition.x, ubo.objectPosition.y, 0);

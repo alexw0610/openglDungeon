@@ -1,0 +1,7 @@
+templateName: "upgradeImpactBullet"
+type: "UpgradeComponent"
+modifiers:
+  upgradeTitle: "Bullet Upgrade: Impact"
+  upgradeRarity: "Epic"
+  toolTip: "Every 4th bullet detonates on impact, dealing damage to all enemies in an area."
+  upgradeType: "impactBullet"

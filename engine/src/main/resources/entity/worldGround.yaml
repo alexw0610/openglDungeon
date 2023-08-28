@@ -1,0 +1,20 @@
+templateName: "worldGround"
+components:
+  - type: "base.TransformationComponent"
+  - type: "base.RenderComponent"
+    arguments:
+      meshKey: "QUAD"
+      textureKey: "floor"
+      shaderType: "shader"
+      scale: 1.0
+      layer: 1
+    modifiers:
+      alwaysVisible: false
+      shadeless: false
+      randomizeTextureOffset: true
+  - type: "tag.SurfaceTag"
+  - type: "base.CollisionComponent"
+    arguments:
+      hitBoxType: "AABB"
+      hitBoxSize: 1.0
+      obstructsMovement: false

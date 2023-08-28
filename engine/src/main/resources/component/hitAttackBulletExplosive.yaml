@@ -1,0 +1,11 @@
+templateName: "hitAttackBulletExplosive"
+type: "AttackComponent"
+arguments:
+  name: "hitAttackBulletExplosive"
+modifiers:
+  aoE: true
+  singleTarget: false
+  damage: 5.0
+  range: 2.5
+  knockback: 350.0
+  texture: "explosion"

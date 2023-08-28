@@ -1,0 +1,10 @@
+templateName: "slashAttackAlien"
+type: "AttackComponent"
+arguments:
+  name: "slashAttackAlien"
+modifiers:
+  aoE: true
+  damage: 9.0
+  range: 1.2
+  knockback: 0.0
+  texture: "slash_alien"

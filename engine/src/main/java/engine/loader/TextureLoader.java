@@ -7,25 +7,26 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.MissingResourceException;
 
 public class TextureLoader {
 
-    private static final String RESOURCE_TEXTURE_SUBFOLDER = "texture/";
+    private static final String RESOURCE_TEXTURE_SUBFOLDER = "./texture/";
     private static final String DEFAULT_TEXTURE_FILE_EXTENSION = ".png";
 
     public static Texture loadTexture(String textureName) {
         BufferedImage textureImage;
+        Path path = Paths.get(RESOURCE_TEXTURE_SUBFOLDER + textureName + DEFAULT_TEXTURE_FILE_EXTENSION);
         try {
-            InputStream resourceAsStream = TextureLoader.class.getClassLoader().getResourceAsStream(RESOURCE_TEXTURE_SUBFOLDER + textureName + DEFAULT_TEXTURE_FILE_EXTENSION);
-            if (resourceAsStream == null) {
-                throw new MissingResourceException("The specified Texture cant be found (or opened) in the resource path. ", TextureLoader.class.getName(), textureName);
-            }
+            InputStream resourceAsStream = Files.newInputStream(path);
             textureImage = ImageIO.read(resourceAsStream);
         } catch (IOException e) {
             throw new MissingResourceException("The specified Texture cant be found (or opened) in the resource path. " + e, TextureLoader.class.getName(), textureName);
         }
-
+        System.out.println("Loaded texture " + textureName + " from external path " + path);
         ByteBuffer textureBuffer = ByteBuffer.allocate(textureImage.getWidth() * textureImage.getHeight() * 4);
         int[] temp = new int[textureImage.getWidth() * textureImage.getHeight()];
         textureImage.getRGB(0, 0, textureImage.getWidth(), textureImage.getHeight(), temp, 0, textureImage.getWidth());
@@ -42,20 +43,4 @@ public class TextureLoader {
         return new Texture(textureImage.getWidth(), textureImage.getHeight(), textureBuffer);
 
     }
-
-    public static BufferedImage loadTextureBuffer(String textureName) {
-        BufferedImage textureImage;
-        try {
-            InputStream resourceAsStream = TextureLoader.class.getClassLoader().getResourceAsStream(RESOURCE_TEXTURE_SUBFOLDER + textureName + DEFAULT_TEXTURE_FILE_EXTENSION);
-            if (resourceAsStream == null) {
-                throw new MissingResourceException("The specified Texture cant be found (or opened) in the resource path. ", TextureLoader.class.getName(), textureName);
-            }
-            textureImage = ImageIO.read(resourceAsStream);
-        } catch (IOException e) {
-            throw new MissingResourceException("The specified Texture cant be found (or opened) in the resource path. " + e, TextureLoader.class.getName(), textureName);
-        }
-        return textureImage;
-    }
-
-
 }

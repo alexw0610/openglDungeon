@@ -1,0 +1,20 @@
+templateName: "attack"
+components:
+  - type: "base.TransformationComponent"
+  - type: "base.RenderComponent"
+    arguments:
+      meshKey: "QUAD"
+      textureKey: "slash_alien"
+      shaderType: "shader"
+      scale: 1.0
+      layer: 6
+    modifiers:
+      alwaysVisible: true
+      shadeless: true
+  - type: "base.AnimationComponent"
+    arguments:
+      animationSpeed: 110.0
+      animationContinuous: false
+      animationLength: 4
+    modifiers:
+      deleteAfterPlay: true

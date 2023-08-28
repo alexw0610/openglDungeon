@@ -1,8 +1,8 @@
 package engine.service.util;
 
-import engine.component.CollisionComponent;
-import engine.component.TransformationComponent;
-import engine.component.ViewBlockingTag;
+import engine.component.base.CollisionComponent;
+import engine.component.base.TransformationComponent;
+import engine.component.tag.ViewBlockingTag;
 import engine.entity.Entity;
 import engine.handler.EntityHandler;
 import engine.object.Edge;

@@ -20,7 +20,7 @@ public class KeyHandler {
         actionToKeyMap.put("movePlayerRight", KeyEvent.VK_D);
         actionToKeyMap.put("movePlayerLeft", KeyEvent.VK_A);
 
-        actionToKeyMap.put("dash", KeyEvent.VK_SPACE);
+        actionToKeyMap.put("dash", KeyEvent.VK_Q);
 
         actionToKeyMap.put("moveCameraUp", KeyEvent.VK_UP);
         actionToKeyMap.put("moveCameraDown", KeyEvent.VK_DOWN);
@@ -31,6 +31,7 @@ public class KeyHandler {
         actionToKeyMap.put("zoomCameraOut", KeyEvent.VK_PAGE_UP);
 
         actionToKeyMap.put("openInventory", KeyEvent.VK_I);
+        actionToKeyMap.put("placeBomb", KeyEvent.VK_E);
     }
 
     public static KeyHandler getInstance() {

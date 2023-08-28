@@ -1,5 +1,6 @@
 package engine.service.util;
 
+import engine.object.generation.World;
 import org.joml.Vector2d;
 import org.joml.Vector2i;
 
@@ -7,12 +8,15 @@ import java.util.*;
 
 public class Pathfinding {
 
-    /*public List<Vector2i> getPath(NavMap navMap, Vector2d start, Vector2d target) {
-        Node startNode = new Node((int) (start.x() + 0.5), (int) (start.y() + 0.5));
-        if (!navMap.isWalkable(new Vector2i((int) (start.x() + 0.5), (int) (start.y() + 0.5)))) {
+    private static final int MAX_OPEN_TILES = 80;
+    private static final int MAX_CHECKED_TILES = 80;
+
+    public List<Vector2i> getPath(World world, Vector2d start, Vector2d target) {
+        Node startNode = new Node((int) Math.round(start.x()), (int) Math.round(start.y()));
+        if (!world.isWalkable((int) Math.round(start.x()), (int) Math.round(start.y()))) {
             return Collections.emptyList();
         }
-        if (!navMap.isWalkable(new Vector2i((int) (target.x() + 0.5), (int) (target.y() + 0.5)))) {
+        if (!world.isWalkable((int) Math.round(target.x()), (int) Math.round(target.y()))) {
             return Collections.emptyList();
         }
         startNode.setG(0);
@@ -20,7 +24,7 @@ public class Pathfinding {
         LinkedList<Node> openList = new LinkedList<>();
         openList.add(startNode);
         LinkedList<Node> closedList = new LinkedList<>();
-        Node targetNode = getFinalNode(openList, closedList, navMap, new Vector2i((int) (target.x() + 0.5), (int) (target.y() + 0.5)));
+        Node targetNode = getFinalNode(openList, closedList, world, new Vector2i((int) Math.round(target.x()), (int) Math.round(target.y())));
         if (targetNode == null) {
             return Collections.emptyList();
         }
@@ -40,7 +44,7 @@ public class Pathfinding {
         return path;
     }
 
-    private Node getFinalNode(LinkedList<Node> openList, LinkedList<Node> closedList, NavMap navMap, Vector2i target) {
+    private Node getFinalNode(LinkedList<Node> openList, LinkedList<Node> closedList, World world, Vector2i target) {
         while (!openList.isEmpty()) {
             Node q = openList.stream().min(Comparator.comparingDouble(Node::getF)).get();
             openList.remove(q);
@@ -48,7 +52,10 @@ public class Pathfinding {
             if (q.getX() == target.x() && q.getY() == target.y()) {
                 return q;
             }
-            LinkedList<Node> successors = generateSuccessors(q, navMap);
+            if (openList.size() > MAX_OPEN_TILES || closedList.size() > MAX_CHECKED_TILES) {
+                return null;
+            }
+            LinkedList<Node> successors = generateSuccessors(q, world);
             for (Node successor : successors) {
                 if (successor.getX() == target.x() && successor.getY() == target.y()) {
                     return successor;
@@ -75,45 +82,45 @@ public class Pathfinding {
                 Math.abs(target.y - successor.getY());
     }
 
-    private LinkedList<Node> generateSuccessors(Node q, NavMap navMap) {
+    private LinkedList<Node> generateSuccessors(Node q, World world) {
         LinkedList<Node> successors = new LinkedList<>();
         boolean top = false;
         boolean right = false;
         boolean bottom = false;
         boolean left = false;
-        if (navMap.isWalkable(new Vector2i(q.getX(), q.getY() + 1))) {
+        if (world.isWalkable(q.getX(), q.getY() + 1)) {
             top = true;
             successors.add(new Node(q.getX(), q.getY() + 1, q));
         }
-        if (navMap.isWalkable(new Vector2i(q.getX() - 1, q.getY()))) {
+        if (world.isWalkable(q.getX() - 1, q.getY())) {
             left = true;
             successors.add(new Node(q.getX() - 1, q.getY(), q));
         }
-        if (navMap.isWalkable(new Vector2i(q.getX() + 1, q.getY()))) {
+        if (world.isWalkable(q.getX() + 1, q.getY())) {
             right = true;
             successors.add(new Node(q.getX() + 1, q.getY(), q));
         }
-        if (navMap.isWalkable(new Vector2i(q.getX(), q.getY() - 1))) {
+        if (world.isWalkable(q.getX(), q.getY() - 1)) {
             bottom = true;
             successors.add(new Node(q.getX(), q.getY() - 1, q));
         }
         if (top && right) {
-            if (navMap.isWalkable(new Vector2i(q.getX() + 1, q.getY() + 1))) {
+            if (world.isWalkable(q.getX() + 1, q.getY() + 1)) {
                 successors.add(new Node(q.getX() + 1, q.getY() + 1, q));
             }
         }
         if (right && bottom) {
-            if (navMap.isWalkable(new Vector2i(q.getX() + 1, q.getY() - 1))) {
+            if (world.isWalkable(q.getX() + 1, q.getY() - 1)) {
                 successors.add(new Node(q.getX() + 1, q.getY() - 1, q));
             }
         }
         if (bottom && left) {
-            if (navMap.isWalkable(new Vector2i(q.getX() - 1, q.getY() - 1))) {
+            if (world.isWalkable(q.getX() - 1, q.getY() - 1)) {
                 successors.add(new Node(q.getX() - 1, q.getY() - 1, q));
             }
         }
         if (left && top) {
-            if (navMap.isWalkable(new Vector2i(q.getX() - 1, q.getY() + 1))) {
+            if (world.isWalkable(q.getX() - 1, q.getY() + 1)) {
                 successors.add(new Node(q.getX() - 1, q.getY() + 1, q));
             }
         }
@@ -181,5 +188,5 @@ public class Pathfinding {
         public void setParent(Node parent) {
             this.parent = parent;
         }
-    }*/
+    }
 }

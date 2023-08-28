@@ -5,16 +5,16 @@ import engine.loader.YamlLoader;
 import engine.loader.template.EntityTemplate;
 
 import java.io.File;
-import java.net.JarURLConnection;
-import java.util.Enumeration;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.jar.JarEntry;
 
 public class EntityTemplateHandler implements Handler<EntityTemplate> {
     private static final ThreadLocal<EntityTemplateHandler> INSTANCE = ThreadLocal.withInitial(EntityTemplateHandler::new);
-    public static final String ENTITY_TEMPLATE_FOLDER = "entity/";
+    public static final String ENTITY_TEMPLATE_FOLDER = "./entity/";
     private final Map<String, EntityTemplate> templateMap = new HashMap<>();
 
     public static EntityTemplateHandler getInstance() {
@@ -23,21 +23,13 @@ public class EntityTemplateHandler implements Handler<EntityTemplate> {
 
     private EntityTemplateHandler() {
         try {
-            Enumeration<JarEntry> entries = ((JarURLConnection) getClass().getClassLoader()
-                    .getResource("zone/").toURI().toURL().openConnection())
-                    .getJarFile().entries();
-            while (entries.hasMoreElements()) {
-                JarEntry entry = entries.nextElement();
-                if (entry.getName().startsWith(ENTITY_TEMPLATE_FOLDER) && entry.getName().endsWith(".yaml")) {
-                    String filename = entry.getName().split("/")[1];
-                    addObject(filename.split("\\.")[0], YamlLoader.load(EntityTemplate.class, ENTITY_TEMPLATE_FOLDER + filename));
-                }
+            for (Path path : Files.newDirectoryStream(Paths.get(ENTITY_TEMPLATE_FOLDER))) {
+                File file = new File(path.toUri());
+                addObject(file.getName().split("\\.")[0], YamlLoader.load(EntityTemplate.class, Files.newInputStream(path)));
+                System.out.println("Loaded entityTemplate " + file.getName().split("\\.")[0] + " from external path " + path);
             }
         } catch (Exception e) {
-            File templateDirectory = new File(Thread.currentThread().getContextClassLoader().getResource(ENTITY_TEMPLATE_FOLDER).getPath());
-            for (File file : templateDirectory.listFiles()) {
-                addObject(file.getName().split("\\.")[0], YamlLoader.load(EntityTemplate.class, ENTITY_TEMPLATE_FOLDER + file.getName()));
-            }
+            System.err.println("Failed to load entityTemplates from external Path. Error: " + e.getMessage());
         }
     }
 

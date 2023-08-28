@@ -1,0 +1,20 @@
+templateName: "teleport"
+components:
+  - type: "base.TransformationComponent"
+  - type: "base.RenderComponent"
+    arguments:
+      meshKey: "QUAD"
+      textureKey: "teleport"
+      shaderType: "shader"
+      scale: 1.0
+      layer: 8
+    modifiers:
+      alwaysVisible: true
+      shadeless: true
+  - type: "base.AnimationComponent"
+    arguments:
+      animationSpeed: 50.0
+      animationContinuous: false
+      animationLength: 8
+    modifiers:
+      deleteAfterPlay: true

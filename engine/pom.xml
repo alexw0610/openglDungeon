@@ -18,6 +18,20 @@
             <scope>compile</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.jogamp.joal</groupId>
+            <artifactId>joal</artifactId>
+            <version>2.3.2</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jogamp.joal</groupId>
+            <artifactId>joal-main</artifactId>
+            <version>2.3.2</version>
+            <scope>compile</scope>
+        </dependency>
+
         <!-- https://mvnrepository.com/artifact/org.jogamp.gluegen/gluegen-rt-main -->
         <dependency>
             <groupId>org.jogamp.gluegen</groupId>
@@ -34,12 +48,12 @@
             <scope>compile</scope>
         </dependency>
 
-            <dependency>
-                <groupId>org.joml</groupId>
-                <artifactId>joml</artifactId>
-                <version>1.10.2</version>
-                <scope>compile</scope>
-            </dependency>
+        <dependency>
+            <groupId>org.joml</groupId>
+            <artifactId>joml</artifactId>
+            <version>1.10.5</version>
+            <scope>compile</scope>
+        </dependency>
 
         <dependency>
             <groupId>org.joml</groupId>
@@ -51,7 +65,7 @@
         <dependency>
             <groupId>org.yaml</groupId>
             <artifactId>snakeyaml</artifactId>
-            <version>1.29</version>
+            <version>2.0</version>
             <scope>compile</scope>
         </dependency>
 
@@ -98,7 +112,6 @@
                 <executions>
                     <execution>
                         <id>copy-resources</id>
-                        <!-- here the phase you need -->
                         <phase>package</phase>
                         <goals>
                             <goal>copy-resources</goal>
@@ -107,15 +120,53 @@
                             <outputDirectory>${basedir}/target</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>src/main/resources</directory>
+                                    <targetPath>/texture</targetPath>
+                                    <directory>src/main/resources/texture</directory>
+                                </resource>
+                                <resource>
+                                    <targetPath>/sound</targetPath>
+                                    <directory>src/main/resources/sound</directory>
+                                </resource>
+                                <resource>
+                                    <targetPath>/entity</targetPath>
+                                    <directory>src/main/resources/entity</directory>
+                                </resource>
+                                <resource>
+                                    <targetPath>/component</targetPath>
+                                    <directory>src/main/resources/component</directory>
                                 </resource>
                             </resources>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
-
-
+            <plugin>
+                <!-- Build an executable JAR -->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.1.0</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>lib/</classpathPrefix>
+                            <mainClass>client.Main</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
         </plugins>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <excludes>
+                    <exclude>texture/*</exclude>
+                    <exclude>sound/*</exclude>
+                    <exclude>component/*</exclude>
+                    <exclude>entity/*</exclude>
+                </excludes>
+                <filtering>false</filtering>
+            </resource>
+        </resources>
     </build>
 </project>

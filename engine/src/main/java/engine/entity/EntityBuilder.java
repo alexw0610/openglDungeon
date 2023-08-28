@@ -1,7 +1,7 @@
 package engine.entity;
 
 import engine.component.Component;
-import engine.component.TransformationComponent;
+import engine.component.base.TransformationComponent;
 import engine.handler.EntityHandler;
 import engine.handler.template.EntityTemplateHandler;
 

@@ -1,0 +1,32 @@
+templateName: "boss_alien"
+components:
+  - type: "base.TransformationComponent"
+  - type: "base.RenderComponent"
+    arguments:
+      meshKey: "QUAD"
+      textureKey: "alien_boss"
+      shaderType: "shader"
+      scale: 3.0
+      layer: 4
+    modifiers:
+      alwaysVisible: true
+      shadeless: true
+      spriteSize: 24.0
+  - type: "base.AnimationComponent"
+    arguments:
+      animationSpeed: 166.0
+      animationContinuous: true
+      animationLength: 4
+    modifiers:
+      movementDriven: false
+  - type: "StatComponent"
+    modifiers:
+      attackSpeed: 1.2
+      secondaryAttackSpeed: 3.0
+      movementSpeed: 1.5
+      maxHealthPoints: 200.0
+  - type: "base.CollisionComponent"
+    arguments:
+      hitBoxType: "AABB"
+      hitBoxSize: 0.99
+  - type: "BossComponent"

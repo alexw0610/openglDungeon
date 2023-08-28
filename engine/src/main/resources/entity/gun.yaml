@@ -1,0 +1,16 @@
+templateName: "gun"
+components:
+  - type: "base.TransformationComponent"
+  - type: "base.RenderComponent"
+    arguments:
+      meshKey: "QUAD"
+      textureKey: "gun"
+      shaderType: "shader"
+      scale: 1.0
+      layer: 7
+    modifiers:
+      alwaysVisible: true
+      shadeless: true
+  - type: "GunComponent"
+    modifiers:
+      bulletSpeed: 6.5

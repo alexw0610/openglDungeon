@@ -1,0 +1,12 @@
+templateName: "dashHit"
+type: "AttackComponent"
+arguments:
+  name: "dashHit"
+modifiers:
+  aoE: true
+  damage: 0.0
+  range: 2.0
+  knockback: 400.0
+  texture: "explosion"
+  affectsTerrain: true
+  stunsTarget: true
