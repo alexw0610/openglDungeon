@@ -1,0 +1,11 @@
+templateName: "upgradeAttackDamagePrimary"
+type: "UpgradeComponent"
+modifiers:
+  upgradeTitle: "Stat Upgrade: Primary Attack Damage"
+  upgradeIcon: "upgrade_rare"
+  upgradeRarity: "Rare"
+  toolTip: "Increases your primary base bullet damage by 5%."
+  upgradeType: "attackDamage"
+  upgradeSlot: "primary"
+  upgradeCategory: "statModifier"
+  modifierValue: 1.05

@@ -22,7 +22,6 @@ public class AudioService {
     }
 
     private AudioService() {
-        ALut.alutInit();
         audioSources = new LinkedList<>();
     }
 

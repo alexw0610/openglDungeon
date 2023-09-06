@@ -75,7 +75,7 @@ public class AISystem {
         if (aiComponent.getCurrentTarget().getComponentOfType(StatComponent.class).isDead()) {
             aiComponent.setCurrentState(IDLE);
         } else if ((aiComponent.getAttackedLast() == 0
-                || aiComponent.getAttackedLast() < System.currentTimeMillis() - (statComponent.getAttackSpeed() * 1000))
+                || aiComponent.getAttackedLast() < System.currentTimeMillis() - (statComponent.getAttackSpeedPrimary() * 1000))
                 && !entity.hasComponentOfType(KnockbackComponent.class)
                 && !entity.hasComponentOfType(StunComponent.class)) {
             if (entity.hasComponentOfType(RangedMobTag.class)) {

@@ -59,6 +59,10 @@ public class KeyHandler {
         }
     }
 
+    public void setKeyReleased(short keyCode) {
+        keyMap[keyCode] = 0;
+    }
+
     public void addKeyPressedEvent(KeyEvent keyEvent) {
         this.keyPressedEventQueue.add(keyEvent);
     }

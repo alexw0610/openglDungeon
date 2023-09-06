@@ -1,0 +1,11 @@
+templateName: "upgradeBulletVelocityPrimary"
+type: "UpgradeComponent"
+modifiers:
+  upgradeTitle: "Stat Upgrade: Primary Bullet Velocity"
+  upgradeIcon: "upgrade_rare"
+  upgradeRarity: "Rare"
+  toolTip: "Increases your primary bullet velocity by 10 percent."
+  upgradeType: "bulletVelocity"
+  upgradeSlot: "primary"
+  upgradeCategory: "statModifier"
+  modifierValue: 1.10

@@ -27,19 +27,23 @@ public class StatSystem {
             }
             if (entity.hasComponentOfType(PlayerTag.class)
                     && statComponent.getXPPercentage() == 1.0) {
-                statComponent.setXp(0);
-                statComponent.healToFull();
-                statComponent.setLevel(statComponent.getLevel() + 1);
-                MobSpawner.clearMobs();
-                MobSpawner.toggleMobSpawning(false);
-                WorldGenerator.clearWorld();
-                WorldGenerator.generateSafeRoom();
-                LootSpawner.spawnLootOptions();
-                UIHandler.getInstance().toggleUIGroupVisible(UIGroupKey.STATS, true);
-                entity.getComponentOfType(TransformationComponent.class).setPositionX(5);
-                entity.getComponentOfType(TransformationComponent.class).setPositionY(5);
+                handleLevelUp(entity, statComponent);
             }
         }
+    }
+
+    private static void handleLevelUp(Entity entity, StatComponent statComponent) {
+        statComponent.setLevel(statComponent.getLevel() + 1);
+        statComponent.setXp(0);
+        statComponent.healToFull();
+        MobSpawner.clearMobs();
+        MobSpawner.toggleMobSpawning(false);
+        WorldGenerator.clearWorld();
+        WorldGenerator.generateSafeRoom();
+        LootSpawner.spawnLootOptions();
+        UIHandler.getInstance().toggleUIGroupVisible(UIGroupKey.STATS, true);
+        entity.getComponentOfType(TransformationComponent.class).setPositionX(5);
+        entity.getComponentOfType(TransformationComponent.class).setPositionY(5);
     }
 
     private static void handleEntityDeath(Entity entity, StatComponent statComponent, TransformationComponent transformationComponent) {

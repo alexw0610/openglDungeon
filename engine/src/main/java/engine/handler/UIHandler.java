@@ -23,8 +23,8 @@ public class UIHandler implements Handler<UIElement> {
         return INSTANCE.get();
     }
 
-    public static void setInstance(UIHandler entityHandler) {
-        INSTANCE.set(entityHandler);
+    public static void setInstance(UIHandler uiHandler) {
+        INSTANCE.set(uiHandler);
     }
 
     @Override
@@ -78,9 +78,20 @@ public class UIHandler implements Handler<UIElement> {
         this.elements.clear();
     }
 
+    public void removeAllObjectsWithPrefix(String prefix) {
+        removeObjectsWithPrefix(prefix);
+        removeTextObjectsWithPrefix(prefix);
+    }
+
     public void removeTextObjectsWithPrefix(String prefix) {
         for (String key : this.texts.keySet().stream().filter(key -> key.startsWith(prefix)).collect(Collectors.toList())) {
             removeTextObject(key);
+        }
+    }
+
+    public void removeObjectsWithPrefix(String prefix) {
+        for (String key : this.elements.keySet().stream().filter(key -> key.startsWith(prefix)).collect(Collectors.toList())) {
+            removeObject(key);
         }
     }
 

@@ -29,9 +29,7 @@ components:
       hitBoxSize: 0.33
   - type: "StatComponent"
     modifiers:
-      maxHealthPoints: 50.0
-      attackSpeed: 0.65
-      secondaryAttackSpeed: 3.0
+      maxHealthPoints: 40.0
       movementSpeed: 2.5
       dropsItems: false
       dropsXP: false

@@ -17,7 +17,6 @@ public class MobSpawner {
     private static final float MOB_SPAWN_CHANCE = 0.3f;
     public static final String MOB_PREFIX = "MOB_";
     public static boolean shouldSpawnMobs = true;
-
     public static int difficultyLevel = 0;
 
     public static void clearMobs() {
@@ -67,7 +66,7 @@ public class MobSpawner {
         mobStats.setDropsXP(false);
         mobStats.setLevel(playerLevel);
         mobStats.setMaxHealthPoints(mobStats.getMaxHealthPoints() + ((mobStats.getMaxHealthPoints() * 0.5) * playerLevel));
-        mobStats.setAttackSpeed(mobStats.getAttackSpeed() - ((mobStats.getAttackSpeed() * 0.05) * playerLevel));
+        mobStats.setAttackSpeedPrimary(mobStats.getAttackSpeedPrimary() - ((mobStats.getAttackSpeedPrimary() * 0.05) * playerLevel));
         int corner = (int) (Math.random() * 4.0);
         switch (corner) {
             case 0:
@@ -134,7 +133,7 @@ public class MobSpawner {
                     StatComponent mobStats = mob.getComponentOfType(StatComponent.class);
                     mobStats.setLevel(playerLevel);
                     mobStats.setMaxHealthPoints(mobStats.getMaxHealthPoints() + ((mobStats.getMaxHealthPoints() * 0.5) * playerLevel));
-                    mobStats.setAttackSpeed(mobStats.getAttackSpeed() - ((mobStats.getAttackSpeed() * 0.05) * playerLevel));
+                    mobStats.setAttackSpeedPrimary(mobStats.getAttackSpeedPrimary() - ((mobStats.getAttackSpeedPrimary() * 0.05) * playerLevel));
                     EntityHandler.getInstance().addObject("MOB_" + RandomStringUtils.randomAlphanumeric(8), mob);
                     spawnPositionFound = true;
                     mobCount++;

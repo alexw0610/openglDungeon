@@ -2,7 +2,9 @@ templateName: "upgradeMaxHealth"
 type: "UpgradeComponent"
 modifiers:
   upgradeTitle: "Stat Upgrade: Minor Health"
+  upgradeIcon: "upgrade_common"
   upgradeRarity: "Common"
   toolTip: "Increases your maximum health points by 20."
   upgradeType: "maxHealth"
+  upgradeCategory: "statModifier"
   modifierValue: 20.0

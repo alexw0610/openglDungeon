@@ -1,16 +1,18 @@
 package client;
 
 import engine.Engine;
+import engine.component.GunComponent;
 import engine.component.TooltipComponent;
 import engine.component.base.CameraComponent;
 import engine.component.base.RenderComponent;
 import engine.component.base.TransformationComponent;
-import engine.component.tag.StartLevelTag;
+import engine.entity.ComponentBuilder;
 import engine.entity.Entity;
 import engine.entity.EntityBuilder;
 import engine.handler.EntityHandler;
 import engine.handler.UIHandler;
 import engine.object.generation.World;
+import engine.service.LootSpawner;
 import engine.service.MobSpawner;
 import engine.service.WorldGenerator;
 
@@ -34,16 +36,28 @@ public class Main {
                 .build();
         EntityHandler.getInstance().addObject("PLAYER", player);
 
+        Entity gun = EntityBuilder
+                .builder()
+                .fromTemplate("gun")
+                .at(0, 0)
+                .build();
+        gun.addComponent(player.getComponentOfType(TransformationComponent.class));
+        EntityHandler.getInstance().addObject("GUN", gun);
+
         Entity gunItem = EntityBuilder.builder()
                 .fromTemplate("item")
                 .at(4.5, 10)
                 .buildAndInstantiate();
-        gunItem.addComponent(new StartLevelTag());
-        gunItem.getComponentOfType(RenderComponent.class).setTextureKey("gun");
+        gunItem.addComponent(ComponentBuilder.fromTemplate("gunDefaultIssueBlaster"));
+        gunItem.getComponentOfType(RenderComponent.class)
+                .setTextureKey(gunItem
+                        .getComponentOfType(GunComponent.class)
+                        .getGunSprite());
         gunItem.addComponent(new TooltipComponent("Pick me up!"));
 
         World world = WorldGenerator.generateSafeRoom();
         MobSpawner.toggleMobSpawning(false);
+        LootSpawner.spawnLootOptions();
         EntityHandler.getInstance().setWorld(world);
         player.getComponentOfType(TransformationComponent.class).setPositionX(4.5);
         player.getComponentOfType(TransformationComponent.class).setPositionY(5);

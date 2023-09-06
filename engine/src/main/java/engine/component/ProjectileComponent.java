@@ -9,6 +9,8 @@ public class ProjectileComponent implements Component {
     private double speed;
     private String onCollisionAttack;
 
+    private double damageOverwrite;
+
     public Vector2d getDirection() {
         return direction;
     }
@@ -31,5 +33,13 @@ public class ProjectileComponent implements Component {
 
     public void setOnCollisionAttack(String onCollisionAttack) {
         this.onCollisionAttack = onCollisionAttack;
+    }
+
+    public double getDamageOverwrite() {
+        return damageOverwrite;
+    }
+
+    public void setDamageOverwrite(double damageOverwrite) {
+        this.damageOverwrite = damageOverwrite;
     }
 }

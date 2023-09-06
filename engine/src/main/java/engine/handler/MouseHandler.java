@@ -3,6 +3,7 @@ package engine.handler;
 import com.jogamp.newt.event.MouseEvent;
 import engine.EngineConstants;
 import engine.service.RenderService;
+import engine.service.util.CoordinateConverter;
 import org.joml.Vector2d;
 
 import java.util.ArrayDeque;
@@ -46,7 +47,7 @@ public class MouseHandler {
     }
 
     public Vector2d getMousePositionClipSpace() {
-        return getMousePositionClipSpace(new Vector2d(this.mousePositionX, this.mousePositionY));
+        return CoordinateConverter.transformWorldSpaceToClipSpace(getMousePositionWorldSpace());
     }
 
     public Vector2d getMousePositionWorldSpace(Vector2d positionScreenSpace) {

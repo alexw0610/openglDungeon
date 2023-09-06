@@ -2,7 +2,9 @@ templateName: "upgradeMovementSpeed"
 type: "UpgradeComponent"
 modifiers:
   upgradeTitle: "Stat Upgrade: Minor Movement Speed"
+  upgradeIcon: "upgrade_common"
   upgradeRarity: "Common"
   toolTip: "Increases your movement speed 0.05."
   upgradeType: "movementSpeed"
+  upgradeCategory: "statModifier"
   modifierValue: 0.05

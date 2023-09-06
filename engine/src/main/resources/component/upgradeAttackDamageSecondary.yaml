@@ -1,0 +1,11 @@
+templateName: "upgradeAttackDamageSecondary"
+type: "UpgradeComponent"
+modifiers:
+  upgradeTitle: "Stat Upgrade: Secondary Attack Damage"
+  upgradeIcon: "upgrade_rare"
+  upgradeRarity: "Rare"
+  toolTip: "Increases your secondary base bullet damage by 5%."
+  upgradeType: "attackDamage"
+  upgradeSlot: "secondary"
+  upgradeCategory: "statModifier"
+  modifierValue: 1.05

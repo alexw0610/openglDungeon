@@ -3,6 +3,8 @@ package engine.object.audio;
 import com.jogamp.openal.AL;
 import com.jogamp.openal.ALFactory;
 
+import static engine.service.util.AudioUtil.checkOpenALError;
+
 public class AudioSource {
     private final int[] source = new int[1];
 
@@ -17,13 +19,6 @@ public class AudioSource {
         al.alSource3f(source[0], al.AL_VELOCITY, 0, 0, 0);
         al.alSourcei(source[0], al.AL_LOOPING, al.AL_FALSE);
         checkOpenALError(al);
-    }
-
-    private static void checkOpenALError(AL al) {
-        int error = al.alGetError();
-        if (error != al.AL_NO_ERROR) {
-            System.err.println("openAL error code " + error);
-        }
     }
 
     public void attachAudioToSource(int audioBuffer) {

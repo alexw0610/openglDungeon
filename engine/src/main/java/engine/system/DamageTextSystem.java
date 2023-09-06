@@ -38,7 +38,7 @@ public class DamageTextSystem {
                 uiPosition.y(),
                 0.5,
                 0.5,
-                java.lang.Math.log(damageTextComponent.getDamage()) * 0.8);
+                damageTextComponent.isCriticalHit() ? 1.5 : 1.0);
         if (damageTextComponent.isPlayer()) {
             damageText.setColor(DAMAGE_TEXT_PLAYER_COLOR);
         } else if (damageTextComponent.isCriticalHit()) {

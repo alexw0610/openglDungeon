@@ -20,11 +20,11 @@ public class BossSystem {
         Entity player = EntityHandler.getInstance().getEntityWithComponent(PlayerTag.class);
         Vector2d direction = player.getComponentOfType(TransformationComponent.class).getPosition().sub(transformationComponent.getPosition()).normalize();
         if (!statComponent.isDead() && !player.getComponentOfType(StatComponent.class).isDead()) {
-            if (System.currentTimeMillis() - bossComponent.getLastPrimaryAttack() > (statComponent.getAttackSpeed() * 1000)) {
+            if (System.currentTimeMillis() - bossComponent.getLastPrimaryAttack() > (statComponent.getAttackSpeedPrimary() * 1000)) {
                 bossComponent.setLastPrimaryAttack(System.currentTimeMillis());
                 attackPrimary(entity, direction, transformationComponent);
             }
-            if (System.currentTimeMillis() - bossComponent.getLastSecondaryAttack() > (statComponent.getSecondaryAttackSpeed() * 1000)) {
+            if (System.currentTimeMillis() - bossComponent.getLastSecondaryAttack() > (statComponent.getAttackSpeedSecondary() * 1000)) {
                 bossComponent.setLastSecondaryAttack(System.currentTimeMillis());
                 attackSecondary(entity, transformationComponent);
             }

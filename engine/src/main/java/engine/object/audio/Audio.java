@@ -6,6 +6,8 @@ import com.jogamp.openal.util.ALut;
 
 import java.nio.ByteBuffer;
 
+import static engine.service.util.AudioUtil.checkOpenALError;
+
 public class Audio {
 
     private int[] buffer = new int[1];
@@ -23,21 +25,13 @@ public class Audio {
         this.freq = new int[1];
         this.loop = new int[1];
         this.format = new int[1];
-        checkOpenALError(al);
         al.alGenBuffers(1, this.buffer, 0);
         checkOpenALError(al);
-        ALut.alutLoadWAVFile(file, format, data, size, freq, loop);
+        ALut.alutLoadWAVFile(file, this.format, this.data, this.size, this.freq, this.loop);
         checkOpenALError(al);
-        al.alBufferData(buffer[0], this.format[0], data[0], size[0], freq[0]);
+        al.alBufferData(this.buffer[0], this.format[0], this.data[0], this.size[0] - (this.size[0]%8), this.freq[0]);
         checkOpenALError(al);
         System.out.println("Loaded audio " + file + " from external path " + file);
-    }
-
-    private static void checkOpenALError(AL al) {
-        int error = al.alGetError();
-        if (error != al.AL_NO_ERROR) {
-            System.err.println("openAL error code " + error);
-        }
     }
 
     public int getAudioDataBuffer() {

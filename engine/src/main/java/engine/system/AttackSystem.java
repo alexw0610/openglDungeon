@@ -74,11 +74,14 @@ public class AttackSystem {
 
     private static void handleDamage(AttackComponent attackComponent, Entity attackableEntity, StatComponent statComponent) {
         if (statComponent != null) {
-            DamageTextComponent damageTextComponent = new DamageTextComponent(attackComponent.getDamage());
+            DamageTextComponent damageTextComponent;
             double damage = attackComponent.getDamage();
             if (Math.random() < attackComponent.getCriticalHitChance()) {
                 damage = damage * (1.0 + Math.random());
+                damageTextComponent = new DamageTextComponent(damage);
                 damageTextComponent.setCriticalHit(true);
+            }else{
+                damageTextComponent = new DamageTextComponent(damage);
             }
             if (statComponent.getMaxArmor() > 0) {
                 double leftOverDamage = Math.max(damage - statComponent.getCurrentArmor(), 0.0);

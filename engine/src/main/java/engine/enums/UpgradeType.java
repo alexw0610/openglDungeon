@@ -4,10 +4,10 @@ public enum UpgradeType {
 
     MAX_HEALTH("maxHealth"),
     ATTACK_SPEED("attackSpeed"),
+    ATTACK_DAMAGE("attackDamage"),
     MOVEMENT_SPEED("movementSpeed"),
     MAX_ARMOR("maxArmor"),
-    BULLET_VELOCITY("bulletVelocity"),
-    IMPACT_BULLET("impactBullet");
+    BULLET_VELOCITY("bulletVelocity");
 
     private final String key;
 

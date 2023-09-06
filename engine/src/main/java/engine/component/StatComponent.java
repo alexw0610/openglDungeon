@@ -1,5 +1,8 @@
 package engine.component;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class StatComponent implements Component {
 
     private static final long serialVersionUID = 4912727537252374835L;
@@ -10,22 +13,34 @@ public class StatComponent implements Component {
     private double movementSpeed;
     private double currentArmor;
     private double maxArmor;
-    private double attackSpeed;
-    private double secondaryAttackSpeed;
+    private double attackSpeedPrimary;
+    private double attackSpeedSecondary;
+    private double bulletSpeedPrimary;
+    private double bulletSpeedSecondary;
+    private double lastShotPrimary;
+    private double lastShotSecondary;
+    private double bulletCountPrimary;
+    private double bulletCountSecondary;
+    private double baseBulletDamagePrimary;
+    private double baseBulletDamageSecondary;
     private double lastDashed;
     private boolean isDead;
     private double xp;
     private boolean dropsItems;
     private boolean dropsXP;
     private int level;
+    private final List<UpgradeComponent> upgrades;
+    private final List<GunComponent> guns;
+
+    private GunComponent equipedGun;
 
     public StatComponent() {
         super();
         this.maxHealthPoints = 10.0;
         this.currentHealthPoints = maxHealthPoints;
         this.movementSpeed = 100.0;
-        this.attackSpeed = 1.0;
-        this.secondaryAttackSpeed = 2.0;
+        this.attackSpeedPrimary = 1.0;
+        this.attackSpeedSecondary = 1.0;
         this.isDead = false;
         this.xp = 0;
         this.level = 1;
@@ -34,6 +49,13 @@ public class StatComponent implements Component {
         this.lastDashed = 0;
         this.currentArmor = 0;
         this.maxArmor = 0;
+        this.bulletSpeedPrimary = 1.0;
+        this.bulletSpeedSecondary = 1.0;
+        this.baseBulletDamagePrimary = 1.0;
+        this.baseBulletDamageSecondary = 1.0;
+        this.upgrades = new ArrayList<>();
+        this.guns = new ArrayList<>();
+        this.equipedGun = null;
     }
 
     public double getCurrentHealthpoints() {
@@ -98,20 +120,20 @@ public class StatComponent implements Component {
         return Math.max(this.currentArmor / this.maxArmor, 0);
     }
 
-    public double getAttackSpeed() {
-        return attackSpeed;
+    public double getAttackSpeedPrimary() {
+        return attackSpeedPrimary;
     }
 
-    public void setAttackSpeed(Double attackSpeed) {
-        this.attackSpeed = Math.max(attackSpeed, 0.1);
+    public void setAttackSpeedPrimary(Double attackSpeedPrimary) {
+        this.attackSpeedPrimary = Math.max(attackSpeedPrimary, 0.1);
     }
 
-    public double getSecondaryAttackSpeed() {
-        return secondaryAttackSpeed;
+    public double getAttackSpeedSecondary() {
+        return attackSpeedSecondary;
     }
 
-    public void setSecondaryAttackSpeed(Double secondaryAttackSpeed) {
-        this.secondaryAttackSpeed = secondaryAttackSpeed;
+    public void setAttackSpeedSecondary(Double attackSpeedSecondary) {
+        this.attackSpeedSecondary = attackSpeedSecondary;
     }
 
     public double getXp() {
@@ -175,12 +197,100 @@ public class StatComponent implements Component {
         this.currentArmor = maxArmor;
     }
 
+    public double getBulletSpeedPrimary() {
+        return bulletSpeedPrimary;
+    }
+
+    public void setBulletSpeedPrimary(double bulletSpeedPrimary) {
+        this.bulletSpeedPrimary = bulletSpeedPrimary;
+    }
+
+    public double getBulletSpeedSecondary() {
+        return bulletSpeedSecondary;
+    }
+
+    public void setBulletSpeedSecondary(double bulletSpeedSecondary) {
+        this.bulletSpeedSecondary = bulletSpeedSecondary;
+    }
+
+    public double getLastShotPrimary() {
+        return lastShotPrimary;
+    }
+
+    public void setLastShotPrimary(double lastShotPrimary) {
+        this.lastShotPrimary = lastShotPrimary;
+    }
+
+    public double getLastShotSecondary() {
+        return lastShotSecondary;
+    }
+
+    public void setLastShotSecondary(double lastShotSecondary) {
+        this.lastShotSecondary = lastShotSecondary;
+    }
+
+    public double getBulletCountPrimary() {
+        return bulletCountPrimary;
+    }
+
+    public void setBulletCountPrimary(double bulletCountPrimary) {
+        this.bulletCountPrimary = bulletCountPrimary;
+    }
+
+    public double getBulletCountSecondary() {
+        return bulletCountSecondary;
+    }
+
+    public void setBulletCountSecondary(double bulletCountSecondary) {
+        this.bulletCountSecondary = bulletCountSecondary;
+    }
+
+    public double getBaseBulletDamagePrimary() {
+        return baseBulletDamagePrimary;
+    }
+
+    public void setBaseBulletDamagePrimary(double baseBulletDamagePrimary) {
+        this.baseBulletDamagePrimary = baseBulletDamagePrimary;
+    }
+
+    public double getBaseBulletDamageSecondary() {
+        return baseBulletDamageSecondary;
+    }
+
+    public void setBaseBulletDamageSecondary(double baseBulletDamageSecondary) {
+        this.baseBulletDamageSecondary = baseBulletDamageSecondary;
+    }
+
+    public List<UpgradeComponent> getUpgrades() {
+        return upgrades;
+    }
+
+    public void addUpgrade(UpgradeComponent upgradeComponent) {
+        this.upgrades.add(upgradeComponent);
+    }
+
+    public List<GunComponent> getGuns() {
+        return guns;
+    }
+
+    public void addGuns(GunComponent gunComponent) {
+        this.guns.add(gunComponent);
+    }
+
+    public void setEquipedGun(GunComponent gunComponent) {
+        this.equipedGun = gunComponent;
+    }
+
+    public GunComponent getEquipedGun() {
+        return equipedGun;
+    }
+
     @Override
     public String toString() {
         return "StatComponent{" +
                 "maxHealthPoints=" + maxHealthPoints +
                 ", movementSpeed=" + movementSpeed +
-                ", attackSpeed=" + attackSpeed +
+                ", attackSpeed=" + attackSpeedPrimary +
                 ", level=" + level +
                 '}';
     }

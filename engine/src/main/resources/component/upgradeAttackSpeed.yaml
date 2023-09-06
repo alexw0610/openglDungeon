@@ -1,8 +1,0 @@
-templateName: "upgradeAttackSpeed"
-type: "UpgradeComponent"
-modifiers:
-  upgradeTitle: "Stat Upgrade: Minor Attack Speed"
-  upgradeRarity: "Common"
-  toolTip: "Increases your attack speed by 0.05 attacks per second."
-  upgradeType: "attackSpeed"
-  modifierValue: 0.05

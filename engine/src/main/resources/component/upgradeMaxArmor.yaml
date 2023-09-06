@@ -2,7 +2,9 @@ templateName: "upgradeMaxArmor"
 type: "UpgradeComponent"
 modifiers:
   upgradeTitle: "Stat Upgrade: Armor"
+  upgradeIcon: "upgrade_rare"
   upgradeRarity: "Rare"
   toolTip: "Increases your maximum armor points by 30."
   upgradeType: "maxArmor"
+  upgradeCategory: "statModifier"
   modifierValue: 30.0

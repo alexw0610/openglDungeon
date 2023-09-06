@@ -1,7 +1,6 @@
 package engine.system.base;
 
 import engine.component.*;
-import engine.component.base.AudioComponent;
 import engine.component.base.CollisionComponent;
 import engine.component.base.TransformationComponent;
 import engine.component.internal.CreatedByComponent;
@@ -13,6 +12,7 @@ import engine.entity.ComponentBuilder;
 import engine.entity.Entity;
 import engine.entity.EntityBuilder;
 import engine.handler.EntityHandler;
+import engine.service.util.AudioUtil;
 import engine.service.util.CollisionUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.joml.Vector2d;
@@ -52,6 +52,27 @@ public class CollisionSystem {
 
     private static void handleProjectileCollision(Entity entity, TransformationComponent transformationComponent, ProjectileComponent projectileComponent, List<Entity> collisions) {
         Optional<Entity> firstCollision;
+        firstCollision = getProjectileCollisionEntity(entity, collisions);
+        if (firstCollision.isPresent()) {
+            AttackComponent attack = (AttackComponent) ComponentBuilder.fromTemplate(projectileComponent.getOnCollisionAttack());
+            if (attack.isSingleTarget()) {
+                attack.setTargetEntity(firstCollision.get().getEntityId());
+            }
+            if (projectileComponent.getDamageOverwrite() != 0.0) {
+                attack.setDamage(projectileComponent.getDamageOverwrite());
+            }
+            EntityBuilder.builder()
+                    .withComponent(attack)
+                    .at(transformationComponent.getPosition().x(), transformationComponent.getPosition().y())
+                    .buildAndInstantiate();
+
+            AudioUtil.createSoundEntity("impact", transformationComponent);
+            EntityHandler.getInstance().removeObject(entity.getEntityId());
+        }
+    }
+
+    private static Optional<Entity> getProjectileCollisionEntity(Entity entity, List<Entity> collisions) {
+        Optional<Entity> firstCollision;
         Entity createdBy = entity.getComponentOfType(CreatedByComponent.class)
                 .getCreatorEntity();
         if (createdBy.hasComponentOfType(MobTag.class)
@@ -68,24 +89,7 @@ public class CollisionSystem {
                     .filter(collision -> !collision.hasComponentOfType(ProjectileComponent.class))
                     .findFirst();
         }
-        if (firstCollision.isPresent()) {
-            AttackComponent attack = (AttackComponent) ComponentBuilder.fromTemplate(projectileComponent.getOnCollisionAttack());
-            if (attack.isSingleTarget()) {
-                attack.setTargetEntity(firstCollision.get().getEntityId());
-            }
-            EntityBuilder.builder()
-                    .withComponent(attack)
-                    .at(transformationComponent.getPosition().x(), transformationComponent.getPosition().y())
-                    .buildAndInstantiate();
-            AudioComponent audio = new AudioComponent();
-            audio.setPlayOnce(true);
-            audio.setAudioKey("impact");
-            EntityBuilder.builder()
-                    .withComponent(audio)
-                    .at(transformationComponent.getPosition().x(), transformationComponent.getPosition().y())
-                    .buildAndInstantiate();
-            EntityHandler.getInstance().removeObject(entity.getEntityId());
-        }
+        return firstCollision;
     }
 
     private static void handleOtherApplyComponents(CollisionComponent collisionComponent, Entity collision) {

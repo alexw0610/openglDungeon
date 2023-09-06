@@ -1,0 +1,11 @@
+templateName: "upgradeAttackSpeedMajorSecondary"
+type: "UpgradeComponent"
+modifiers:
+  upgradeTitle: "Stat Upgrade: Major Secondary Attack Speed"
+  upgradeIcon: "upgrade_epic"
+  upgradeRarity: "Epic"
+  toolTip: "Increases your secondary attack speed by 0.8 attacks per second."
+  upgradeType: "attackSpeed"
+  upgradeSlot: "secondary"
+  upgradeCategory: "statModifier"
+  modifierValue: 0.8

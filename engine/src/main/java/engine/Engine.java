@@ -41,6 +41,7 @@ public class Engine {
     private UIHandler uiHandler;
     private boolean started = false;
     private boolean paused = true;
+    private boolean alInit = false;
 
     public void start() {
         setupDisplay();
@@ -61,13 +62,11 @@ public class Engine {
         window.addWindowListener(new WindowAdapter() {
             @Override
             public void windowDestroyNotify(WindowEvent arg0) {
-                new Thread() {
-                    @Override
-                    public void run() {
-                        if (animator.isStarted()) animator.stop();
-                        java.lang.System.exit(0);
-                    }
-                }.start();
+                new Thread(() -> {
+                    if (animator.isStarted()) animator.stop();
+                    ALut.alutExit();
+                    System.exit(0);
+                }).start();
             }
         });
         window.setSize((int) WINDOW_WIDTH, (int) WINDOW_HEIGHT);
@@ -82,6 +81,10 @@ public class Engine {
     }
 
     public void step() {
+        if (!alInit) {
+            ALut.alutInit();
+            alInit = true;
+        }
         while (paused) {
             try {
                 Thread.sleep(1000);
@@ -95,7 +98,9 @@ public class Engine {
         processEntities();
         MobSpawner.spawnMobs(EntityHandler.getInstance().getWorld());
         renderEntities();
-        UIService.getInstance().updateUI();
+        if (System.nanoTime() - lastStepTime < 0.1 * SECONDS_TO_NANOSECONDS_FACTOR){
+            UIService.getInstance().updateUI();
+        }
         renderUI();
         InputProcessor.processInput();
 
@@ -152,8 +157,8 @@ public class Engine {
             if (ProjectileSystem.isResponsibleFor(entity)) {
                 ProjectileSystem.processEntity(entity);
             }
-            if (GunSystem.isResponsibleFor(entity)) {
-                GunSystem.processEntity(entity);
+            if (PointToMouseSystem.isResponsibleFor(entity)) {
+                PointToMouseSystem.processEntity(entity);
             }
             if (AudioSystem.isResponsibleFor(entity)) {
                 AudioSystem.processEntity(entity);
@@ -193,7 +198,10 @@ public class Engine {
                 .unordered()
                 .filter(e -> e.getComponentOfType(TransformationComponent.class)
                         .getPosition()
-                        .distance(cameraPosition) < EngineConstants.RENDER_DISTANCE)
+                        .distance(cameraPosition) < EngineConstants.RENDER_DISTANCE
+                        && !e.getComponentOfType(RenderComponent.class)
+                        .getTextureKey()
+                        .isEmpty())
                 .sorted(Comparator.comparingInt(e -> e.getComponentOfType(RenderComponent.class).getLayer()))
                 .collect(Collectors.toList());
         for (Entity entity : EntityHandler.getInstance().getAllEntitiesWithComponents(ViewSourceTag.class)) {

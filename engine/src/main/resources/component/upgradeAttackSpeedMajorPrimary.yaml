@@ -1,0 +1,11 @@
+templateName: "upgradeAttackSpeedMajorPrimary"
+type: "UpgradeComponent"
+modifiers:
+  upgradeTitle: "Stat Upgrade: Major Primary Attack Speed"
+  upgradeIcon: "upgrade_rare"
+  upgradeRarity: "Rare"
+  toolTip: "Increases your primary attack speed by 0.15 attacks per second."
+  upgradeType: "attackSpeed"
+  upgradeSlot: "primary"
+  upgradeCategory: "statModifier"
+  modifierValue: 0.15

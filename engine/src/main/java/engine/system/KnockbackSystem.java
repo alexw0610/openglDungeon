@@ -12,9 +12,6 @@ public class KnockbackSystem {
         KnockbackComponent knockbackComponent = entity.getComponentOfType(KnockbackComponent.class);
         PhysicsComponent physicsComponent = entity.getComponentOfType(PhysicsComponent.class);
         applyKnockbackToMomentum(knockbackComponent, physicsComponent);
-        //if ((System.nanoTime() - knockbackComponent.getKnockbackStartTime()) > (0.5 * 1000000000)) {
-        //    entity.removeComponent(KnockbackComponent.class);
-        //}
         knockbackComponent.setKnockbackVelocity(knockbackComponent.getKnockbackVelocity() - (knockbackComponent.getKnockbackVelocity() * 0.15));
         if (knockbackComponent.getKnockbackVelocity() < 0.2) {
             entity.removeComponent(KnockbackComponent.class);

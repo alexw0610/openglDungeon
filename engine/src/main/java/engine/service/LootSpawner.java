@@ -1,5 +1,6 @@
 package engine.service;
 
+import engine.component.UpgradeComponent;
 import engine.component.base.RenderComponent;
 import engine.component.tag.StartLevelTag;
 import engine.entity.ComponentBuilder;
@@ -40,21 +41,22 @@ public class LootSpawner {
                     .at(2.5 + (i * 2), 13)
                     .build();
             if (Math.random() > 0.50 && epicUpgrades.size() > 0) {
-                addUpgradeComponent(item, "upgrade_epic", epicUpgrades);
+                addUpgradeComponent(item, epicUpgrades);
             } else if (Math.random() > 0.75 && rareUpgrades.size() > 0) {
-                addUpgradeComponent(item, "upgrade_rare", rareUpgrades);
+                addUpgradeComponent(item, rareUpgrades);
             } else if (commonUpgrades.size() > 0) {
-                addUpgradeComponent(item, "upgrade_common", commonUpgrades);
+                addUpgradeComponent(item, commonUpgrades);
             }
-            item.addComponent(new StartLevelTag());
+            //item.addComponent(new StartLevelTag());
             EntityHandler.getInstance().addObject("PICKUP_" + i + "_", item);
         }
     }
 
-    private static void addUpgradeComponent(Entity item, String textureKey, List<ComponentTemplate> upgrades) {
-        item.getComponentOfType(RenderComponent.class).setTextureKey(textureKey);
+    private static void addUpgradeComponent(Entity item, List<ComponentTemplate> upgrades) {
         int upgradeId = (int) Math.floor(Math.random() * upgrades.size());
-        item.addComponent(ComponentBuilder.fromTemplate(upgrades.get(upgradeId).getTemplateName()));
+        UpgradeComponent upgradeComponent = (UpgradeComponent) ComponentBuilder.fromTemplate(upgrades.get(upgradeId).getTemplateName());
+        item.addComponent(upgradeComponent);
+        item.getComponentOfType(RenderComponent.class).setTextureKey(upgradeComponent.getUpgradeIcon());
         upgrades.remove(upgradeId);
     }
 
@@ -83,11 +85,11 @@ public class LootSpawner {
                     .at(6 + (i * 2), 8)
                     .build();
             if (Math.random() > 0.50 && epicUpgrades.size() > 0) {
-                addUpgradeComponent(item, "upgrade_epic", epicUpgrades);
+                addUpgradeComponent(item, epicUpgrades);
             } else if (Math.random() > 0.25 && rareUpgrades.size() > 0) {
-                addUpgradeComponent(item, "upgrade_rare", rareUpgrades);
+                addUpgradeComponent(item, rareUpgrades);
             } else if (commonUpgrades.size() > 0) {
-                addUpgradeComponent(item, "upgrade_common", commonUpgrades);
+                addUpgradeComponent(item, commonUpgrades);
             }
             item.addComponent(new StartLevelTag());
             EntityHandler.getInstance().addObject("PICKUP_" + i + "_", item);

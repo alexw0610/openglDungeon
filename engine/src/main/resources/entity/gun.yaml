@@ -4,13 +4,11 @@ components:
   - type: "base.RenderComponent"
     arguments:
       meshKey: "QUAD"
-      textureKey: "gun"
+      textureKey: ""
       shaderType: "shader"
       scale: 1.0
       layer: 7
     modifiers:
       alwaysVisible: true
       shadeless: true
-  - type: "GunComponent"
-    modifiers:
-      bulletSpeed: 6.5
+  - type: "tag.PointToMouseTag"

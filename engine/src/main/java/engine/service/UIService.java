@@ -1,6 +1,9 @@
 package engine.service;
 
-import engine.component.*;
+import engine.component.BossComponent;
+import engine.component.StatComponent;
+import engine.component.TooltipComponent;
+import engine.component.UpgradeComponent;
 import engine.component.base.CollisionComponent;
 import engine.component.base.TransformationComponent;
 import engine.component.tag.PlayerTag;
@@ -9,16 +12,22 @@ import engine.enums.UIGroupKey;
 import engine.handler.EntityHandler;
 import engine.handler.MouseHandler;
 import engine.handler.UIHandler;
+import engine.object.ui.UIComponentElement;
 import engine.object.ui.UIElement;
+import engine.object.ui.UIGroup;
 import engine.object.ui.UIText;
 import engine.service.util.CollisionUtil;
 import engine.service.util.CoordinateConverter;
+import engine.service.util.UIUtil;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.joml.Vector2d;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 import static engine.EngineConstants.*;
 
@@ -48,10 +57,24 @@ public class UIService {
     }
 
     public UIService() {
-        loadUIScene();
+        initPlayerHUD();
+        initStatUI();
+        initStatUpgradeUI();
+        initInventory();
     }
 
-    public void loadUIScene() {
+    public void updateUI() {
+        updateHUD();
+        updateStatUpgradeUI();
+        updateMouseOver();
+    }
+
+    private void updateHUD() {
+        updatePlayerHUD();
+        updateBossHealthbar();
+    }
+
+    private void initPlayerHUD() {
         UIElement healthbarBorder = new UIElement(-DEFAULT_BAR_WIDTH - 0.1, 0.85, DEFAULT_BAR_WIDTH, 0.1, 3, "healthBarBorder");
         healthbarBorder.setUiGroupKey(UIGroupKey.HUD);
         UIHandler.getInstance().addObject(healthbarBorder);
@@ -84,7 +107,6 @@ public class UIService {
         this.bossHealthBar.setUiGroupKey(UIGroupKey.HUD);
         UIHandler.getInstance().addObject(bossHealthBar);
 
-        initStatUI();
     }
 
     private void initStatUI() {
@@ -139,48 +161,94 @@ public class UIService {
         this.moveSpeedStat.setColor(STAT_VALUE_COLOR);
         this.moveSpeedStat.setUiGroupKey(UIGroupKey.STATS);
         UIHandler.getInstance().addObject(this.moveSpeedStat);
+
     }
 
-    public void updateUI() {
-        updateHUD();
-        updateMouseOver();
+    private void initStatUpgradeUI() {
+        UIElement statUpgradeBackground = new UIElement(-DEFAULT_BAR_WIDTH - 0.65, 0.35, 0.5, 0.29, 1, "statBackground");
+        statUpgradeBackground.setUiGroupKey(UIGroupKey.STATS);
+        UIHandler.getInstance().addObject(statUpgradeBackground);
     }
 
-    private void updateHUD() {
-        updatePlayerHUD();
-        updateBossHealthbar();
+    private void initInventory() {
+        UIElement inventoryBackground = new UIElement(-0.8, -0.7, 1.6, 1.4, 1, "uibg");
+        inventoryBackground.setUiGroupKey(UIGroupKey.INVENTORY);
+        inventoryBackground.setVisible(false);
+        UIHandler.getInstance().addObject(inventoryBackground);
+    }
+
+    private void updateStatUpgradeUI() {
+        UIHandler.getInstance().removeAllObjectsWithPrefix("STAT_UPGRADE_");
+        StatComponent statComponent = EntityHandler.getInstance()
+                .getEntityWithComponent(PlayerTag.class)
+                .getComponentOfType(StatComponent.class);
+        List<UpgradeComponent> upgrades = statComponent.getUpgrades();
+        List<UpgradeComponent> upgradesDistinct = upgrades
+                .stream()
+                .filter(upgrade -> upgrade.getUpgradeCategory().equals("statModifier"))
+                .distinct()
+                .sorted(UpgradeComponent::compareTo)
+                .collect(Collectors.toList());
+        double offsetX = 0.095;
+        double offsetY = 0.1;
+        for (int i = 0; i < upgradesDistinct.size(); i++) {
+            UpgradeComponent upgradeComponent = upgradesDistinct.get(i);
+            UIComponentElement upgradeIcon = new UIComponentElement((-DEFAULT_BAR_WIDTH - 0.64) + (offsetX * (i % 5)),
+                    0.51 - (offsetY * (Math.floorDiv(i, 5))),
+                    0.1,
+                    0.1,
+                    2,
+                    upgradeComponent.getUpgradeIcon());
+            upgradeIcon.setUiGroupKey(UIGroupKey.STATS);
+            upgradeIcon.setComponent(upgradeComponent);
+            upgradeIcon.setComponentClass(UpgradeComponent.class);
+            UIHandler.getInstance().addObject("STAT_UPGRADE_" + RandomStringUtils.randomAlphanumeric(6), upgradeIcon);
+            long upgradeCount = upgrades.stream().filter(upgrade -> upgrade.equals(upgradeComponent)).count();
+            if (upgradeCount > 1) {
+                UIText upgradeCountText = new UIText("x" + upgradeCount, (-DEFAULT_BAR_WIDTH - 0.59) + (offsetX * (i % 5)),
+                        0.55 - (offsetY * (Math.floorDiv(i, 5))),
+                        0.1,
+                        0.1,
+                        0.75);
+                upgradeCountText.setColor(TEXT_COLOR_YELLOW);
+                upgradeCountText.setLayer(3);
+                upgradeIcon.setUiGroupKey(UIGroupKey.STATS);
+                UIHandler.getInstance().addObject("STAT_UPGRADE_" + RandomStringUtils.randomAlphanumeric(6), upgradeCountText);
+            }
+        }
+
     }
 
     private void updatePlayerHUD() {
         Entity player = EntityHandler.getInstance().getEntityWithComponent(PlayerTag.class);
-        Entity gun = EntityHandler.getInstance().getEntityWithComponent(GunComponent.class);
         DecimalFormat decimalFormat = new DecimalFormat("#.##");
         decimalFormat.setDecimalFormatSymbols(DecimalFormatSymbols.getInstance(Locale.ENGLISH));
         decimalFormat.setRoundingMode(RoundingMode.UP);
         if (player != null && player.getComponentOfType(StatComponent.class) != null) {
 
-            this.levelIndicator.setText("Lvl. " + player.getComponentOfType(StatComponent.class).getLevel());
+            StatComponent statComponent = player.getComponentOfType(StatComponent.class);
+            this.levelIndicator.setText("Lvl. " + statComponent.getLevel());
 
-            double healthPercent = player.getComponentOfType(StatComponent.class).getHealthPercentage();
+            double healthPercent = statComponent.getHealthPercentage();
             this.healthbar.setWidth(DEFAULT_BAR_WIDTH * healthPercent);
 
-            double armorPercent = player.getComponentOfType(StatComponent.class).getArmorPercentage();
+            double armorPercent = statComponent.getArmorPercentage();
             this.armorbar.setWidth(DEFAULT_BAR_WIDTH * armorPercent);
 
-            double xpPercent = player.getComponentOfType(StatComponent.class).getXPPercentage();
+            double xpPercent = statComponent.getXPPercentage();
             this.xpbar.setWidth(DEFAULT_BAR_WIDTH * xpPercent);
 
-            if (gun != null) {
-                double attackSpeedCooldown = Math.max(Math.min((System.nanoTime() - gun.getComponentOfType(GunComponent.class).getLastShotTime())
-                        / (player.getComponentOfType(StatComponent.class).getAttackSpeed() * SECONDS_TO_NANOSECONDS_FACTOR), 1.0), 0);
+            if (statComponent.getEquipedGun() != null) {
+                double attackSpeedCooldown = Math.max(Math.min((System.nanoTime() - statComponent.getLastShotPrimary())
+                        / (statComponent.getAttackSpeedPrimary() * SECONDS_TO_NANOSECONDS_FACTOR), 1.0), 0);
                 this.attackSpeedBar.setWidth(DEFAULT_BAR_WIDTH * attackSpeedCooldown);
             } else {
                 this.attackSpeedBar.setWidth(0);
             }
-            this.healthStat.setText(decimalFormat.format(player.getComponentOfType(StatComponent.class).getMaxHealthPoints()));
-            this.armorStat.setText(decimalFormat.format(player.getComponentOfType(StatComponent.class).getMaxArmor()));
-            this.attackSpeedStat.setText(decimalFormat.format(player.getComponentOfType(StatComponent.class).getAttackSpeed()));
-            this.moveSpeedStat.setText(decimalFormat.format(player.getComponentOfType(StatComponent.class).getMovementSpeed()));
+            this.healthStat.setText(decimalFormat.format(statComponent.getMaxHealthPoints()));
+            this.armorStat.setText(decimalFormat.format(statComponent.getMaxArmor()));
+            this.attackSpeedStat.setText(decimalFormat.format(statComponent.getAttackSpeedPrimary()));
+            this.moveSpeedStat.setText(decimalFormat.format(statComponent.getMovementSpeed()));
         }
     }
 
@@ -195,15 +263,15 @@ public class UIService {
     }
 
     private void updateMouseOver() {
-        UIHandler.getInstance().removeTextObject("TOOLTIP_TITLE");
-        UIHandler.getInstance().removeTextObject("TOOLTIP_RARITY");
-        UIHandler.getInstance().removeTextObject("TOOLTIP_TEXT");
-        UIHandler.getInstance().removeObject("TOOLTIP_BACKGROUND");
+        UIHandler.getInstance().removeAllObjectsWithPrefix("TOOLTIP_");
         for (Entity tooltipEntity : EntityHandler.getInstance().getAllEntitiesWithComponents(TooltipComponent.class)) {
             updateTooltipPopup(tooltipEntity);
         }
         for (Entity upgradeEntity : EntityHandler.getInstance().getAllEntitiesWithComponents(UpgradeComponent.class)) {
             updateUpgradePopup(upgradeEntity);
+        }
+        for (UIElement uiElement : UIHandler.getInstance().getAllObjects()) {
+            updateUIElementPopup(uiElement);
         }
     }
 
@@ -213,22 +281,8 @@ public class UIService {
                 tooltipEntity.getComponentOfType(CollisionComponent.class).getHitBox(),
                 transformationComponent.getPosition())) {
             Vector2d positionClipspace = CoordinateConverter.transformWorldSpaceToClipSpace(transformationComponent.getPosition());
-            UIText tooltipText = new UIText(tooltipEntity.getComponentOfType(TooltipComponent.class).getTooltip(),
-                    positionClipspace.x(),
-                    positionClipspace.y(),
-                    0.4,
-                    0.1,
-                    0.65);
-            tooltipText.setColor(TEXT_COLOR_YELLOW);
-            tooltipText.setLayer(2);
-            UIElement tooltipBackground = new UIElement(positionClipspace.x(),
-                    positionClipspace.y(),
-                    tooltipText.getMaxReachedWidth(),
-                    tooltipText.getMaxReachedHeight(),
-                    1,
-                    "tooltipBox");
-            UIHandler.getInstance().addObject("TOOLTIP_TEXT", tooltipText);
-            UIHandler.getInstance().addObject("TOOLTIP_BACKGROUND", tooltipBackground);
+            UIGroup uiGroup = UIUtil.getTooltip(tooltipEntity.getComponentOfType(TooltipComponent.class), positionClipspace);
+            UIUtil.addUIGroupToUIHandler(uiGroup, "TOOLTIP_");
         }
     }
 
@@ -239,55 +293,23 @@ public class UIService {
                 transformationComponent.getPosition())) {
             UpgradeComponent upgradeComponent = upgradeEntity.getComponentOfType(UpgradeComponent.class);
             Vector2d positionClipspace = CoordinateConverter.transformWorldSpaceToClipSpace(transformationComponent.getPosition());
-            UIText upgradeTitle = new UIText(upgradeComponent.getUpgradeTitle(),
-                    positionClipspace.x(),
-                    positionClipspace.y(),
-                    0.4,
-                    0.1,
-                    0.75);
-            upgradeTitle.setColor(TEXT_COLOR_YELLOW);
-            upgradeTitle.setLayer(2);
+            UIGroup upgradeTooltipGroup = UIUtil.getUpgradeComponentTooltip(upgradeComponent, positionClipspace, 6);
+            UIUtil.addUIGroupToUIHandler(upgradeTooltipGroup, "TOOLTIP_");
+        }
+    }
 
-            UIText upgradeRarity = new UIText(upgradeComponent.getUpgradeRarity(),
-                    positionClipspace.x(),
-                    positionClipspace.y() + upgradeTitle.getMaxReachedHeight(),
-                    0.4,
-                    0.1,
-                    0.65);
-
-            switch (upgradeComponent.getUpgradeRarity()) {
-                case "Common":
-                    upgradeRarity.setColor(RARITY_COLOR_COMMON);
-                    break;
-                case "Rare":
-                    upgradeRarity.setColor(RARITY_COLOR_RARE);
-                    break;
-                case "Epic":
-                    upgradeRarity.setColor(RARITY_COLOR_EPIC);
-                    break;
+    private static void updateUIElementPopup(UIElement uiElement) {
+        if (CollisionUtil.checkInside(
+                MouseHandler.getInstance().getMousePositionClipSpace(),
+                uiElement.getX(),
+                uiElement.getY(),
+                uiElement.getX() + uiElement.getWidth(),
+                uiElement.getY() + uiElement.getHeight())) {
+            if (uiElement instanceof UIComponentElement && uiElement.isVisible()) {
+                UIGroup upgradeTooltipGroup = UIUtil.getUpgradeComponentTooltip((UpgradeComponent) ((UIComponentElement) uiElement).getComponent(),
+                        new Vector2d(uiElement.getX(), uiElement.getY()), 6);
+                UIUtil.addUIGroupToUIHandler(upgradeTooltipGroup, "TOOLTIP_");
             }
-
-            upgradeRarity.setLayer(2);
-
-            UIText upgradeTooltip = new UIText(upgradeComponent.getToolTip(),
-                    positionClipspace.x(),
-                    positionClipspace.y() + upgradeTitle.getMaxReachedHeight() + upgradeRarity.getMaxReachedHeight(),
-                    0.4,
-                    0.1,
-                    0.65);
-            upgradeTooltip.setColor(TEXT_COLOR_WHITE);
-            upgradeTooltip.setLayer(2);
-
-            UIElement tooltipBackground = new UIElement(positionClipspace.x() - 0.025,
-                    positionClipspace.y() + 0.025,
-                    Math.max(upgradeTitle.getMaxReachedWidth(), upgradeTooltip.getMaxReachedWidth()) + 0.05,
-                    upgradeTitle.getMaxReachedHeight() + upgradeRarity.getMaxReachedHeight() + upgradeTooltip.getMaxReachedHeight() - 0.05,
-                    1,
-                    "statBackground");
-            UIHandler.getInstance().addObject("TOOLTIP_TITLE", upgradeTitle);
-            UIHandler.getInstance().addObject("TOOLTIP_RARITY", upgradeRarity);
-            UIHandler.getInstance().addObject("TOOLTIP_TEXT", upgradeTooltip);
-            UIHandler.getInstance().addObject("TOOLTIP_BACKGROUND", tooltipBackground);
         }
     }
 }

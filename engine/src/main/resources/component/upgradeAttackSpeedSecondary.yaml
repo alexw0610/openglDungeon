@@ -1,0 +1,11 @@
+templateName: "upgradeAttackSpeedSecondary"
+type: "UpgradeComponent"
+modifiers:
+  upgradeTitle: "Stat Upgrade: Minor Secondary Attack Speed"
+  upgradeIcon: "upgrade_common"
+  upgradeRarity: "Common"
+  toolTip: "Increases your secondary attack speed by 0.02 attacks per second."
+  upgradeType: "attackSpeed"
+  upgradeSlot: "secondary"
+  upgradeCategory: "statModifier"
+  modifierValue: 0.02

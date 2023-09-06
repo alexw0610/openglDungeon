@@ -3,13 +3,13 @@ package engine.system;
 import engine.Engine;
 import engine.component.AttackComponent;
 import engine.component.DashComponent;
-import engine.component.base.AudioComponent;
 import engine.component.base.PhysicsComponent;
 import engine.component.base.TransformationComponent;
 import engine.component.internal.CreatedByComponent;
 import engine.entity.ComponentBuilder;
 import engine.entity.Entity;
 import engine.entity.EntityBuilder;
+import engine.service.util.AudioUtil;
 
 import static engine.EngineConstants.SECONDS_TO_NANOSECONDS_FACTOR;
 import static engine.EngineConstants.STEP_TIME_FACTOR;
@@ -41,13 +41,7 @@ public class DashSystem {
                 .at(transformationComponent.getPosition().x(), transformationComponent.getPosition().y())
                 .withComponent(new CreatedByComponent(entity))
                 .buildAndInstantiate();
-        AudioComponent audio = new AudioComponent();
-        audio.setPlayOnce(true);
-        audio.setAudioKey("impact");
-        EntityBuilder.builder()
-                .withComponent(audio)
-                .at(transformationComponent.getPosition().x(), transformationComponent.getPosition().y())
-                .buildAndInstantiate();
+        AudioUtil.createSoundEntity("impact", transformationComponent);
     }
 
     public static boolean isResponsibleFor(Entity entity) {

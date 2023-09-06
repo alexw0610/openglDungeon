@@ -20,7 +20,7 @@ public class CollisionUtil {
     public static boolean checkInside(Vector2d point, HitBox hitbox, Vector2d hitboxPosition) {
         switch (hitbox.getHitBoxType()) {
             case AABB:
-                return Intersectiond.testPointAar(point.x(), point.y(),
+                return checkInside(point,
                         hitboxPosition.x() - (hitbox.getSize() / 2),
                         hitboxPosition.y() - (hitbox.getSize() / 2),
                         hitboxPosition.x() + (hitbox.getSize() / 2),
@@ -32,6 +32,16 @@ public class CollisionUtil {
                 return false;
         }
     }
+
+    public static boolean checkInside(Vector2d point, double minX, double minY, double maxX, double maxY) {
+        return Intersectiond.testPointAar(point.x(), point.y(),
+                minX,
+                minY,
+                maxX,
+                maxY
+        );
+    }
+
 
     public static boolean checkCollision(Vector2d positionA, HitBox hitBoxA, Vector2d positionB, HitBox hitBoxB) {
         switch (hitBoxA.getHitBoxType()) {
