@@ -12,7 +12,6 @@ public class BulletModifierUtil {
             projectileComponent.setDamageOverwrite(
                     gunComponent.getPrimaryBaseDamage() * statComponent.getBaseBulletDamagePrimary());
             projectileComponent.setSpeed(gunComponent.getPrimaryBulletSpeed() * statComponent.getBulletSpeedPrimary());
-            System.out.println(projectileComponent.getDamageOverwrite());
         } else if (Slot.SECONDARY.equals(slot)) {
             projectileComponent.setDamageOverwrite(
                     gunComponent.getSecondaryBaseDamage() * statComponent.getBaseBulletDamageSecondary());

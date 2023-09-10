@@ -1,7 +1,5 @@
 package engine.component;
 
-import engine.enums.BulletModifier;
-
 public class GunComponent implements Component {
     private String gunName;
     private String gunSprite;
@@ -17,10 +15,10 @@ public class GunComponent implements Component {
     private boolean secondaryModifierSlotAAvailable;
     private boolean primaryModifierSlotBAvailable;
     private boolean secondaryModifierSlotBAvailable;
-    private BulletModifier primaryModifierSlotA;
-    private BulletModifier secondaryModifierSlotA;
-    private BulletModifier primaryModifierSlotB;
-    private BulletModifier secondaryModifierSlotB;
+    private UpgradeComponent primaryModifierSlotA;
+    private UpgradeComponent secondaryModifierSlotA;
+    private UpgradeComponent primaryModifierSlotB;
+    private UpgradeComponent secondaryModifierSlotB;
 
     public String getGunName() {
         return gunName;
@@ -134,35 +132,35 @@ public class GunComponent implements Component {
         this.secondaryModifierSlotBAvailable = secondaryModifierSlotBAvailable;
     }
 
-    public BulletModifier getPrimaryModifierSlotA() {
+    public UpgradeComponent getPrimaryModifierSlotA() {
         return primaryModifierSlotA;
     }
 
-    public void setPrimaryModifierSlotA(BulletModifier primaryModifierSlotA) {
+    public void setPrimaryModifierSlotA(UpgradeComponent primaryModifierSlotA) {
         this.primaryModifierSlotA = primaryModifierSlotA;
     }
 
-    public BulletModifier getSecondaryModifierSlotA() {
+    public UpgradeComponent getSecondaryModifierSlotA() {
         return secondaryModifierSlotA;
     }
 
-    public void setSecondaryModifierSlotA(BulletModifier secondaryModifierSlotA) {
+    public void setSecondaryModifierSlotA(UpgradeComponent secondaryModifierSlotA) {
         this.secondaryModifierSlotA = secondaryModifierSlotA;
     }
 
-    public BulletModifier getPrimaryModifierSlotB() {
+    public UpgradeComponent getPrimaryModifierSlotB() {
         return primaryModifierSlotB;
     }
 
-    public void setPrimaryModifierSlotB(BulletModifier primaryModifierSlotB) {
+    public void setPrimaryModifierSlotB(UpgradeComponent primaryModifierSlotB) {
         this.primaryModifierSlotB = primaryModifierSlotB;
     }
 
-    public BulletModifier getSecondaryModifierSlotB() {
+    public UpgradeComponent getSecondaryModifierSlotB() {
         return secondaryModifierSlotB;
     }
 
-    public void setSecondaryModifierSlotB(BulletModifier secondaryModifierSlotB) {
+    public void setSecondaryModifierSlotB(UpgradeComponent secondaryModifierSlotB) {
         this.secondaryModifierSlotB = secondaryModifierSlotB;
     }
 }

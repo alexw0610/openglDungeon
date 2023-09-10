@@ -8,10 +8,9 @@ import engine.component.base.*;
 import engine.component.tag.*;
 import engine.entity.Entity;
 import engine.entity.EntityBuilder;
-import engine.enums.UIGroupKey;
 import engine.enums.WorldTileType;
 import engine.handler.EntityHandler;
-import engine.handler.UIHandler;
+import engine.handler.UIStateHandler;
 import engine.service.LootSpawner;
 import engine.service.MobSpawner;
 import engine.service.WorldGenerator;
@@ -41,7 +40,7 @@ public class StatSystem {
         WorldGenerator.clearWorld();
         WorldGenerator.generateSafeRoom();
         LootSpawner.spawnLootOptions();
-        UIHandler.getInstance().toggleUIGroupVisible(UIGroupKey.STATS, true);
+        UIStateHandler.getInstance().showOutOfCombatUI();
         entity.getComponentOfType(TransformationComponent.class).setPositionX(5);
         entity.getComponentOfType(TransformationComponent.class).setPositionY(5);
     }
@@ -74,7 +73,7 @@ public class StatSystem {
                 LootSpawner.spawnBossLoot();
                 MobSpawner.clearMobs();
                 Entity player = EntityHandler.getInstance().getEntityWithComponent(PlayerTag.class);
-                UIHandler.getInstance().toggleUIGroupVisible(UIGroupKey.STATS, true);
+                UIStateHandler.getInstance().showOutOfCombatUI();
                 player.getComponentOfType(StatComponent.class).healToFull();
                 player.getComponentOfType(StatComponent.class).setLevel(player.getComponentOfType(StatComponent.class).getLevel() + 1);
             }

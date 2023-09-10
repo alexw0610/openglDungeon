@@ -38,6 +38,15 @@ public class MouseHandler {
                 && keyMap[actionToMouseMap.get(action)] == 1;
     }
 
+    public boolean isKeyForActionPressed(String action, boolean consume) {
+        boolean pressed = actionToMouseMap.get(action) != null
+                && keyMap[actionToMouseMap.get(action)] == 1;
+        if (pressed && consume) {
+            keyMap[actionToMouseMap.get(action)] = 0;
+        }
+        return pressed;
+    }
+
     public Vector2d getMousePositionScreenSpace() {
         return new Vector2d(this.mousePositionX, this.mousePositionY);
     }

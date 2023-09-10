@@ -17,6 +17,8 @@ public class EngineConstants {
     public static final double SECONDS_TO_NANOSECONDS_FACTOR = 1000000000;
     public static final Vector3d TEXT_COLOR_WHITE= new Vector3d(255.0 / 255.0, 255.0 / 255.0, 255.0 / 255.0);
     public static final Vector3d TEXT_COLOR_YELLOW = new Vector3d(239.0 / 255.0, 232.0 / 255.0, 145.0 / 255.0);
+    public static final Vector3d TEXT_COLOR_GREEN = new Vector3d(20.0 / 255.0, 232.0 / 255.0, 20.0 / 255.0);
+    public static final Vector3d TEXT_COLOR_GRAY = new Vector3d(50.0 / 255.0, 50.0 / 255.0, 50.0 / 255.0);
     public static final Vector3d STAT_VALUE_COLOR = new Vector3d(239.0 / 255.0, 232.0 / 255.0, 145.0 / 255.0);
     public static final Vector3d RARITY_COLOR_COMMON = new Vector3d(145.0 / 255.0, 165.0 / 255.0, 168.0 / 255.0);
     public static final Vector3d RARITY_COLOR_RARE = new Vector3d(62.0 / 255.0, 98.0 / 255.0, 216.0 / 255.0);

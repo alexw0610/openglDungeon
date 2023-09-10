@@ -29,6 +29,7 @@ public class UIHandler implements Handler<UIElement> {
 
     @Override
     public void addObject(String key, UIElement object) {
+        object.setElementKey(key);
         this.elements.put(key, object);
     }
 
@@ -39,13 +40,12 @@ public class UIHandler implements Handler<UIElement> {
     @Override
     public void addObject(UIElement object) {
         String key = RandomStringUtils.randomAlphanumeric(16);
-        this.elements.put(key, object);
+        addObject(key, object);
     }
 
-    public String addObject(UIText object) {
+    public void addObject(UIText object) {
         String key = RandomStringUtils.randomAlphanumeric(16);
-        this.texts.put(key, object);
-        return key;
+        addObject(key, object);
     }
 
     @Override
@@ -95,6 +95,7 @@ public class UIHandler implements Handler<UIElement> {
         }
     }
 
+    @Deprecated
     public void toggleUIGroupVisible(UIGroupKey targetGroupKey, boolean visible) {
         this.elements.values().stream().filter(element -> element.getUiGroupKey().equals(targetGroupKey)).forEach(element -> element.setVisible(visible));
         this.texts.values().stream().filter(text -> text.getUiGroupKey().equals(targetGroupKey)).forEach(text -> text.setVisible(visible));

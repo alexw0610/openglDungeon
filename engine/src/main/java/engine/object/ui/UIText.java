@@ -7,6 +7,7 @@ import org.joml.Vector3d;
 import java.util.LinkedList;
 
 import static engine.EngineConstants.DEFAULT_FONT_TEXTURE_SIZE;
+import static engine.EngineConstants.TEXT_COLOR_WHITE;
 
 public class UIText {
 
@@ -34,7 +35,7 @@ public class UIText {
         this.scale = scale;
         this.maxReachedWidth = 0;
         this.maxReachedHeight = -((37 / DEFAULT_FONT_TEXTURE_SIZE) * this.scale);
-        this.color = new Vector3d(1.0, 1.0, 1.0);
+        this.color = TEXT_COLOR_WHITE;
         this.visible = true;
         this.uiGroupKey = UIGroupKey.GENERAL;
         characters = generateCharacterInformation();

@@ -48,12 +48,11 @@ public class Main {
                 .fromTemplate("item")
                 .at(4.5, 10)
                 .buildAndInstantiate();
-        gunItem.addComponent(ComponentBuilder.fromTemplate("gunDefaultIssueBlaster"));
+        gunItem.addComponent(ComponentBuilder.fromTemplate("gunStandardIssueBlaster"));
         gunItem.getComponentOfType(RenderComponent.class)
                 .setTextureKey(gunItem
                         .getComponentOfType(GunComponent.class)
                         .getGunSprite());
-        gunItem.addComponent(new TooltipComponent("Pick me up!"));
 
         World world = WorldGenerator.generateSafeRoom();
         MobSpawner.toggleMobSpawning(false);

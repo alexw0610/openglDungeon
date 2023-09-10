@@ -2,18 +2,24 @@ package engine.handler;
 
 import engine.enums.UIGroupKey;
 
+import java.util.LinkedList;
+import java.util.List;
+
 public class UIStateHandler {
 
     private static final ThreadLocal<UIStateHandler> INSTANCE = ThreadLocal.withInitial(UIStateHandler::new);
 
-    private boolean inventoryOpen;
+    private boolean inventoryVisible;
     private boolean hudVisible;
     private boolean statsVisible;
 
+    private final List<UIGroupKey> visibleUIGroups;
+
     private UIStateHandler() {
-        this.inventoryOpen = false;
+        this.inventoryVisible = false;
         this.hudVisible = true;
         this.statsVisible = true;
+        visibleUIGroups = new LinkedList<>();
         updateUIPartsVisiblity();
     }
 
@@ -25,27 +31,53 @@ public class UIStateHandler {
         INSTANCE.set(uiStateHandler);
     }
 
-    public void showInventory() {
-        this.inventoryOpen = true;
-        this.hudVisible = false;
+    public void showCombatUI() {
+        this.inventoryVisible = false;
+        this.hudVisible = true;
         this.statsVisible = false;
         updateUIPartsVisiblity();
     }
 
-    public void closeInventory() {
-        this.inventoryOpen = false;
+    public void showOutOfCombatUI() {
+        this.inventoryVisible = false;
         this.hudVisible = true;
         this.statsVisible = true;
         updateUIPartsVisiblity();
     }
 
-    private void updateUIPartsVisiblity() {
-        UIHandler.getInstance().toggleUIGroupVisible(UIGroupKey.INVENTORY, inventoryOpen);
-        UIHandler.getInstance().toggleUIGroupVisible(UIGroupKey.HUD, hudVisible);
-        UIHandler.getInstance().toggleUIGroupVisible(UIGroupKey.STATS, statsVisible);
+    public void showInventory() {
+        this.inventoryVisible = true;
+        updateUIPartsVisiblity();
     }
 
-    public boolean isInventoryOpen() {
-        return inventoryOpen;
+    public void closeInventory() {
+        this.inventoryVisible = false;
+        updateUIPartsVisiblity();
+    }
+
+    private void updateUIPartsVisiblity() {
+        if (inventoryVisible) {
+            this.visibleUIGroups.add(UIGroupKey.INVENTORY);
+        } else {
+            this.visibleUIGroups.remove(UIGroupKey.INVENTORY);
+        }
+        if (hudVisible) {
+            this.visibleUIGroups.add(UIGroupKey.HUD);
+        } else {
+            this.visibleUIGroups.remove(UIGroupKey.HUD);
+        }
+        if (statsVisible) {
+            this.visibleUIGroups.add(UIGroupKey.STATS);
+        } else {
+            this.visibleUIGroups.remove(UIGroupKey.STATS);
+        }
+    }
+
+    public boolean isInventoryVisible() {
+        return inventoryVisible;
+    }
+
+    public List<UIGroupKey> getVisibleUIGroups() {
+        return visibleUIGroups;
     }
 }

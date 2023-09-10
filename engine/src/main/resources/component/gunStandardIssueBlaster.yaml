@@ -1,14 +1,14 @@
-templateName: "gunDefaultIssueBlaster"
+templateName: "gunStandardIssueBlaster"
 type: "GunComponent"
 modifiers:
-  gunName: "Default Issue Blaster"
+  gunName: "Standard Issue Blaster"
   gunSprite: "gun"
   primaryBaseDamage: 2.0
   secondaryBaseDamage: 0.0
   primaryBaseAttackSpeed: 0.65
   secondaryBaseAttackSpeed: 0.0
   primaryBulletSpeed: 2.0
-  secondaryBulletSpeed: 2.0
+  secondaryBulletSpeed: 0.0
   primaryAttack: true
   secondaryAttack: false
   primaryModifierSlotAAvailable: true

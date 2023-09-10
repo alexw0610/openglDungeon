@@ -47,6 +47,15 @@ public class KeyHandler {
                 && keyMap[actionToKeyMap.get(action)] == 1;
     }
 
+    public boolean isKeyForActionPressed(String action, boolean consume) {
+        boolean pressed = actionToKeyMap.get(action) != null
+                && keyMap[actionToKeyMap.get(action)] == 1;
+        if(pressed && consume){
+            setKeyReleased(actionToKeyMap.get(action));
+        }
+        return pressed;
+    }
+
     public void setKeyPressed(KeyEvent keyEvent) {
         if (!keyEvent.isAutoRepeat()) {
             keyMap[keyEvent.getKeyCode()] = 1;

@@ -13,9 +13,11 @@ import engine.component.base.RenderComponent;
 import engine.component.base.TransformationComponent;
 import engine.component.tag.ViewSourceTag;
 import engine.entity.Entity;
+import engine.enums.UIGroupKey;
 import engine.handler.EntityHandler;
 import engine.handler.MeshHandler;
 import engine.handler.UIHandler;
+import engine.handler.UIStateHandler;
 import engine.object.ui.UIElement;
 import engine.object.ui.UIText;
 import engine.service.InputProcessor;
@@ -98,7 +100,7 @@ public class Engine {
         processEntities();
         MobSpawner.spawnMobs(EntityHandler.getInstance().getWorld());
         renderEntities();
-        if (System.nanoTime() - lastStepTime < 0.1 * SECONDS_TO_NANOSECONDS_FACTOR){
+        if (System.nanoTime() - lastStepTime < 0.1 * SECONDS_TO_NANOSECONDS_FACTOR) {
             UIService.getInstance().updateUI();
         }
         renderUI();
@@ -222,12 +224,16 @@ public class Engine {
     }
 
     private static void renderUI() {
+        List<UIGroupKey> visibleUIGroups = UIStateHandler.getInstance().getVisibleUIGroups();
         Collection<UIElement> uiElementsToRender = UIHandler.getInstance()
                 .getAllObjects()
                 .stream()
-                .filter(UIElement::isVisible).collect(Collectors.toList());
+                .filter(UIElement::isVisible)
+                .filter(uiElement -> uiElement.getUiGroupKey().equals(UIGroupKey.GENERAL) || visibleUIGroups.contains(uiElement.getUiGroupKey()))
+                .collect(Collectors.toList());
         uiElementsToRender.addAll(UIHandler.getInstance().getAllTextObjects().stream()
                 .filter(UIText::isVisible)
+                .filter(uiElement -> uiElement.getUiGroupKey().equals(UIGroupKey.GENERAL) || visibleUIGroups.contains(uiElement.getUiGroupKey()))
                 .map(UIText::getCharacters)
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList()));

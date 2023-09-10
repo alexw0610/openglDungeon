@@ -266,7 +266,15 @@ public class StatComponent implements Component {
     }
 
     public void addUpgrade(UpgradeComponent upgradeComponent) {
-        this.upgrades.add(upgradeComponent);
+        if(upgradeComponent != null){
+            this.upgrades.add(upgradeComponent);
+        }
+    }
+
+    public void removeUpgrade(UpgradeComponent upgradeComponent) {
+        if(upgradeComponent != null){
+            this.upgrades.remove(upgradeComponent);
+        }
     }
 
     public List<GunComponent> getGuns() {

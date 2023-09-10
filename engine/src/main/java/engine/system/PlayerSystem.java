@@ -1,6 +1,5 @@
 package engine.system;
 
-import com.jogamp.newt.event.KeyEvent;
 import engine.component.GunComponent;
 import engine.component.ProjectileComponent;
 import engine.component.StatComponent;
@@ -12,7 +11,6 @@ import engine.component.tag.*;
 import engine.entity.Entity;
 import engine.entity.EntityBuilder;
 import engine.enums.Slot;
-import engine.enums.UIGroupKey;
 import engine.enums.UpgradeType;
 import engine.handler.*;
 import engine.object.generation.World;
@@ -41,10 +39,8 @@ public class PlayerSystem {
             handleItemPickup(entity, items, transformationComponent, statComponent);
             handleMouseInput(entity, statComponent, gunComponent, direction);
         }
-        if (KeyHandler.getInstance().isKeyForActionPressed("openInventory")) {
-            KeyHandler.getInstance().setKeyReleased(KeyEvent.VK_I);
-            //TODO: Please clean this up in the future. PLEASE! :(
-            if (UIStateHandler.getInstance().isInventoryOpen()) {
+        if (KeyHandler.getInstance().isKeyForActionPressed("openInventory", true)) {
+            if (UIStateHandler.getInstance().isInventoryVisible()) {
                 UIStateHandler.getInstance().closeInventory();
             } else {
                 UIStateHandler.getInstance().showInventory();
@@ -56,6 +52,7 @@ public class PlayerSystem {
     private static void handleMouseInput(Entity entity, StatComponent statComponent, GunComponent gunComponent, Vector2d direction) {
         if (gunComponent != null
                 && gunComponent.isPrimaryAttack()
+                && !UIStateHandler.getInstance().isInventoryVisible()
                 && MouseHandler.getInstance().isKeyForActionPressed("mouseButtonPrimary")
                 && System.nanoTime() - statComponent.getLastShotPrimary()
                 > (gunComponent.getPrimaryBaseAttackSpeed() * statComponent.getAttackSpeedPrimary() * SECONDS_TO_NANOSECONDS_FACTOR)) {
@@ -63,6 +60,7 @@ public class PlayerSystem {
         }
         if (gunComponent != null
                 && gunComponent.isSecondaryAttack()
+                && !UIStateHandler.getInstance().isInventoryVisible()
                 && MouseHandler.getInstance().isKeyForActionPressed("mouseButtonSecondary")
                 && System.nanoTime() - statComponent.getLastShotSecondary()
                 > (gunComponent.getSecondaryBaseAttackSpeed() * statComponent.getAttackSpeedSecondary() * SECONDS_TO_NANOSECONDS_FACTOR)) {
@@ -134,7 +132,7 @@ public class PlayerSystem {
     }
 
     private static void handleLevelStart(Entity entity, StatComponent statComponent) {
-        UIHandler.getInstance().toggleUIGroupVisible(UIGroupKey.STATS, false);
+        UIStateHandler.getInstance().showCombatUI();
         LootSpawner.clearLoot();
         WorldGenerator.clearWorld();
         UIHandler.getInstance().removeTextObjectsWithPrefix("DT_");

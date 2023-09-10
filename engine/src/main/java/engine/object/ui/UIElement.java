@@ -21,6 +21,8 @@ public class UIElement {
     private Vector3d color;
     private UIGroupKey uiGroupKey;
 
+    private String elementKey;
+
     public UIElement(double x, double y, double width, double height, int layer, String texture) {
         this.x = x;
         this.y = y;
@@ -147,6 +149,7 @@ public class UIElement {
         return visible;
     }
 
+    @Deprecated
     public void setVisible(boolean visible) {
         this.visible = visible;
     }
@@ -157,5 +160,13 @@ public class UIElement {
 
     public void setUiGroupKey(UIGroupKey uiGroupKey) {
         this.uiGroupKey = uiGroupKey;
+    }
+
+    public String getElementKey() {
+        return elementKey;
+    }
+
+    public void setElementKey(String elementKey) {
+        this.elementKey = elementKey;
     }
 }
