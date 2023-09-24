@@ -67,7 +67,7 @@ public class RenderService {
         this.uniformBuffers = new int[3];
         this.uboDataBuffer = DoubleBuffer.allocate(19);
         this.lightUboDataBuffer = DoubleBuffer.allocate(16);
-        this.UIUboDataBuffer = DoubleBuffer.allocate(16);
+        this.UIUboDataBuffer = DoubleBuffer.allocate(19);
         gl.glGenBuffers(3, uniformBuffers, 0);
         this.frameBuffers = new int[2];
         this.renderedTextures = new int[2];
@@ -303,6 +303,8 @@ public class RenderService {
         this.UIUboDataBuffer.put(13, uiElement.getColor().y());
         this.UIUboDataBuffer.put(14, uiElement.getColor().z());
         this.UIUboDataBuffer.put(15, EngineConstants.DEFAULT_SPRITE_SIZE);
+
+        this.UIUboDataBuffer.put(16, uiElement.isAlwaysVisible() ? 1 : 0);
 
         gl.glBindBuffer(gl.GL_UNIFORM_BUFFER, this.uniformBuffers[2]);
         gl.glBufferSubData(gl.GL_UNIFORM_BUFFER, 0, 8L * this.UIUboDataBuffer.capacity(), this.UIUboDataBuffer);

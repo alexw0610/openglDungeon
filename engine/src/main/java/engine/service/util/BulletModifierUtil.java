@@ -9,13 +9,11 @@ public class BulletModifierUtil {
 
     public static void adjustProjectileComponentWithStats(Slot slot, ProjectileComponent projectileComponent, StatComponent statComponent, GunComponent gunComponent) {
         if (Slot.PRIMARY.equals(slot)) {
-            projectileComponent.setDamageOverwrite(
-                    gunComponent.getPrimaryBaseDamage() * statComponent.getBaseBulletDamagePrimary());
-            projectileComponent.setSpeed(gunComponent.getPrimaryBulletSpeed() * statComponent.getBulletSpeedPrimary());
+            projectileComponent.setDamageOverwrite(gunComponent.getPrimaryBaseDamage() * statComponent.getBaseBulletDamagePrimary());
+            projectileComponent.setSpeed(gunComponent.getPrimaryBaseBulletSpeed() * statComponent.getBulletSpeedPrimary());
         } else if (Slot.SECONDARY.equals(slot)) {
-            projectileComponent.setDamageOverwrite(
-                    gunComponent.getSecondaryBaseDamage() * statComponent.getBaseBulletDamageSecondary());
-            projectileComponent.setSpeed(gunComponent.getSecondaryBulletSpeed() * statComponent.getBulletSpeedSecondary());
+            projectileComponent.setDamageOverwrite(gunComponent.getSecondaryBaseDamage() * statComponent.getBaseBulletDamageSecondary());
+            projectileComponent.setSpeed(gunComponent.getSecondaryBaseBulletSpeed() * statComponent.getBulletSpeedSecondary());
         }
     }
 }

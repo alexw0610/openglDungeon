@@ -82,6 +82,9 @@ public class EntityHandler implements Handler<Entity> {
     @Override
     public void removeObject(String key) {
         synchronized (this.objects) {
+            if (this.objects.containsKey(key)) {
+                this.objects.get(key).onRemove();
+            }
             this.objects.remove(key);
         }
     }
@@ -118,5 +121,10 @@ public class EntityHandler implements Handler<Entity> {
 
     public void setWorld(World world) {
         this.world = world;
+    }
+
+    public void cleanup(){
+        this.objects.values().forEach(Entity::onRemove);
+        this.objects.clear();
     }
 }

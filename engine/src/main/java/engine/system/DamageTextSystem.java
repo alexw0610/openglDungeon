@@ -11,6 +11,7 @@ import org.joml.Math;
 import org.joml.Vector2d;
 
 import static engine.EngineConstants.*;
+import static engine.EntityKeyConstants.DAMAGE_TEXT_PREFIX;
 
 public class DamageTextSystem {
     public static void processEntity(Entity entity) {
@@ -46,9 +47,8 @@ public class DamageTextSystem {
         } else {
             damageText.setColor(DAMAGE_TEXT_COLOR);
         }
-        String key = "DT_" + RandomStringUtils.randomAlphanumeric(8);
+        String key = DAMAGE_TEXT_PREFIX + RandomStringUtils.randomAlphanumeric(8);
         UIHandler.getInstance().addObject(key, damageText);
-        damageText.setKey(key);
         damageTextComponent.setDamageText(damageText);
     }
 

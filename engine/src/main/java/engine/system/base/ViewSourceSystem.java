@@ -1,5 +1,6 @@
 package engine.system.base;
 
+import engine.EntityKeyConstants;
 import engine.component.base.TransformationComponent;
 import engine.component.tag.ViewBlockingTag;
 import engine.component.tag.ViewSourceTag;
@@ -19,8 +20,6 @@ import java.util.stream.Collectors;
 
 public class ViewSourceSystem {
 
-    public static final String VIEW_POLYGON_KEY_PREFIX = "viewPolygon_";
-
     public static void processEntity(Entity entity) {
         TransformationComponent transformationComponent = entity.getComponentOfType(TransformationComponent.class);
         List<Entity> entities = EntityHandler.getInstance().getAllEntitiesWithComponents(TransformationComponent.class, ViewBlockingTag.class);
@@ -35,7 +34,7 @@ public class ViewSourceSystem {
                 })
                 .collect(Collectors.toList());
         for (Mesh mesh : meshes) {
-            MeshHandler.getInstance().addMesh(VIEW_POLYGON_KEY_PREFIX + RandomStringUtils.randomAlphanumeric(8), mesh);
+            MeshHandler.getInstance().addMesh(EntityKeyConstants.VIEW_POLYGON_KEY_PREFIX + RandomStringUtils.randomAlphanumeric(8), mesh);
             RenderService.getInstance().renderToViewMap(mesh);
         }
     }

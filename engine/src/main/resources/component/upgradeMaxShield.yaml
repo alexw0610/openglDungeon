@@ -1,0 +1,10 @@
+templateName: "upgradeMaxShield"
+type: "UpgradeComponent"
+modifiers:
+  upgradeTitle: "Stat Upgrade: Shield"
+  upgradeIcon: "upgrade_rare"
+  upgradeRarity: "Rare"
+  toolTip: "Increases your maximum shield points by 30."
+  upgradeType: "maxShield"
+  upgradeCategory: "playerStatModifier"
+  modifierValue: 30.0

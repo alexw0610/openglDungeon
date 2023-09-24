@@ -7,5 +7,5 @@ modifiers:
   toolTip: "Increases your primary bullet velocity by 10 percent."
   upgradeType: "bulletVelocity"
   upgradeSlot: "primary"
-  upgradeCategory: "statModifier"
+  upgradeCategory: "gunStatModifier"
   modifierValue: 1.10

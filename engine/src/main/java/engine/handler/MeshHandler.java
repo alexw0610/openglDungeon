@@ -52,4 +52,9 @@ public class MeshHandler {
     public Mesh getMeshForKey(PrimitiveMeshShape primitiveMeshShape) {
         return meshes.get(primitiveMeshShape.value());
     }
+
+    public void cleanup(){
+        this.meshes.values().forEach(Mesh::unload);
+        this.meshes.clear();
+    }
 }

@@ -16,4 +16,9 @@ public class CreatedByComponent implements Component {
     public Entity getCreatorEntity() {
         return creatorEntity;
     }
+
+    @Override
+    public void onRemove() {
+
+    }
 }

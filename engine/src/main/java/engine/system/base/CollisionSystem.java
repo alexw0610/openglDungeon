@@ -14,12 +14,15 @@ import engine.entity.EntityBuilder;
 import engine.handler.EntityHandler;
 import engine.service.util.AudioUtil;
 import engine.service.util.CollisionUtil;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.joml.Vector2d;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static engine.EntityKeyConstants.ATTACK_PREFIX;
 
 public class CollisionSystem {
     public static void processEntity(Entity entity) {
@@ -64,7 +67,7 @@ public class CollisionSystem {
             EntityBuilder.builder()
                     .withComponent(attack)
                     .at(transformationComponent.getPosition().x(), transformationComponent.getPosition().y())
-                    .buildAndInstantiate();
+                    .buildAndInstantiate(ATTACK_PREFIX + RandomStringUtils.randomAlphanumeric(6));
 
             AudioUtil.createSoundEntity("impact", transformationComponent);
             EntityHandler.getInstance().removeObject(entity.getEntityId());

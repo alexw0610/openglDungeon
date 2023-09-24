@@ -45,4 +45,9 @@ public class LightSourceComponent implements Component {
     public void setLightFallOff(double lightFallOff) {
         this.lightFallOff = lightFallOff;
     }
+
+    @Override
+    public void onRemove() {
+
+    }
 }

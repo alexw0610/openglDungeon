@@ -18,8 +18,7 @@ components:
   - type: "tag.ShadowCastTag"
   - type: "StatComponent"
     modifiers:
-      currentHealthPoints: 10.0
-      maxHealthPoints: 10.0
+      maxHealthPoints: 50.0
       movementSpeed: 0.0
   - type: "tag.TerrainTag"
   - type: "tag.ViewBlockingTag"

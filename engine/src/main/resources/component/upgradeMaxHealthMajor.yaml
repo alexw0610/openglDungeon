@@ -6,5 +6,5 @@ modifiers:
   upgradeRarity: "Rare"
   toolTip: "Increases your maximum health points by 40."
   upgradeType: "maxHealth"
-  upgradeCategory: "statModifier"
+  upgradeCategory: "playerStatModifier"
   modifierValue: 40.0

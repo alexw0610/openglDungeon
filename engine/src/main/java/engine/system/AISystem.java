@@ -1,5 +1,6 @@
 package engine.system;
 
+import engine.EntityKeyConstants;
 import engine.component.*;
 import engine.component.base.PhysicsComponent;
 import engine.component.base.RenderComponent;
@@ -16,6 +17,7 @@ import engine.handler.EntityHandler;
 import engine.object.generation.World;
 import engine.service.util.CollisionUtil;
 import engine.service.util.Pathfinding;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.joml.Vector2d;
 import org.joml.Vector2dc;
 import org.joml.Vector2i;
@@ -29,6 +31,7 @@ import java.util.stream.Collectors;
 import static engine.enums.AIBehaviourState.*;
 
 public class AISystem {
+
     public static void processEntity(Entity entity) {
         AIComponent aiComponent = entity.getComponentOfType(AIComponent.class);
         TransformationComponent transformationComponent = entity.getComponentOfType(TransformationComponent.class);
@@ -95,7 +98,7 @@ public class AISystem {
             EntityBuilder.builder()
                     .withComponent(attack)
                     .at(transformationComponent.getPosition().x(), transformationComponent.getPosition().y())
-                    .buildAndInstantiate();
+                    .buildAndInstantiate(EntityKeyConstants.ATTACK_PREFIX + RandomStringUtils.randomAlphanumeric(6));
         } else if (!aiComponent.getPathToTarget()
                 .isEmpty()) {
             aiComponent.setCurrentState(PATHING);
@@ -111,7 +114,7 @@ public class AISystem {
             Entity alienGlub = EntityBuilder.builder()
                     .fromTemplate("projectile_alien")
                     .at(transformationComponent.getPosition().x(), transformationComponent.getPosition().y())
-                    .buildAndInstantiate();
+                    .buildAndInstantiate(EntityKeyConstants.PROJECTILE_PREFIX + RandomStringUtils.randomAlphanumeric(6));
             alienGlub.addComponent(new CreatedByComponent(entity));
             alienGlub.getComponentOfType(ProjectileComponent.class)
                     .setDirection(direction);

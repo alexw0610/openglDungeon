@@ -70,4 +70,8 @@ public class TextureHandler {
         return new Vector2i(loadedTextureMap.get(textureKey).getWidth() / DEFAULT_TILE_SIZE,
                 loadedTextureMap.get(textureKey).getHeight() / DEFAULT_TILE_SIZE);
     }
+
+    public void cleanup(){
+        this.loadedTextureMap.values().forEach(Texture::cleanup);
+    }
 }

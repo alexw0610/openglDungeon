@@ -11,8 +11,8 @@ public class StatComponent implements Component {
     private double currentHealthPoints;
     private double maxHealthPoints;
     private double movementSpeed;
-    private double currentArmor;
-    private double maxArmor;
+    private double currentShield;
+    private double maxShield;
     private double attackSpeedPrimary;
     private double attackSpeedSecondary;
     private double bulletSpeedPrimary;
@@ -24,6 +24,8 @@ public class StatComponent implements Component {
     private double baseBulletDamagePrimary;
     private double baseBulletDamageSecondary;
     private double lastDashed;
+    private double dashCooldownSpeed;
+    private double dashStunDuration;
     private boolean isDead;
     private double xp;
     private boolean dropsItems;
@@ -31,8 +33,7 @@ public class StatComponent implements Component {
     private int level;
     private final List<UpgradeComponent> upgrades;
     private final List<GunComponent> guns;
-
-    private GunComponent equipedGun;
+    private GunComponent equippedGun;
 
     public StatComponent() {
         super();
@@ -47,15 +48,34 @@ public class StatComponent implements Component {
         this.dropsItems = true;
         this.dropsXP = true;
         this.lastDashed = 0;
-        this.currentArmor = 0;
-        this.maxArmor = 0;
+        this.currentShield = 0;
+        this.maxShield = 0;
         this.bulletSpeedPrimary = 1.0;
         this.bulletSpeedSecondary = 1.0;
         this.baseBulletDamagePrimary = 1.0;
         this.baseBulletDamageSecondary = 1.0;
         this.upgrades = new ArrayList<>();
         this.guns = new ArrayList<>();
-        this.equipedGun = null;
+        this.equippedGun = null;
+        this.dashCooldownSpeed = 4.0;
+        this.dashStunDuration = 0.0;
+    }
+
+    public void uneqiupGunUpgrades() {
+        if (this.equippedGun != null) {
+            UpgradeComponent upgradePrimA = this.getEquippedGun().getPrimaryModifierSlotA();
+            this.addUpgrade(upgradePrimA);
+            this.equippedGun.setPrimaryModifierSlotA(null);
+            UpgradeComponent upgradePrimB = this.getEquippedGun().getPrimaryModifierSlotB();
+            this.addUpgrade(upgradePrimB);
+            this.equippedGun.setPrimaryModifierSlotB(null);
+            UpgradeComponent upgradeSecA = this.getEquippedGun().getSecondaryModifierSlotA();
+            this.addUpgrade(upgradeSecA);
+            this.equippedGun.setSecondaryModifierSlotA(null);
+            UpgradeComponent upgradeSecB = this.getEquippedGun().getSecondaryModifierSlotB();
+            this.addUpgrade(upgradeSecB);
+            this.equippedGun.setSecondaryModifierSlotB(null);
+        }
     }
 
     public double getCurrentHealthpoints() {
@@ -68,7 +88,7 @@ public class StatComponent implements Component {
 
     public void healToFull() {
         this.currentHealthPoints = this.maxHealthPoints;
-        this.currentArmor = this.maxArmor;
+        this.currentShield = this.maxShield;
     }
 
     public void setMaxHealthPoints(Double healthPoints) {
@@ -76,12 +96,12 @@ public class StatComponent implements Component {
         this.currentHealthPoints = this.maxHealthPoints;
     }
 
-    public void subtractHealthPoints(double damage) {
+    public void subtractHealthPoints(Double damage) {
         this.currentHealthPoints = Math.max(this.currentHealthPoints - damage, 0.0);
     }
 
-    public void subtractArmorPoints(double damage) {
-        this.currentArmor = Math.max(this.currentArmor - damage, 0.0);
+    public void subtractArmorPoints(Double damage) {
+        this.currentShield = Math.max(this.currentShield - damage, 0.0);
     }
 
     public double getMovementSpeed() {
@@ -117,7 +137,7 @@ public class StatComponent implements Component {
     }
 
     public double getArmorPercentage() {
-        return Math.max(this.currentArmor / this.maxArmor, 0);
+        return Math.max(this.currentShield / this.maxShield, 0);
     }
 
     public double getAttackSpeedPrimary() {
@@ -140,7 +160,7 @@ public class StatComponent implements Component {
         return xp;
     }
 
-    public void setXp(double xp) {
+    public void setXp(Double xp) {
         this.xp = xp;
     }
 
@@ -180,28 +200,28 @@ public class StatComponent implements Component {
         this.lastDashed = lastDashed;
     }
 
-    public double getCurrentArmor() {
-        return currentArmor;
+    public double getCurrentShield() {
+        return currentShield;
     }
 
-    public void setCurrentArmor(double currentArmor) {
-        this.currentArmor = currentArmor;
+    public void setCurrentShield(Double currentShield) {
+        this.currentShield = currentShield;
     }
 
-    public double getMaxArmor() {
-        return maxArmor;
+    public double getMaxShield() {
+        return maxShield;
     }
 
-    public void setMaxArmor(double maxArmor) {
-        this.maxArmor = maxArmor;
-        this.currentArmor = maxArmor;
+    public void setMaxShield(Double maxShield) {
+        this.maxShield = maxShield;
+        this.currentShield = maxShield;
     }
 
     public double getBulletSpeedPrimary() {
         return bulletSpeedPrimary;
     }
 
-    public void setBulletSpeedPrimary(double bulletSpeedPrimary) {
+    public void setBulletSpeedPrimary(Double bulletSpeedPrimary) {
         this.bulletSpeedPrimary = bulletSpeedPrimary;
     }
 
@@ -209,7 +229,7 @@ public class StatComponent implements Component {
         return bulletSpeedSecondary;
     }
 
-    public void setBulletSpeedSecondary(double bulletSpeedSecondary) {
+    public void setBulletSpeedSecondary(Double bulletSpeedSecondary) {
         this.bulletSpeedSecondary = bulletSpeedSecondary;
     }
 
@@ -225,7 +245,7 @@ public class StatComponent implements Component {
         return lastShotSecondary;
     }
 
-    public void setLastShotSecondary(double lastShotSecondary) {
+    public void setLastShotSecondary(Double lastShotSecondary) {
         this.lastShotSecondary = lastShotSecondary;
     }
 
@@ -233,7 +253,7 @@ public class StatComponent implements Component {
         return bulletCountPrimary;
     }
 
-    public void setBulletCountPrimary(double bulletCountPrimary) {
+    public void setBulletCountPrimary(Double bulletCountPrimary) {
         this.bulletCountPrimary = bulletCountPrimary;
     }
 
@@ -241,7 +261,7 @@ public class StatComponent implements Component {
         return bulletCountSecondary;
     }
 
-    public void setBulletCountSecondary(double bulletCountSecondary) {
+    public void setBulletCountSecondary(Double bulletCountSecondary) {
         this.bulletCountSecondary = bulletCountSecondary;
     }
 
@@ -249,7 +269,7 @@ public class StatComponent implements Component {
         return baseBulletDamagePrimary;
     }
 
-    public void setBaseBulletDamagePrimary(double baseBulletDamagePrimary) {
+    public void setBaseBulletDamagePrimary(Double baseBulletDamagePrimary) {
         this.baseBulletDamagePrimary = baseBulletDamagePrimary;
     }
 
@@ -257,7 +277,7 @@ public class StatComponent implements Component {
         return baseBulletDamageSecondary;
     }
 
-    public void setBaseBulletDamageSecondary(double baseBulletDamageSecondary) {
+    public void setBaseBulletDamageSecondary(Double baseBulletDamageSecondary) {
         this.baseBulletDamageSecondary = baseBulletDamageSecondary;
     }
 
@@ -266,13 +286,13 @@ public class StatComponent implements Component {
     }
 
     public void addUpgrade(UpgradeComponent upgradeComponent) {
-        if(upgradeComponent != null){
+        if (upgradeComponent != null) {
             this.upgrades.add(upgradeComponent);
         }
     }
 
     public void removeUpgrade(UpgradeComponent upgradeComponent) {
-        if(upgradeComponent != null){
+        if (upgradeComponent != null) {
             this.upgrades.remove(upgradeComponent);
         }
     }
@@ -285,12 +305,28 @@ public class StatComponent implements Component {
         this.guns.add(gunComponent);
     }
 
-    public void setEquipedGun(GunComponent gunComponent) {
-        this.equipedGun = gunComponent;
+    public void setEquippedGun(GunComponent gunComponent) {
+        this.equippedGun = gunComponent;
     }
 
-    public GunComponent getEquipedGun() {
-        return equipedGun;
+    public GunComponent getEquippedGun() {
+        return equippedGun;
+    }
+
+    public double getDashCooldownSpeed() {
+        return dashCooldownSpeed;
+    }
+
+    public void setDashCooldownSpeed(Double dashCooldownSpeed) {
+        this.dashCooldownSpeed = dashCooldownSpeed;
+    }
+
+    public double getDashStunDuration() {
+        return dashStunDuration;
+    }
+
+    public void setDashStunDuration(double dashStunDuration) {
+        this.dashStunDuration = dashStunDuration;
     }
 
     @Override
@@ -301,5 +337,10 @@ public class StatComponent implements Component {
                 ", attackSpeed=" + attackSpeedPrimary +
                 ", level=" + level +
                 '}';
+    }
+
+    @Override
+    public void onRemove() {
+
     }
 }

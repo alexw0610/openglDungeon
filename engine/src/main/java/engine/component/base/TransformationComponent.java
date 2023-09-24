@@ -58,4 +58,9 @@ public class TransformationComponent implements Component {
     public Vector2d getLastPosition() {
         return new Vector2d(this.lastPositionX, this.lastPositionY);
     }
+
+    @Override
+    public void onRemove() {
+
+    }
 }

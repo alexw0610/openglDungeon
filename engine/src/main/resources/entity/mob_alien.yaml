@@ -23,11 +23,12 @@ components:
   - type: "AIComponent"
   - type: "StatComponent"
     modifiers:
-      attackSpeed: 0.8
-      secondaryAttackSpeed: 3.0
-      movementSpeed: 1.5
-      maxHealthPoints: 10.0
+      attackSpeedPrimary: 0.8
+      attackSpeedSecondary: 3.0
+      movementSpeed: 2.8
+      maxHealthPoints: 30.0
   - type: "base.CollisionComponent"
     arguments:
       hitBoxType: "AABB"
       hitBoxSize: 0.33
+  - type: "HealthBarComponent"

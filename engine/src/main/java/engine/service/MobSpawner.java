@@ -1,5 +1,6 @@
 package engine.service;
 
+import engine.EntityKeyConstants;
 import engine.component.tag.PlayerTag;
 import engine.component.StatComponent;
 import engine.component.base.TransformationComponent;
@@ -15,13 +16,8 @@ public class MobSpawner {
 
     private static final int MOB_CAP = 10;
     private static final float MOB_SPAWN_CHANCE = 0.3f;
-    public static final String MOB_PREFIX = "MOB_";
     public static boolean shouldSpawnMobs = true;
     public static int difficultyLevel = 0;
-
-    public static void clearMobs() {
-        EntityHandler.getInstance().removeObjectsWithPrefix(MOB_PREFIX);
-    }
 
     public static void setDifficultyLevel(int level) {
         difficultyLevel = level;
@@ -38,7 +34,7 @@ public class MobSpawner {
                 .fromTemplate("boss_alien")
                 .at(8, 8)
                 .build();
-        EntityHandler.getInstance().addObject("MOB_" + RandomStringUtils.randomAlphanumeric(8), boss);
+        EntityHandler.getInstance().addObject(EntityKeyConstants.MOB_PREFIX + RandomStringUtils.randomAlphanumeric(8), boss);
     }
 
     public static void spawnBossAdd(World world, int maxAdds, int playerLevel) {
@@ -65,7 +61,7 @@ public class MobSpawner {
         StatComponent mobStats = mob.getComponentOfType(StatComponent.class);
         mobStats.setDropsXP(false);
         mobStats.setLevel(playerLevel);
-        mobStats.setMaxHealthPoints(mobStats.getMaxHealthPoints() + ((mobStats.getMaxHealthPoints() * 0.5) * playerLevel));
+        mobStats.setMaxHealthPoints(mobStats.getMaxHealthPoints() + ((mobStats.getMaxHealthPoints() * 0.1) * playerLevel));
         mobStats.setAttackSpeedPrimary(mobStats.getAttackSpeedPrimary() - ((mobStats.getAttackSpeedPrimary() * 0.05) * playerLevel));
         int corner = (int) (Math.random() * 4.0);
         switch (corner) {
@@ -91,7 +87,7 @@ public class MobSpawner {
 
     public static void spawnMobs(World world) {
         int mobCount = (int) EntityHandler.getInstance()
-                .getObjectsWithPrefix("MOB_")
+                .getObjectsWithPrefix(EntityKeyConstants.MOB_PREFIX)
                 .stream()
                 .filter(mob -> !mob.getComponentOfType(StatComponent.class).isDead())
                 .count();
@@ -132,9 +128,9 @@ public class MobSpawner {
                     }
                     StatComponent mobStats = mob.getComponentOfType(StatComponent.class);
                     mobStats.setLevel(playerLevel);
-                    mobStats.setMaxHealthPoints(mobStats.getMaxHealthPoints() + ((mobStats.getMaxHealthPoints() * 0.5) * playerLevel));
-                    mobStats.setAttackSpeedPrimary(mobStats.getAttackSpeedPrimary() - ((mobStats.getAttackSpeedPrimary() * 0.05) * playerLevel));
-                    EntityHandler.getInstance().addObject("MOB_" + RandomStringUtils.randomAlphanumeric(8), mob);
+                    mobStats.setMaxHealthPoints(mobStats.getMaxHealthPoints() + ((mobStats.getMaxHealthPoints() * 0.1) * playerLevel));
+                    mobStats.setAttackSpeedPrimary(mobStats.getAttackSpeedPrimary() - ((mobStats.getAttackSpeedPrimary() * 0.01) * playerLevel));
+                    EntityHandler.getInstance().addObject(EntityKeyConstants.MOB_PREFIX + RandomStringUtils.randomAlphanumeric(8), mob);
                     spawnPositionFound = true;
                     mobCount++;
                 } else {

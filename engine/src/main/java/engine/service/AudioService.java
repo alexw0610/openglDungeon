@@ -48,4 +48,8 @@ public class AudioService {
         return null;
     }
 
+    public void cleanup(){
+        this.audioSources.forEach(AudioSource::delete);
+    }
+
 }

@@ -117,4 +117,9 @@ public class AnimationComponent implements Component {
     public void setKnockbacked(boolean knockbacked) {
         isKnockbacked = knockbacked;
     }
+
+    @Override
+    public void onRemove() {
+
+    }
 }

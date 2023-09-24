@@ -17,23 +17,6 @@ layout(binding = 0) uniform sampler2D texture_sampler;
 layout(binding = 1) uniform sampler2D view_sampler;
 layout(binding = 2) uniform sampler2D light_sampler;
 
-float rand(vec2 co){
-    return (0.5-(fract(sin(dot(co, vec2(12.9898, 78.233))) * 43758.5453)))*200;
-}
-
-float getViewAreaRSample(){
-    float sum = 0;
-    vec2 pos = vec2(gl_FragCoord.xy);
-    vec2 viewAreaSize = textureSize(view_sampler,0);
-    for(int x=0;x<10;x++) {
-        for(int y=0;y<10;y++) {
-            vec2 uv = ((vec2(pos.x+rand(vec2(x,y)),pos.y+rand(vec2(y,x))) / viewAreaSize.xy));
-            sum = sum + vec4(texture(view_sampler, uv.xy)).r;
-        }
-    }
-    return sum/100;
-}
-
 void main(){
     vec2 textureSheetSize = textureSize(texture_sampler,0);
     vec2 viewAreaSize = textureSize(view_sampler,0);

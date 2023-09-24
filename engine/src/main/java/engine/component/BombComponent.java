@@ -29,4 +29,9 @@ public class BombComponent implements Component {
     public void setAttackComponentTemplate(String attackComponentTemplate) {
         this.attackComponentTemplate = attackComponentTemplate;
     }
+
+    @Override
+    public void onRemove() {
+
+    }
 }

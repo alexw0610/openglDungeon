@@ -14,4 +14,9 @@ public class CreatedAtComponent implements Component {
     public double getEngineTick() {
         return engineTick;
     }
+
+    @Override
+    public void onRemove() {
+
+    }
 }

@@ -1,0 +1,10 @@
+templateName: "upgradeDashStunDuration"
+type: "UpgradeComponent"
+modifiers:
+  upgradeTitle: "Stat Upgrade: Dash Stun Duration"
+  upgradeIcon: "upgrade_epic"
+  upgradeRarity: "Epic"
+  toolTip: "Increases the stun caused by your dash by 1.5 seconds."
+  upgradeType: "dashStun"
+  upgradeCategory: "playerStatModifier"
+  modifierValue: 1.5

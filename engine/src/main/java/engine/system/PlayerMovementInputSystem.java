@@ -44,9 +44,12 @@ public class PlayerMovementInputSystem {
             }
         }
         if (KeyHandler.getInstance().isKeyForActionPressed("dash")) {
-            if (!entity.hasComponentOfType(DashComponent.class) && ((System.nanoTime() - statComponent.getLastDashed()) > (4.0 * 1000000000))) {
+            if (!entity.hasComponentOfType(DashComponent.class)
+                    && ((System.nanoTime() - statComponent.getLastDashed()) > (statComponent.getDashCooldownSpeed() * 1000000000))) {
                 statComponent.setLastDashed(System.nanoTime());
-                entity.addComponent(new DashComponent(direction, 10.0));
+                DashComponent dashComponent = new DashComponent(direction, 10.0);
+                dashComponent.setDashStunDuration(statComponent.getDashStunDuration());
+                entity.addComponent(dashComponent);
             }
         }
     }

@@ -1,5 +1,6 @@
 package engine.service;
 
+import engine.EntityKeyConstants;
 import engine.component.StatComponent;
 import engine.component.base.CollisionComponent;
 import engine.component.base.RenderComponent;
@@ -10,7 +11,6 @@ import engine.entity.Entity;
 import engine.entity.EntityBuilder;
 import engine.enums.WorldTileType;
 import engine.handler.EntityHandler;
-import engine.handler.UIHandler;
 import engine.object.generation.World;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.joml.Vector2i;
@@ -27,8 +27,6 @@ public class WorldGenerator {
     private static final int UPPER_DEATH_LIMIT = 8;
     private static final int LOWER_DEATH_LIMIT = 2;
     private static final int COME_ALIVE_VALUE = 5;
-    public static final String WORLD_TILE_PREFIX = "WORLD_TILE_";
-
 
     public static World generateLevel() {
         int[][] generationMap = new int[48][48];
@@ -91,11 +89,6 @@ public class WorldGenerator {
                 }
             }
         }
-    }
-
-    public static void clearWorld() {
-        EntityHandler.getInstance().removeAllObjectsWithoutPrefix("PLAYER", "GUN", "CAMERA");
-        UIHandler.getInstance().removeTextObjectsWithPrefix("DT_");
     }
 
     public static int getCaveSize(int x, int y, World world) {
@@ -181,7 +174,7 @@ public class WorldGenerator {
                     }
                 }
                 world.getTile(x, y).setEntity(entity);
-                EntityHandler.getInstance().addObject(WORLD_TILE_PREFIX + RandomStringUtils.randomAlphanumeric(8), entity);
+                EntityHandler.getInstance().addObject(EntityKeyConstants.WORLD_TILE_PREFIX + RandomStringUtils.randomAlphanumeric(8), entity);
             }
         }
     }

@@ -42,4 +42,9 @@ public class ProjectileComponent implements Component {
     public void setDamageOverwrite(double damageOverwrite) {
         this.damageOverwrite = damageOverwrite;
     }
+
+    @Override
+    public void onRemove() {
+
+    }
 }

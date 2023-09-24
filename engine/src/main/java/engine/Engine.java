@@ -14,16 +14,10 @@ import engine.component.base.TransformationComponent;
 import engine.component.tag.ViewSourceTag;
 import engine.entity.Entity;
 import engine.enums.UIGroupKey;
-import engine.handler.EntityHandler;
-import engine.handler.MeshHandler;
-import engine.handler.UIHandler;
-import engine.handler.UIStateHandler;
+import engine.handler.*;
 import engine.object.ui.UIElement;
 import engine.object.ui.UIText;
-import engine.service.InputProcessor;
-import engine.service.MobSpawner;
-import engine.service.RenderService;
-import engine.service.UIService;
+import engine.service.*;
 import engine.system.*;
 import engine.system.base.*;
 import org.joml.Vector2d;
@@ -37,12 +31,14 @@ import static engine.EngineConstants.*;
 
 public class Engine {
 
+    private FPSAnimator fpsAnimator;
     public static double stepTimeDelta = 0;
     private static double lastStepTime = 0;
     private EntityHandler entityHandler;
     private UIHandler uiHandler;
     private boolean started = false;
     private boolean paused = true;
+    private static boolean shutdown = false;
     private boolean alInit = false;
 
     public void start() {
@@ -60,15 +56,16 @@ public class Engine {
         GLProfile glp = GLProfile.getDefault();
         GLCapabilities caps = new GLCapabilities(glp);
         GLWindow window = GLWindow.create(caps);
-        FPSAnimator animator = new FPSAnimator(window, FPS, true);
+        fpsAnimator = new FPSAnimator(window, FPS, true);
         window.addWindowListener(new WindowAdapter() {
             @Override
             public void windowDestroyNotify(WindowEvent arg0) {
                 new Thread(() -> {
-                    if (animator.isStarted()) animator.stop();
-                    ALut.alutExit();
-                    System.exit(0);
+                    if (fpsAnimator.isStarted()) {
+                        fpsAnimator.stop();
+                    }
                 }).start();
+                shutdown = true;
             }
         });
         window.setSize((int) WINDOW_WIDTH, (int) WINDOW_HEIGHT);
@@ -78,11 +75,14 @@ public class Engine {
         window.addKeyListener(inputListener);
         window.addMouseListener(inputListener);
         window.setTitle(TITLE);
-        animator.start();
+        fpsAnimator.start();
         window.setVisible(true);
     }
 
     public void step() {
+        if (shutdown) {
+            cleanupAndShutdown();
+        }
         if (!alInit) {
             ALut.alutInit();
             alInit = true;
@@ -104,8 +104,6 @@ public class Engine {
             UIService.getInstance().updateUI();
         }
         renderUI();
-        InputProcessor.processInput();
-
         long stepTime = java.lang.System.nanoTime();
         stepTimeDelta = (stepTime - lastStepTime);
         lastStepTime = stepTime;
@@ -113,8 +111,8 @@ public class Engine {
     }
 
     private static void clearEphemeralMeshes() {
-        MeshHandler.getInstance().removeMeshesWithPrefix(LightSourceSystem.LIGHT_POLYGON_KEY_PREFIX);
-        MeshHandler.getInstance().removeMeshesWithPrefix(ViewSourceSystem.VIEW_POLYGON_KEY_PREFIX);
+        MeshHandler.getInstance().removeMeshesWithPrefix(EntityKeyConstants.LIGHT_POLYGON_KEY_PREFIX);
+        MeshHandler.getInstance().removeMeshesWithPrefix(EntityKeyConstants.VIEW_POLYGON_KEY_PREFIX);
     }
 
     private static void processEntities() {
@@ -183,6 +181,9 @@ public class Engine {
             if (DamageTextSystem.isResponsibleFor(entity)) {
                 DamageTextSystem.processEntity(entity);
             }
+            if (HealthBarSystem.isResponsibleFor(entity)) {
+                HealthBarSystem.processEntity(entity);
+            }
         }
     }
 
@@ -224,11 +225,10 @@ public class Engine {
     }
 
     private static void renderUI() {
-        List<UIGroupKey> visibleUIGroups = UIStateHandler.getInstance().getVisibleUIGroups();
+        List<UIGroupKey> visibleUIGroups = UISceneService.getInstance().getVisibleUIGroups();
         Collection<UIElement> uiElementsToRender = UIHandler.getInstance()
                 .getAllObjects()
                 .stream()
-                .filter(UIElement::isVisible)
                 .filter(uiElement -> uiElement.getUiGroupKey().equals(UIGroupKey.GENERAL) || visibleUIGroups.contains(uiElement.getUiGroupKey()))
                 .collect(Collectors.toList());
         uiElementsToRender.addAll(UIHandler.getInstance().getAllTextObjects().stream()
@@ -243,6 +243,21 @@ public class Engine {
         for (UIElement uiElement : uiElementsToRender) {
             RenderService.getInstance().renderUI(uiElement);
         }
+    }
+
+    private void cleanupAndShutdown() {
+        if (fpsAnimator.isStarted()) {
+            fpsAnimator.stop();
+        }
+        EntityHandler.getInstance().cleanup();
+        AudioHandler.getInstance().cleanup();
+        MeshHandler.getInstance().cleanup();
+        TextureHandler.getInstance().cleanup();
+        ShaderHandler.getInstance().cleanup();
+        UIHandler.getInstance().cleanup();
+        AudioService.getInstance().cleanup();
+        ALut.alutExit();
+        System.exit(0);
     }
 
     public void setEntityHandler(EntityHandler entityHandler) {
@@ -271,5 +286,9 @@ public class Engine {
 
     public void setPaused(boolean paused) {
         this.paused = paused;
+    }
+
+    public static void requestShutdown() {
+        shutdown = true;
     }
 }

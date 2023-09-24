@@ -17,9 +17,10 @@ public class UIElement {
     private boolean fixedTextureSize;
     private int layer;
     private String textureKey;
-    private boolean visible;
     private Vector3d color;
     private UIGroupKey uiGroupKey;
+
+    private boolean alwaysVisible;
 
     private String elementKey;
 
@@ -37,8 +38,8 @@ public class UIElement {
         this.textureWidth = 1;
         this.textureHeight = 1;
         this.color = new Vector3d(1, 1, 1);
-        this.visible = true;
         this.uiGroupKey = UIGroupKey.GENERAL;
+        this.alwaysVisible = true;
     }
 
     public double getX() {
@@ -145,15 +146,6 @@ public class UIElement {
         this.color = color;
     }
 
-    public boolean isVisible() {
-        return visible;
-    }
-
-    @Deprecated
-    public void setVisible(boolean visible) {
-        this.visible = visible;
-    }
-
     public UIGroupKey getUiGroupKey() {
         return uiGroupKey;
     }
@@ -168,5 +160,13 @@ public class UIElement {
 
     public void setElementKey(String elementKey) {
         this.elementKey = elementKey;
+    }
+
+    public boolean isAlwaysVisible() {
+        return alwaysVisible;
+    }
+
+    public void setAlwaysVisible(boolean alwaysVisible) {
+        this.alwaysVisible = alwaysVisible;
     }
 }

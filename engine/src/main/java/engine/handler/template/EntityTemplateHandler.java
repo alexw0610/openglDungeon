@@ -56,4 +56,9 @@ public class EntityTemplateHandler implements Handler<EntityTemplate> {
     public void removeObject(String key) {
         this.templateMap.remove(key);
     }
+
+    @Override
+    public void cleanup() {
+
+    }
 }

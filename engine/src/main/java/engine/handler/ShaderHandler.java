@@ -30,4 +30,8 @@ public class ShaderHandler {
             boundShaderType = shaderType;
         }
     }
+
+    public void cleanup(){
+        this.shaderMap.values().forEach(Shader::cleanup);
+    }
 }

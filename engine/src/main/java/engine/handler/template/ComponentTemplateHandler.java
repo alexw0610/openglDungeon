@@ -63,6 +63,11 @@ public class ComponentTemplateHandler implements Handler<ComponentTemplate> {
         this.templateMap.remove(key);
     }
 
+    @Override
+    public void cleanup() {
+
+    }
+
     public String getNameForItemTypeId(int itemTypeId) {
         return this.itemTypeIdMap.get(itemTypeId);
     }

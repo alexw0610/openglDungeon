@@ -1,0 +1,10 @@
+templateName: "upgradeDashCooldown"
+type: "UpgradeComponent"
+modifiers:
+  upgradeTitle: "Stat Upgrade: Dash Cooldown"
+  upgradeIcon: "upgrade_rare"
+  upgradeRarity: "Rare"
+  toolTip: "Decreases your dash cooldown by 10%."
+  upgradeType: "dashCooldown"
+  upgradeCategory: "playerStatModifier"
+  modifierValue: 0.10

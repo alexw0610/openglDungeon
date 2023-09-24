@@ -61,4 +61,9 @@ public class Texture {
     public int getHeight() {
         return height;
     }
+
+    public void cleanup() {
+        GL3 gl = GLContext.getCurrentGL().getGL3();
+        gl.glDeleteTextures(1, new int[]{this.textureId}, 0);
+    }
 }

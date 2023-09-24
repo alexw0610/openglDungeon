@@ -1,5 +1,6 @@
 package engine.system;
 
+import engine.EntityKeyConstants;
 import engine.component.*;
 import engine.component.base.AudioComponent;
 import engine.component.base.CollisionComponent;
@@ -13,12 +14,14 @@ import engine.enums.HitBoxType;
 import engine.handler.EntityHandler;
 import engine.object.HitBox;
 import engine.service.util.CollisionUtil;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.joml.Vector2d;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class AttackSystem {
+
     public static void processEntity(Entity entity) {
         AttackComponent attackComponent = entity.getComponentOfType(AttackComponent.class);
         TransformationComponent transformationComponent = entity.getComponentOfType(TransformationComponent.class);
@@ -59,16 +62,18 @@ public class AttackSystem {
 
     private static void handleAttack(AttackComponent attackComponent, TransformationComponent transformationComponent, Entity attackableEntity) {
         StatComponent statComponent = attackableEntity.getComponentOfType(StatComponent.class);
-        handleDamage(attackComponent, attackableEntity, statComponent);
         TransformationComponent targetTransform = attackableEntity.getComponentOfType(TransformationComponent.class);
         createAttackSpriteAtTarget(attackComponent, targetTransform);
-        applyKnockback(attackComponent, transformationComponent, attackableEntity);
-        applyStun(attackComponent, attackableEntity);
+        if (statComponent.getCurrentShield() == 0.0) {
+            applyKnockback(attackComponent, transformationComponent, attackableEntity);
+            applyStun(attackComponent, attackableEntity);
+        }
+        handleDamage(attackComponent, attackableEntity, statComponent);
     }
 
     private static void applyStun(AttackComponent attackComponent, Entity attackableEntity) {
-        if (attackComponent.isStunsTarget()) {
-            attackableEntity.addComponent(new StunComponent(2));
+        if (attackComponent.isStunsTarget() && attackComponent.getStunDuration() > 0.0) {
+            attackableEntity.addComponent(new StunComponent(attackComponent.getStunDuration()));
         }
     }
 
@@ -80,11 +85,11 @@ public class AttackSystem {
                 damage = damage * (1.0 + Math.random());
                 damageTextComponent = new DamageTextComponent(damage);
                 damageTextComponent.setCriticalHit(true);
-            }else{
+            } else {
                 damageTextComponent = new DamageTextComponent(damage);
             }
-            if (statComponent.getMaxArmor() > 0) {
-                double leftOverDamage = Math.max(damage - statComponent.getCurrentArmor(), 0.0);
+            if (statComponent.getMaxShield() > 0) {
+                double leftOverDamage = Math.max(damage - statComponent.getCurrentShield(), 0.0);
                 statComponent.subtractArmorPoints(damage);
                 damage = leftOverDamage;
             }
@@ -99,7 +104,7 @@ public class AttackSystem {
             EntityBuilder.builder()
                     .withComponent(damageTextComponent)
                     .withComponent(attackableEntity.getComponentOfType(TransformationComponent.class))
-                    .buildAndInstantiate();
+                    .buildAndInstantiate(EntityKeyConstants.DAMAGE_TEXT_PREFIX + RandomStringUtils.randomAlphanumeric(6));
         }
     }
 

@@ -1,5 +1,6 @@
 package engine.component;
 
+import engine.handler.UIHandler;
 import engine.object.ui.UIText;
 
 public class DamageTextComponent implements Component {
@@ -48,5 +49,12 @@ public class DamageTextComponent implements Component {
 
     public void setDamageText(UIText damageText) {
         this.damageText = damageText;
+    }
+
+    @Override
+    public void onRemove() {
+        if (getDamageText() != null) {
+            UIHandler.getInstance().removeTextObject(getDamageText().getKey());
+        }
     }
 }

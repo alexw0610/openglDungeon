@@ -1,0 +1,9 @@
+templateName: "upgradeHighVelocityBullet"
+type: "UpgradeComponent"
+modifiers:
+  upgradeTitle: "Bullet Upgrade: High Velocity"
+  upgradeIcon: "upgrade_epic"
+  upgradeRarity: "Epic"
+  toolTip: "Bullet damage increases based on bullet speed. (5dmg/1bs)"
+  upgradeType: "highVelocityBullet"
+  upgradeCategory: "bulletModifier"

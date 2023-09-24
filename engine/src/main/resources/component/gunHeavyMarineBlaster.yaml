@@ -1,0 +1,17 @@
+templateName: "gunHeavyMarineBlaster"
+type: "GunComponent"
+modifiers:
+  gunName: "Heavy Marine Blaster"
+  gunSprite: "heavy_marine_blaster"
+  primaryBaseDamage: 15.0
+  secondaryBaseDamage: 20.0
+  primaryBaseAttackSpeed: 0.45
+  secondaryBaseAttackSpeed: 2.25
+  primaryBaseBulletSpeed: 3.5
+  secondaryBaseBulletSpeed: 3.5
+  primaryAttack: true
+  secondaryAttack: true
+  primaryModifierSlotAAvailable: true
+  secondaryModifierSlotAAvailable: true
+  primaryModifierSlotBAvailable: true
+  secondaryModifierSlotBAvailable: false

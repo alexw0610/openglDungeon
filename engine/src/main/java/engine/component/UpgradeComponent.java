@@ -101,4 +101,9 @@ public class UpgradeComponent implements Component {
         }
         return comparison;
     }
+
+    @Override
+    public void onRemove() {
+
+    }
 }

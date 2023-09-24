@@ -34,6 +34,7 @@ public class UIHandler implements Handler<UIElement> {
     }
 
     public void addObject(String key, UIText object) {
+        object.setKey(key);
         this.texts.put(key, object);
     }
 
@@ -70,6 +71,12 @@ public class UIHandler implements Handler<UIElement> {
         this.elements.remove(key);
     }
 
+    @Override
+    public void cleanup() {
+        this.elements.clear();
+        this.texts.clear();
+    }
+
     public void removeTextObject(String key) {
         this.texts.remove(key);
     }
@@ -95,9 +102,7 @@ public class UIHandler implements Handler<UIElement> {
         }
     }
 
-    @Deprecated
-    public void toggleUIGroupVisible(UIGroupKey targetGroupKey, boolean visible) {
-        this.elements.values().stream().filter(element -> element.getUiGroupKey().equals(targetGroupKey)).forEach(element -> element.setVisible(visible));
-        this.texts.values().stream().filter(text -> text.getUiGroupKey().equals(targetGroupKey)).forEach(text -> text.setVisible(visible));
+    public int getElementCount() {
+        return this.elements.size() + this.texts.size();
     }
 }

@@ -1,34 +1,36 @@
-package engine.handler;
+package engine.service;
 
 import engine.enums.UIGroupKey;
 
 import java.util.LinkedList;
 import java.util.List;
 
-public class UIStateHandler {
+public class UISceneService {
 
-    private static final ThreadLocal<UIStateHandler> INSTANCE = ThreadLocal.withInitial(UIStateHandler::new);
+    private static final ThreadLocal<UISceneService> INSTANCE = ThreadLocal.withInitial(UISceneService::new);
 
     private boolean inventoryVisible;
     private boolean hudVisible;
     private boolean statsVisible;
+    private boolean closeDialogVisible;
 
     private final List<UIGroupKey> visibleUIGroups;
 
-    private UIStateHandler() {
+    private UISceneService() {
         this.inventoryVisible = false;
         this.hudVisible = true;
-        this.statsVisible = true;
+        this.statsVisible = false;
+        this.closeDialogVisible = false;
         visibleUIGroups = new LinkedList<>();
         updateUIPartsVisiblity();
     }
 
-    public static UIStateHandler getInstance() {
+    public static UISceneService getInstance() {
         return INSTANCE.get();
     }
 
-    public static void setInstance(UIStateHandler uiStateHandler) {
-        INSTANCE.set(uiStateHandler);
+    public static void setInstance(UISceneService uiSceneService) {
+        INSTANCE.set(uiSceneService);
     }
 
     public void showCombatUI() {
@@ -41,18 +43,33 @@ public class UIStateHandler {
     public void showOutOfCombatUI() {
         this.inventoryVisible = false;
         this.hudVisible = true;
-        this.statsVisible = true;
+        this.statsVisible = false;
         updateUIPartsVisiblity();
     }
 
     public void showInventory() {
         this.inventoryVisible = true;
+        this.statsVisible = true;
         updateUIPartsVisiblity();
     }
 
-    public void closeInventory() {
+    public void hideInventory() {
+        this.inventoryVisible = false;
+        this.statsVisible = false;
+        updateUIPartsVisiblity();
+    }
+
+    public void showCloseDialog() {
+        this.closeDialogVisible = true;
         this.inventoryVisible = false;
         updateUIPartsVisiblity();
+
+    }
+
+    public void hideCloseDialog() {
+        this.closeDialogVisible = false;
+        updateUIPartsVisiblity();
+
     }
 
     private void updateUIPartsVisiblity() {
@@ -71,13 +88,22 @@ public class UIStateHandler {
         } else {
             this.visibleUIGroups.remove(UIGroupKey.STATS);
         }
+        if (closeDialogVisible) {
+            this.visibleUIGroups.add(UIGroupKey.CLOSE_DIALOG);
+        } else {
+            this.visibleUIGroups.remove(UIGroupKey.CLOSE_DIALOG);
+        }
     }
 
     public boolean isInventoryVisible() {
-        return inventoryVisible;
+        return this.inventoryVisible;
+    }
+
+    public boolean isCloseDialogVisible() {
+        return this.closeDialogVisible;
     }
 
     public List<UIGroupKey> getVisibleUIGroups() {
-        return visibleUIGroups;
+        return this.visibleUIGroups;
     }
 }

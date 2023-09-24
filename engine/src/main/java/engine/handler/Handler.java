@@ -13,4 +13,6 @@ public interface Handler<T> {
     void addObject(T object);
 
     void removeObject(String key);
+
+    void cleanup();
 }

@@ -3,12 +3,14 @@ package engine.service.util;
 import engine.component.GunComponent;
 import engine.component.TooltipComponent;
 import engine.component.UpgradeComponent;
+import engine.enums.UIGroupKey;
 import engine.handler.UIHandler;
 import engine.object.ui.UIElement;
 import engine.object.ui.UIGroup;
 import engine.object.ui.UIText;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.joml.Vector2d;
+import org.joml.Vector3d;
 
 import static engine.EngineConstants.*;
 
@@ -179,5 +181,18 @@ public class UIUtil {
         uiGroup.addUiElements(tooltipBackground);
         uiGroup.addUiTexts(upgradeTitle, type, primaryAttack, secondaryAttack, modifierSlots, modSlotPrimary, modSlotSecondary);
         return uiGroup;
+    }
+
+    public static void instantiateUITextTitleValuePair(String title, double scale, double xTitle, double y, Vector3d textColorTitle, String value, double xValue, Vector3d textColorValue, UIGroupKey uiGroupKey, String uiElementKeyPrefix) {
+        instantiateUIText(title, scale, xTitle, y, textColorTitle, uiGroupKey, uiElementKeyPrefix);
+        instantiateUIText(value, scale, xValue, y, textColorValue, uiGroupKey, uiElementKeyPrefix);
+    }
+
+    public static void instantiateUIText(String text, double scale, double x, double y, Vector3d textColor, UIGroupKey uiGroupKey, String uiElementKeyPrefix) {
+        UIText uiText = new UIText(text, x, y, 1, 1, scale);
+        uiText.setUiGroupKey(uiGroupKey);
+        uiText.setLayer(2);
+        uiText.setColor(textColor);
+        UIHandler.getInstance().addObject(uiElementKeyPrefix + RandomStringUtils.randomAlphanumeric(6), uiText);
     }
 }

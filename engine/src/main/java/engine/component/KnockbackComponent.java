@@ -44,4 +44,9 @@ public class KnockbackComponent implements Component {
     public void setHasCollided() {
         this.hasCollided = true;
     }
+
+    @Override
+    public void onRemove() {
+
+    }
 }

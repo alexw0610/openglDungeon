@@ -32,4 +32,9 @@ public class AudioComponent implements Component {
     public void setLoop(boolean loop) {
         this.loop = loop;
     }
+
+    @Override
+    public void onRemove() {
+
+    }
 }

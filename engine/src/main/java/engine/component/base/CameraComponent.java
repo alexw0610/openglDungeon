@@ -23,4 +23,9 @@ public class CameraComponent implements Component {
     public void setCameraZoom(double cameraZoom) {
         this.cameraZoom = cameraZoom;
     }
+
+    @Override
+    public void onRemove() {
+
+    }
 }

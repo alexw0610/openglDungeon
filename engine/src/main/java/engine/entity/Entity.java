@@ -23,6 +23,9 @@ public class Entity implements Serializable {
     }
 
     public void removeComponent(Class<? extends Component> component) {
+        if (hasComponentOfType(component)) {
+            getComponentOfType(component).onRemove();
+        }
         components.remove(component);
     }
 
@@ -40,6 +43,11 @@ public class Entity implements Serializable {
 
     public void setEntityId(String entityId) {
         this.entityId = entityId;
+    }
+
+    public void onRemove(){
+        this.components.values().forEach(Component::onRemove);
+        this.components.clear();
     }
 
     @Override

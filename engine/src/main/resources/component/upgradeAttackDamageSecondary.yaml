@@ -7,5 +7,5 @@ modifiers:
   toolTip: "Increases your secondary base bullet damage by 5%."
   upgradeType: "attackDamage"
   upgradeSlot: "secondary"
-  upgradeCategory: "statModifier"
+  upgradeCategory: "gunStatModifier"
   modifierValue: 1.05

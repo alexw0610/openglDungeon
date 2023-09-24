@@ -1,0 +1,17 @@
+templateName: "gunAdvancedScoutBlaster"
+type: "GunComponent"
+modifiers:
+  gunName: "Advanced Scout Blaster"
+  gunSprite: "advanced_scout_blaster"
+  primaryBaseDamage: 10.0
+  secondaryBaseDamage: 18.0
+  primaryBaseAttackSpeed: 0.45
+  secondaryBaseAttackSpeed: 2.5
+  primaryBaseBulletSpeed: 3.5
+  secondaryBaseBulletSpeed: 5.0
+  primaryAttack: true
+  secondaryAttack: true
+  primaryModifierSlotAAvailable: true
+  secondaryModifierSlotAAvailable: false
+  primaryModifierSlotBAvailable: true
+  secondaryModifierSlotBAvailable: false

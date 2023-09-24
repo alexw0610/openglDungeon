@@ -7,6 +7,7 @@ out vec2 textureUv;
 out double fixedSize;
 out double spriteSize;
 out vec3 color;
+out double alwaysVisible;
 
 
 layout (std140, column_major, binding = 2) uniform UBO{
@@ -22,6 +23,7 @@ layout (std140, column_major, binding = 2) uniform UBO{
     uniform double textureHeight;
     uniform dvec3 color;
     uniform double spriteSize;
+    uniform double alwaysVisible;
 } ubo;
 
 void main()
@@ -30,6 +32,7 @@ void main()
     spriteSize = ubo.spriteSize;
     textureUv = vec2(textureIn.x,textureIn.y);
     color = vec3(ubo.color.rgb);
+    alwaysVisible = ubo.alwaysVisible;
 
     vec3 position = vec3(vertexIn.x,vertexIn.y,vertexIn.z);
 

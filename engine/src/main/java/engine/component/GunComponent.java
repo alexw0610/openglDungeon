@@ -7,8 +7,8 @@ public class GunComponent implements Component {
     private double secondaryBaseDamage;
     private double primaryBaseAttackSpeed;
     private double secondaryBaseAttackSpeed;
-    private double primaryBulletSpeed;
-    private double secondaryBulletSpeed;
+    private double primaryBaseBulletSpeed;
+    private double secondaryBaseBulletSpeed;
     private boolean primaryAttack;
     private boolean secondaryAttack;
     private boolean primaryModifierSlotAAvailable;
@@ -68,20 +68,20 @@ public class GunComponent implements Component {
         this.secondaryBaseAttackSpeed = secondaryBaseAttackSpeed;
     }
 
-    public double getPrimaryBulletSpeed() {
-        return primaryBulletSpeed;
+    public double getPrimaryBaseBulletSpeed() {
+        return primaryBaseBulletSpeed;
     }
 
-    public void setPrimaryBulletSpeed(Double primaryBulletSpeed) {
-        this.primaryBulletSpeed = primaryBulletSpeed;
+    public void setPrimaryBaseBulletSpeed(Double primaryBaseBulletSpeed) {
+        this.primaryBaseBulletSpeed = primaryBaseBulletSpeed;
     }
 
-    public double getSecondaryBulletSpeed() {
-        return secondaryBulletSpeed;
+    public double getSecondaryBaseBulletSpeed() {
+        return secondaryBaseBulletSpeed;
     }
 
-    public void setSecondaryBulletSpeed(Double secondaryBulletSpeed) {
-        this.secondaryBulletSpeed = secondaryBulletSpeed;
+    public void setSecondaryBaseBulletSpeed(Double secondaryBaseBulletSpeed) {
+        this.secondaryBaseBulletSpeed = secondaryBaseBulletSpeed;
     }
 
     public boolean isPrimaryAttack() {
@@ -162,5 +162,10 @@ public class GunComponent implements Component {
 
     public void setSecondaryModifierSlotB(UpgradeComponent secondaryModifierSlotB) {
         this.secondaryModifierSlotB = secondaryModifierSlotB;
+    }
+
+    @Override
+    public void onRemove() {
+
     }
 }

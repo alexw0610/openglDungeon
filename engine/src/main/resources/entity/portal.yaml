@@ -1,0 +1,34 @@
+templateName: "portal"
+components:
+  - type: "base.TransformationComponent"
+  - type: "base.RenderComponent"
+    arguments:
+      meshKey: "QUAD"
+      textureKey: "portal"
+      shaderType: "shader"
+      scale: 1.5
+      layer: 5
+    modifiers:
+      alwaysVisible: false
+      shadeless: true
+      spriteSize: 16.0
+  - type: "base.AnimationComponent"
+    arguments:
+      animationSpeed: 100.0
+      animationContinuous: true
+      animationLength: 4
+  - type: "base.CollisionComponent"
+    arguments:
+      hitBoxType: "AABB"
+      hitBoxSize: 1.0
+      obstructsMovement: false
+  - type: "tag.StartLevelTag"
+  - type: "tag.ItemTag"
+  - type: "base.PhysicsComponent"
+  - type: "base.LightSourceComponent"
+    arguments:
+      lightColorR: 0.5
+      lightColorG: 0.5
+      lightColorB: 1.7
+      lightStrength: 3.0
+      lightFallOff: 0.03

@@ -45,4 +45,9 @@ public class BossComponent implements Component {
     public void setAddSpawnIntervalSeconds(double addSpawnIntervalSeconds) {
         this.addSpawnIntervalSeconds = addSpawnIntervalSeconds;
     }
+
+    @Override
+    public void onRemove() {
+
+    }
 }

@@ -1,8 +1,9 @@
 package engine.system;
 
+import engine.EntityKeyConstants;
 import engine.component.AIComponent;
 import engine.component.BossComponent;
-import engine.component.GunComponent;
+import engine.component.ShieldComponent;
 import engine.component.StatComponent;
 import engine.component.base.*;
 import engine.component.tag.*;
@@ -10,39 +11,38 @@ import engine.entity.Entity;
 import engine.entity.EntityBuilder;
 import engine.enums.WorldTileType;
 import engine.handler.EntityHandler;
-import engine.handler.UIStateHandler;
 import engine.service.LootSpawner;
-import engine.service.MobSpawner;
-import engine.service.WorldGenerator;
+import engine.service.UISceneService;
+import engine.service.WorldSceneService;
 import org.apache.commons.lang3.RandomStringUtils;
 
 public class StatSystem {
+
     public static void processEntity(Entity entity) {
         StatComponent statComponent = entity.getComponentOfType(StatComponent.class);
         TransformationComponent transformationComponent = entity.getComponentOfType(TransformationComponent.class);
         if (!statComponent.isDead()) {
+            if (statComponent.getCurrentShield() > 0.0 && !entity.hasComponentOfType(ShieldComponent.class)) {
+                entity.addComponent(new ShieldComponent(transformationComponent));
+            } else if (statComponent.getCurrentShield() == 0.0 && entity.hasComponentOfType(ShieldComponent.class)) {
+                entity.removeComponent(ShieldComponent.class);
+            }
             if (statComponent.getCurrentHealthpoints() <= 0) {
                 handleEntityDeath(entity, statComponent, transformationComponent);
             }
             if (entity.hasComponentOfType(PlayerTag.class)
                     && statComponent.getXPPercentage() == 1.0) {
-                handleLevelUp(entity, statComponent);
+                handleLevelUp(statComponent);
             }
         }
     }
 
-    private static void handleLevelUp(Entity entity, StatComponent statComponent) {
+    private static void handleLevelUp(StatComponent statComponent) {
         statComponent.setLevel(statComponent.getLevel() + 1);
-        statComponent.setXp(0);
+        statComponent.setXp(0.0);
         statComponent.healToFull();
-        MobSpawner.clearMobs();
-        MobSpawner.toggleMobSpawning(false);
-        WorldGenerator.clearWorld();
-        WorldGenerator.generateSafeRoom();
-        LootSpawner.spawnLootOptions();
-        UIStateHandler.getInstance().showOutOfCombatUI();
-        entity.getComponentOfType(TransformationComponent.class).setPositionX(5);
-        entity.getComponentOfType(TransformationComponent.class).setPositionY(5);
+        WorldSceneService.loadSafeZone();
+        UISceneService.getInstance().showOutOfCombatUI();
     }
 
     private static void handleEntityDeath(Entity entity, StatComponent statComponent, TransformationComponent transformationComponent) {
@@ -71,9 +71,9 @@ public class StatSystem {
             }
             if (entity.hasComponentOfType(BossComponent.class)) {
                 LootSpawner.spawnBossLoot();
-                MobSpawner.clearMobs();
+                LootSpawner.spawnPortal();
                 Entity player = EntityHandler.getInstance().getEntityWithComponent(PlayerTag.class);
-                UIStateHandler.getInstance().showOutOfCombatUI();
+                UISceneService.getInstance().showOutOfCombatUI();
                 player.getComponentOfType(StatComponent.class).healToFull();
                 player.getComponentOfType(StatComponent.class).setLevel(player.getComponentOfType(StatComponent.class).getLevel() + 1);
             }
@@ -86,8 +86,8 @@ public class StatSystem {
         audioComponent.setPlayOnce(true);
         entity.addComponent(audioComponent);
         entity.removeComponent(LightSourceComponent.class);
-        Entity gun = EntityHandler.getInstance().getEntityWithComponent(GunComponent.class);
-        EntityHandler.getInstance().removeObject(gun.getEntityId());
+        entity.getComponentOfType(StatComponent.class).setEquippedGun(null);
+        EntityHandler.getInstance().removeObject("GUN");
     }
 
     private static void handleXPDrops(TransformationComponent transformationComponent) {
@@ -100,9 +100,9 @@ public class StatSystem {
                     .build();
             xp.getComponentOfType(RenderComponent.class).setTextureKey("xp");
             xp.getComponentOfType(RenderComponent.class).setScale(0.6 + ((Math.random() - 0.5) * 0.2));
-            addRandomDropMomentum(xp);
             xp.addComponent(new XPTag());
-            EntityHandler.getInstance().addObject("ITEM_" + RandomStringUtils.randomAlphanumeric(8), xp);
+            addRandomDropMomentum(xp);
+            EntityHandler.getInstance().addObject(EntityKeyConstants.ITEM_ENTITY_PREFIX + RandomStringUtils.randomAlphanumeric(8), xp);
         }
     }
 
@@ -120,7 +120,7 @@ public class StatSystem {
             medkit.getComponentOfType(RenderComponent.class).setTextureKey("medkit");
             addRandomDropMomentum(medkit);
             medkit.addComponent(new MedKitTag());
-            EntityHandler.getInstance().addObject("ITEM_" + RandomStringUtils.randomAlphanumeric(8), medkit);
+            EntityHandler.getInstance().addObject(EntityKeyConstants.ITEM_ENTITY_PREFIX + RandomStringUtils.randomAlphanumeric(8), medkit);
         }
     }
 

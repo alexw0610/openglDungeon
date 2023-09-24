@@ -76,7 +76,6 @@ public class Shader {
         gl.glUseProgram(program);
     }
 
-
     private void printErrLog(int shader) {
         GL3 gl = GLContext.getCurrentGL().getGL3();
         IntBuffer log_length = IntBuffer.allocate(1);
@@ -85,6 +84,13 @@ public class Shader {
         byte[] bytes = message.array();
         String output = new String(bytes, StandardCharsets.UTF_8);
         System.out.println(output);
+    }
+
+    public void cleanup() {
+        GL3 gl = GLContext.getCurrentGL().getGL3();
+        gl.glDeleteShader(this.vs);
+        gl.glDeleteShader(this.fs);
+        gl.glDeleteProgram(this.program);
     }
 
 }

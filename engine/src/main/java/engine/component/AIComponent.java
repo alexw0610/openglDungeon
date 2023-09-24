@@ -59,4 +59,9 @@ public class AIComponent implements Component {
     public void setCurrentTarget(Entity currentTarget) {
         this.currentTarget = currentTarget;
     }
+
+    @Override
+    public void onRemove() {
+
+    }
 }

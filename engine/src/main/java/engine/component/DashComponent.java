@@ -9,6 +9,8 @@ public class DashComponent implements Component {
     private double dashVelocity;
     private final double dashStartedGameTimeNano;
 
+    private double dashStunDuration;
+
     private boolean hasCollided;
 
     public DashComponent(Vector2d dashDirection, double dashVelocity) {
@@ -16,6 +18,7 @@ public class DashComponent implements Component {
         this.dashVelocity = dashVelocity;
         this.dashStartedGameTimeNano = System.nanoTime();
         this.hasCollided = false;
+        this.dashStunDuration = 0.0;
     }
 
     public Vector2d getDashDirection() {
@@ -44,5 +47,18 @@ public class DashComponent implements Component {
 
     public void setHasCollided() {
         this.hasCollided = true;
+    }
+
+    public double getDashStunDuration() {
+        return dashStunDuration;
+    }
+
+    public void setDashStunDuration(double dashStunDuration) {
+        this.dashStunDuration = dashStunDuration;
+    }
+
+    @Override
+    public void onRemove() {
+
     }
 }

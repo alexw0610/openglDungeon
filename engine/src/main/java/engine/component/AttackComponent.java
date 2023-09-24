@@ -17,6 +17,8 @@ public class AttackComponent implements Component {
     private String texture;
     private Class<Component> targetComponentConstraint;
 
+    private double stunDuration;
+
     private double criticalHitChance;
 
     public AttackComponent(String name) {
@@ -30,6 +32,7 @@ public class AttackComponent implements Component {
         this.affectsTerrain = false;
         this.stunsTarget = false;
         this.criticalHitChance = 0.0;
+        this.stunDuration = 0.0;
     }
 
     public String getAttackName() {
@@ -130,5 +133,18 @@ public class AttackComponent implements Component {
 
     public void setCriticalHitChance(double criticalHitChance) {
         this.criticalHitChance = criticalHitChance;
+    }
+
+    public double getStunDuration() {
+        return stunDuration;
+    }
+
+    public void setStunDuration(Double stunDuration) {
+        this.stunDuration = stunDuration;
+    }
+
+    @Override
+    public void onRemove() {
+
     }
 }

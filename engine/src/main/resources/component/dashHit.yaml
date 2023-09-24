@@ -10,3 +10,4 @@ modifiers:
   texture: "explosion"
   affectsTerrain: true
   stunsTarget: true
+  stunDuration: 0.0

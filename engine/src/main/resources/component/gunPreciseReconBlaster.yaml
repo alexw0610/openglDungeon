@@ -1,0 +1,17 @@
+templateName: "gunPreciseReconBlaster"
+type: "GunComponent"
+modifiers:
+  gunName: "Precise Recon Blaster"
+  gunSprite: "precise_recon_blaster"
+  primaryBaseDamage: 20.0
+  secondaryBaseDamage: 40.0
+  primaryBaseAttackSpeed: 0.45
+  secondaryBaseAttackSpeed: 5.0
+  primaryBaseBulletSpeed: 3.5
+  secondaryBaseBulletSpeed: 5.5
+  primaryAttack: true
+  secondaryAttack: true
+  primaryModifierSlotAAvailable: true
+  secondaryModifierSlotAAvailable: true
+  primaryModifierSlotBAvailable: true
+  secondaryModifierSlotBAvailable: true

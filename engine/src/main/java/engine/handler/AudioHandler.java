@@ -2,7 +2,6 @@ package engine.handler;
 
 import engine.loader.AudioLoader;
 import engine.object.audio.Audio;
-import engine.service.AudioService;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -33,5 +32,9 @@ public class AudioHandler {
             }
         }
         return null;
+    }
+
+    public void cleanup() {
+        audioMap.values().forEach(Audio::delete);
     }
 }

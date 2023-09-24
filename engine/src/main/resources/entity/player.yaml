@@ -29,14 +29,15 @@ components:
       hitBoxSize: 0.33
   - type: "StatComponent"
     modifiers:
-      maxHealthPoints: 40.0
-      movementSpeed: 2.5
+      maxHealthPoints: 50.0
+      movementSpeed: 3.0
       dropsItems: false
       dropsXP: false
+      maxShield: 10.0
   - type: "base.LightSourceComponent"
     arguments:
-      lightColorR: 2.0
-      lightColorG: 0.9
-      lightColorB: 0.7
-      lightStrength: 3.0
+      lightColorR: 0.6
+      lightColorG: 0.7
+      lightColorB: 0.9
+      lightStrength: 2.0
       lightFallOff: 0.01

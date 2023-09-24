@@ -16,4 +16,9 @@ public class TooltipComponent implements Component {
     public void setTooltip(String tooltip) {
         this.tooltip = tooltip;
     }
+
+    @Override
+    public void onRemove() {
+
+    }
 }

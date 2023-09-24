@@ -144,4 +144,9 @@ public class RenderComponent implements Component {
     public void setSpriteSize(Double spriteSize) {
         this.spriteSize = spriteSize;
     }
+
+    @Override
+    public void onRemove() {
+
+    }
 }

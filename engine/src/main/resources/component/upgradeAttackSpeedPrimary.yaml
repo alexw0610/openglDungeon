@@ -7,5 +7,5 @@ modifiers:
   toolTip: "Increases your primary attack speed by 0.05 attacks per second."
   upgradeType: "attackSpeed"
   upgradeSlot: "primary"
-  upgradeCategory: "statModifier"
+  upgradeCategory: "gunStatModifier"
   modifierValue: 0.05

@@ -59,4 +59,9 @@ public class CollisionComponent implements Component {
     public void setOtherApplyComponents(String otherApplyComponents) {
         this.otherApplyComponents = otherApplyComponents;
     }
+
+    @Override
+    public void onRemove() {
+
+    }
 }

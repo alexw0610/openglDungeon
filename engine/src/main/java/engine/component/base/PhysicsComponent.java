@@ -52,4 +52,9 @@ public class PhysicsComponent implements Component {
     public void setLastDash(double lastDash) {
         this.lastDash = lastDash;
     }
+
+    @Override
+    public void onRemove() {
+
+    }
 }

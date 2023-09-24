@@ -31,6 +31,8 @@ public class KeyHandler {
         actionToKeyMap.put("zoomCameraOut", KeyEvent.VK_PAGE_UP);
 
         actionToKeyMap.put("openInventory", KeyEvent.VK_I);
+        actionToKeyMap.put("closeGame", KeyEvent.VK_ESCAPE);
+        actionToKeyMap.put("resumeGame", KeyEvent.VK_ENTER);
         actionToKeyMap.put("placeBomb", KeyEvent.VK_E);
     }
 
