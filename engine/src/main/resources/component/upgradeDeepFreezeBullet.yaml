@@ -1,0 +1,11 @@
+templateName: "upgradeDeepFreezeBullet"
+type: "UpgradeComponent"
+modifiers:
+  upgradeTitle: "Bullet Upgrade: Deep Freeze"
+  upgradeIcon: "upgrade_epic"
+  upgradeRarity: "Epic"
+  toolTip: "Hitting targets currently slowed by freezing bullets, deep freezes them in place for 3 seconds."
+  upgradeType: "deep_freeze"
+  upgradeCategory: "bulletModifier"
+  upgradeSlot: "Secondary"
+  minSpawnLevel: 10

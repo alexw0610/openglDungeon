@@ -41,8 +41,8 @@ public class PhysicsSystem {
             Vector2d dir = new Vector2d();
             moveToTarget.sub(transformationComponent.getPosition(), dir);
             dir.normalize();
-            double x = physicsComponent.getMomentumX() + ((Engine.stepTimeDelta * STEP_TIME_FACTOR) * (dir.x() * statComponent.getMovementSpeed()));
-            double y = physicsComponent.getMomentumY() + ((Engine.stepTimeDelta * STEP_TIME_FACTOR) * (dir.y() * statComponent.getMovementSpeed()));
+            double x = physicsComponent.getMomentumX() + ((Engine.stepTimeDelta * STEP_TIME_FACTOR) * (dir.x() * (statComponent.getMovementSpeed() * statComponent.getMovementSpeedModifier())));
+            double y = physicsComponent.getMomentumY() + ((Engine.stepTimeDelta * STEP_TIME_FACTOR) * (dir.y() * (statComponent.getMovementSpeed() * statComponent.getMovementSpeedModifier())));
             physicsComponent.setMomentumX(x);
             physicsComponent.setMomentumY(y);
         }

@@ -1,7 +1,7 @@
-templateName: "slashAttackAlien"
+templateName: "meleeAttack"
 type: "AttackComponent"
 arguments:
-  name: "slashAttackAlien"
+  name: "meleeAttack"
 modifiers:
   aoE: true
   damage: 9.0

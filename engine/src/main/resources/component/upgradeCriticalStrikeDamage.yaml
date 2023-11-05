@@ -1,0 +1,11 @@
+templateName: "upgradeCriticalStrikeDamage"
+type: "UpgradeComponent"
+modifiers:
+  upgradeTitle: "Stat Upgrade: Critical Strike Damage"
+  upgradeIcon: "upgrade_rare"
+  upgradeRarity: "Rare"
+  toolTip: "Increases your critical strike bonus damage by 10%."
+  upgradeType: "criticalStrikeChance"
+  upgradeCategory: "statModifier"
+  modifierValue: 0.10
+  minSpawnLevel: 0

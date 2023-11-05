@@ -18,17 +18,9 @@ components:
       animationLength: 2
   - type: "ProjectileComponent"
     modifiers:
-        onCollisionAttack: "hitAttackBullet"
-        speed: 6.5
+        onCollisionAttack: "projectileAttack"
   - type: "base.CollisionComponent"
     arguments:
       hitBoxType: "CIRCLE"
       hitBoxSize: 0.25
       obstructsMovement: false
-  - type: "base.LightSourceComponent"
-    arguments:
-      lightColorR: 0.8
-      lightColorG: 0.9
-      lightColorB: 1.7
-      lightStrength: 1.5
-      lightFallOff: 0.2

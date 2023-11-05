@@ -1,0 +1,10 @@
+templateName: "upgradeLifestealBullet"
+type: "UpgradeComponent"
+modifiers:
+  upgradeTitle: "Bullet Upgrade: Lifesteal"
+  upgradeIcon: "upgrade_legendary"
+  upgradeRarity: "Legendary"
+  toolTip: "2% of damage caused is gained as HP"
+  upgradeType: "lifesteal"
+  upgradeCategory: "bulletModifier"
+  minSpawnLevel: 10

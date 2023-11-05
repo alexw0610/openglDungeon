@@ -4,7 +4,8 @@ public enum UpgradeRarity {
 
     COMMON("common", 0),
     RARE("rare", 1),
-    EPIC("epic", 2);
+    EPIC("epic", 2),
+    LEGENDARY("legendary", 3);
 
     private final String key;
     private final int rank;

@@ -1,0 +1,10 @@
+templateName: "upgradeExplosiveBullet"
+type: "UpgradeComponent"
+modifiers:
+  upgradeTitle: "Bullet Upgrade: Explosive"
+  upgradeIcon: "upgrade_epic"
+  upgradeRarity: "Epic"
+  toolTip: "Bullets detonate on impact, damaging all enemies in an area."
+  upgradeType: "explosive"
+  upgradeCategory: "bulletModifier"
+  minSpawnLevel: 5

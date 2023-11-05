@@ -1,0 +1,11 @@
+templateName: "upgradeCriticalStrikeChance"
+type: "UpgradeComponent"
+modifiers:
+  upgradeTitle: "Stat Upgrade: Critical Strike Chance"
+  upgradeIcon: "upgrade_rare"
+  upgradeRarity: "Rare"
+  toolTip: "Increases your chance to critically strike by 2%."
+  upgradeType: "criticalStrikeChance"
+  upgradeCategory: "statModifier"
+  modifierValue: 1.02
+  minSpawnLevel: 0

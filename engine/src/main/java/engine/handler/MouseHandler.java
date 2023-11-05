@@ -22,7 +22,7 @@ public class MouseHandler {
     private MouseHandler() {
         actionToMouseMap = new HashMap<>();
         actionToMouseMap.put("mouseButtonPrimary", MouseEvent.BUTTON1);
-        actionToMouseMap.put("mouseButtonSecondary", MouseEvent.BUTTON2);
+        actionToMouseMap.put("mouseButtonSecondary", MouseEvent.BUTTON3);
     }
 
     public static MouseHandler getInstance() {

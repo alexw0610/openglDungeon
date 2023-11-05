@@ -18,6 +18,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static engine.EngineConstants.RENDER_DISTANCE;
+
 public class ViewSourceSystem {
 
     public static void processEntity(Entity entity) {
@@ -30,7 +32,7 @@ public class ViewSourceSystem {
                 .unordered()
                 .mapToObj(angle -> {
                     Vector3d tempDir = new Vector3d(1, 0, 0).rotateZ(1.047198 * angle);
-                    return VisibilityPolygonFactory.generateVisibilityPolygon(entities, transformationComponent.getPosition().add(new Vector2d(tempDir.x, tempDir.y)), 10);
+                    return VisibilityPolygonFactory.generateVisibilityPolygon(entities, transformationComponent.getPosition().add(new Vector2d(tempDir.x, tempDir.y)), RENDER_DISTANCE);
                 })
                 .collect(Collectors.toList());
         for (Mesh mesh : meshes) {

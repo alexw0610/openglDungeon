@@ -13,6 +13,7 @@ public class UISceneService {
     private boolean hudVisible;
     private boolean statsVisible;
     private boolean closeDialogVisible;
+    private boolean gameOverDialogVisible;
 
     private final List<UIGroupKey> visibleUIGroups;
 
@@ -21,6 +22,7 @@ public class UISceneService {
         this.hudVisible = true;
         this.statsVisible = false;
         this.closeDialogVisible = false;
+        this.gameOverDialogVisible = false;
         visibleUIGroups = new LinkedList<>();
         updateUIPartsVisiblity();
     }
@@ -37,6 +39,7 @@ public class UISceneService {
         this.inventoryVisible = false;
         this.hudVisible = true;
         this.statsVisible = false;
+        this.gameOverDialogVisible = false;
         updateUIPartsVisiblity();
     }
 
@@ -44,6 +47,7 @@ public class UISceneService {
         this.inventoryVisible = false;
         this.hudVisible = true;
         this.statsVisible = false;
+        this.gameOverDialogVisible = false;
         updateUIPartsVisiblity();
     }
 
@@ -62,6 +66,15 @@ public class UISceneService {
     public void showCloseDialog() {
         this.closeDialogVisible = true;
         this.inventoryVisible = false;
+        this.gameOverDialogVisible = false;
+        updateUIPartsVisiblity();
+
+    }
+
+    public void showGameOverDialog() {
+        this.gameOverDialogVisible = true;
+        this.inventoryVisible = false;
+        this.closeDialogVisible = false;
         updateUIPartsVisiblity();
 
     }
@@ -93,6 +106,11 @@ public class UISceneService {
         } else {
             this.visibleUIGroups.remove(UIGroupKey.CLOSE_DIALOG);
         }
+        if (gameOverDialogVisible) {
+            this.visibleUIGroups.add(UIGroupKey.GAME_OVER_DIALOG);
+        } else {
+            this.visibleUIGroups.remove(UIGroupKey.GAME_OVER_DIALOG);
+        }
     }
 
     public boolean isInventoryVisible() {
@@ -101,6 +119,10 @@ public class UISceneService {
 
     public boolean isCloseDialogVisible() {
         return this.closeDialogVisible;
+    }
+
+    public boolean isGameOverDialogVisible() {
+        return this.gameOverDialogVisible;
     }
 
     public List<UIGroupKey> getVisibleUIGroups() {

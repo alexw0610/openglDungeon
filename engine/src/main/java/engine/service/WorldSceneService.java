@@ -16,43 +16,39 @@ public class WorldSceneService {
         World world = WorldGenerator.generateSafeRoom();
         EntityHandler.getInstance().setWorld(world);
         MobSpawner.toggleMobSpawning(false);
+        MobSpawner.toggleBossFight(false);
         LootSpawner.spawnSafeZoneLoot();
-        LootSpawner.spawnPortal();
+        LootSpawner.spawnPortal(4.5, 13);
 
         Entity player = EntityHandler.getInstance().getEntityWithId(PLAYER_ENTITY_KEY);
         player.getComponentOfType(TransformationComponent.class).setPositionX(4.5);
         player.getComponentOfType(TransformationComponent.class).setPositionY(5);
-
-        System.out.println("Entities: " + EntityHandler.getInstance().getEntityCount());
-        System.out.println("UI Elements: " + UIHandler.getInstance().getElementCount());
     }
 
     public static void loadLevel() {
         clearWorld();
         World world = WorldGenerator.generateLevel();
         EntityHandler.getInstance().setWorld(world);
-        MobSpawner.toggleMobSpawning(true);
 
         Entity player = EntityHandler.getInstance().getEntityWithId(PLAYER_ENTITY_KEY);
         WorldGenerator.setPlayerSpawnPosition(player, world);
 
-        System.out.println("Entities: " + EntityHandler.getInstance().getEntityCount());
-        System.out.println("UI Elements: " + UIHandler.getInstance().getElementCount());
+        MobSpawner.toggleBossFight(false);
+        MobSpawner.toggleMobSpawning(true);
     }
 
     public static void loadBossFight() {
         clearWorld();
         World world = WorldGenerator.generateBossRoom();
         EntityHandler.getInstance().setWorld(world);
-        MobSpawner.toggleMobSpawning(false);
-        MobSpawner.spawnBoss();
 
         Entity player = EntityHandler.getInstance().getEntityWithId(PLAYER_ENTITY_KEY);
-        player.getComponentOfType(TransformationComponent.class).setPositionX(8);
+        player.getComponentOfType(TransformationComponent.class).setPositionX(16);
         player.getComponentOfType(TransformationComponent.class).setPositionY(3);
 
-        System.out.println("Entities: " + EntityHandler.getInstance().getEntityCount());
-        System.out.println("UI Elements: " + UIHandler.getInstance().getElementCount());
+        MobSpawner.toggleMobSpawning(true);
+        MobSpawner.toggleBossFight(true);
+        MobSpawner.spawnBoss();
     }
 
     private static void clearWorld() {
@@ -63,6 +59,7 @@ public class WorldSceneService {
         EntityHandler.getInstance().removeObjectsWithPrefix(EntityKeyConstants.PORTAL_KEY);
         EntityHandler.getInstance().removeObjectsWithPrefix(EntityKeyConstants.AUDIO_ENTITY_PREFIX);
         EntityHandler.getInstance().removeObjectsWithPrefix(EntityKeyConstants.LOOT_CHOICE_PREFIX);
+        EntityHandler.getInstance().removeObjectsWithPrefix(EntityKeyConstants.CLUTTER_ENTITY_PREFIX);
         UIHandler.getInstance().removeAllObjectsWithPrefix(DAMAGE_TEXT_PREFIX);
         UIHandler.getInstance().removeAllObjectsWithPrefix(HEALTH_BAR_PREFIX);
     }

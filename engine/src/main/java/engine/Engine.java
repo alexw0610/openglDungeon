@@ -178,6 +178,9 @@ public class Engine {
             if (StunSystem.isResponsibleFor(entity)) {
                 StunSystem.processEntity(entity);
             }
+            if (DoTSystem.isResponsibleFor(entity)) {
+                DoTSystem.processEntity(entity);
+            }
             if (DamageTextSystem.isResponsibleFor(entity)) {
                 DamageTextSystem.processEntity(entity);
             }

@@ -1,0 +1,11 @@
+templateName: "upgradeExecutionBullet"
+type: "UpgradeComponent"
+modifiers:
+  upgradeTitle: "Bullet Upgrade: Execution"
+  upgradeIcon: "upgrade_epic"
+  upgradeRarity: "Epic"
+  toolTip: "Critically striking a target under 20% health results in an execute."
+  upgradeType: "execution"
+  upgradeSlot: "Secondary"
+  upgradeCategory: "bulletModifier"
+  minSpawnLevel: 10

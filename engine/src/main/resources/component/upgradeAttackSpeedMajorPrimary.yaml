@@ -6,6 +6,7 @@ modifiers:
   upgradeRarity: "Rare"
   toolTip: "Increases your primary attack speed by 0.15 attacks per second."
   upgradeType: "attackSpeed"
-  upgradeSlot: "primary"
+  upgradeSlot: "Primary"
   upgradeCategory: "gunStatModifier"
   modifierValue: 0.15
+  minSpawnLevel: 5

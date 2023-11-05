@@ -57,18 +57,18 @@ public class CollisionSystem {
         Optional<Entity> firstCollision;
         firstCollision = getProjectileCollisionEntity(entity, collisions);
         if (firstCollision.isPresent()) {
-            AttackComponent attack = (AttackComponent) ComponentBuilder.fromTemplate(projectileComponent.getOnCollisionAttack());
+            AttackComponent attack = projectileComponent.getAttackComponent();
             if (attack.isSingleTarget()) {
                 attack.setTargetEntity(firstCollision.get().getEntityId());
             }
-            if (projectileComponent.getDamageOverwrite() != 0.0) {
-                attack.setDamage(projectileComponent.getDamageOverwrite());
-            }
-            EntityBuilder.builder()
+            Entity attackEntity = EntityBuilder.builder()
                     .withComponent(attack)
                     .at(transformationComponent.getPosition().x(), transformationComponent.getPosition().y())
-                    .buildAndInstantiate(ATTACK_PREFIX + RandomStringUtils.randomAlphanumeric(6));
-
+                    .build();
+            if (entity.hasComponentOfType(CreatedByComponent.class)) {
+                attackEntity.addComponent(new CreatedByComponent(entity.getComponentOfType(CreatedByComponent.class).getCreatorEntity()));
+            }
+            EntityHandler.getInstance().addObject(ATTACK_PREFIX + RandomStringUtils.randomAlphanumeric(6), attackEntity);
             AudioUtil.createSoundEntity("impact", transformationComponent);
             EntityHandler.getInstance().removeObject(entity.getEntityId());
         }
@@ -126,18 +126,13 @@ public class CollisionSystem {
         obstacles = obstacles
                 .parallelStream()
                 .unordered()
-                .filter(e -> !e.hasComponentOfType(ItemTag.class) && !e.hasComponentOfType(SurfaceTag.class) && distanceLessThan(e, entity, 4.0))
+                .filter(e -> !e.hasComponentOfType(ItemTag.class) && !e.hasComponentOfType(SurfaceTag.class) && CollisionUtil.distanceLessThan(e, entity, 4.0))
                 .collect(Collectors.toList());
         obstacles.remove(entity);
         if (entity.hasComponentOfType(CreatedByComponent.class)) {
             obstacles.remove(createdByComponent.getCreatorEntity());
         }
         return CollisionUtil.getCollisions(transformationComponent, collisionComponent, obstacles);
-    }
-
-    private static boolean distanceLessThan(Entity entityA, Entity entityB, double maximumDistance) {
-        return entityA.getComponentOfType(TransformationComponent.class).getPosition()
-                .distance(entityB.getComponentOfType(TransformationComponent.class).getPosition()) < maximumDistance;
     }
 
     public static boolean isResponsibleFor(Entity entity) {

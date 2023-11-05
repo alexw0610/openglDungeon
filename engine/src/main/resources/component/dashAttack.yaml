@@ -1,7 +1,7 @@
-templateName: "dashHit"
+templateName: "dashAttack"
 type: "AttackComponent"
 arguments:
-  name: "dashHit"
+  name: "dashAttack"
 modifiers:
   aoE: true
   damage: 0.0

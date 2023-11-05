@@ -1,0 +1,10 @@
+templateName: "upgradeChargeShot"
+type: "UpgradeComponent"
+modifiers:
+  upgradeTitle: "Bullet Upgrade: Charge Shot"
+  upgradeIcon: "upgrade_epic"
+  upgradeRarity: "Epic"
+  toolTip: "Recoil energy from shooting is used to charge shield power. 0.5 SP per shot"
+  upgradeType: "charge_shot"
+  upgradeCategory: "bulletModifier"
+  minSpawnLevel: 10

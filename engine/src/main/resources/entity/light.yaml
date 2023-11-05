@@ -1,0 +1,10 @@
+templateName: "light"
+components:
+  - type: "base.TransformationComponent"
+  - type: "base.LightSourceComponent"
+    arguments:
+      lightColorR: 1.0
+      lightColorG: 1.0
+      lightColorB: 1.0
+      lightStrength: 3.0
+      lightFallOff: 0.01

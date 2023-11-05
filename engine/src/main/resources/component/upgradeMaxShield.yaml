@@ -8,3 +8,4 @@ modifiers:
   upgradeType: "maxShield"
   upgradeCategory: "playerStatModifier"
   modifierValue: 30.0
+  minSpawnLevel: 5

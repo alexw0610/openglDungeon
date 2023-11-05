@@ -4,7 +4,8 @@ modifiers:
   upgradeTitle: "Stat Upgrade: Minor Movement Speed"
   upgradeIcon: "upgrade_common"
   upgradeRarity: "Common"
-  toolTip: "Increases your movement speed 0.05."
+  toolTip: "Increases your movement speed by 2%."
   upgradeType: "movementSpeed"
   upgradeCategory: "playerStatModifier"
-  modifierValue: 1.05
+  modifierValue: 1.02
+  minSpawnLevel: 0

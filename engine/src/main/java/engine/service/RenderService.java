@@ -18,8 +18,7 @@ import org.joml.Vector3d;
 
 import java.nio.DoubleBuffer;
 
-import static engine.EngineConstants.WINDOW_HEIGHT;
-import static engine.EngineConstants.WINDOW_WIDTH;
+import static engine.EngineConstants.*;
 
 public class RenderService {
 
@@ -78,7 +77,7 @@ public class RenderService {
         linkTextureToFbo(this.frameBuffers[1], this.renderedTextures[1]);
         gl.glEnable(gl.GL_BLEND);
         gl.glEnable(gl.GL_DEPTH_TEST);
-        gl.glClearColor(8.0f / 255.0f, 7.0f / 255.0f, 14.5f / 255.0f, 0);
+        gl.glClearColor(RENDER_CLEAR_COLOR.x(), RENDER_CLEAR_COLOR.y(), RENDER_CLEAR_COLOR.z(), 0);
         RenderService.cameraPosX = 0;
         RenderService.cameraPosY = 0;
         RenderService.cameraPosZ = 0.25;

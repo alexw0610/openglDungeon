@@ -1,0 +1,14 @@
+templateName: "clutter"
+components:
+  - type: "base.TransformationComponent"
+  - type: "base.RenderComponent"
+    arguments:
+      meshKey: "QUAD"
+      textureKey: ""
+      shaderType: "shader"
+      scale: 1.0
+      layer: 2
+    modifiers:
+      alwaysVisible: false
+      shadeless: false
+      randomizeTextureOffset: true

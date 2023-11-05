@@ -5,5 +5,7 @@ modifiers:
   upgradeIcon: "upgrade_epic"
   upgradeRarity: "Epic"
   toolTip: "Bullet impacts set area on fire, damaging enemies over time."
-  upgradeType: "incendiaryBullet"
+  upgradeType: "incendiary"
   upgradeCategory: "bulletModifier"
+  upgradeSlot: "Secondary"
+  minSpawnLevel: 5

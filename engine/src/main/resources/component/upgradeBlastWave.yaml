@@ -1,0 +1,11 @@
+templateName: "upgradeBlastWave"
+type: "UpgradeComponent"
+modifiers:
+  upgradeTitle: "Bullet Upgrade: Blast Wave"
+  upgradeIcon: "upgrade_rare"
+  upgradeRarity: "Rare"
+  toolTip: "Shooting creates a blast wave at the muzzle pushing back enemies."
+  upgradeType: "explosive"
+  upgradeSlot: "Secondary"
+  upgradeCategory: "bulletModifier"
+  minSpawnLevel: 6

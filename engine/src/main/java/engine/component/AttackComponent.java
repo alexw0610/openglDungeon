@@ -1,5 +1,10 @@
 package engine.component;
 
+import engine.enums.BulletModifier;
+
+import java.util.LinkedList;
+import java.util.List;
+
 import static engine.EngineConstants.KNOCKBACK_VALUE_FACTOR;
 
 public class AttackComponent implements Component {
@@ -16,10 +21,11 @@ public class AttackComponent implements Component {
     private String targetEntity;
     private String texture;
     private Class<Component> targetComponentConstraint;
-
+    private List<BulletModifier> bulletModifierList;
     private double stunDuration;
 
     private double criticalHitChance;
+    private double criticalBonusModifier;
 
     public AttackComponent(String name) {
         this.attackName = name;
@@ -33,6 +39,7 @@ public class AttackComponent implements Component {
         this.stunsTarget = false;
         this.criticalHitChance = 0.0;
         this.stunDuration = 0.0;
+        this.bulletModifierList = new LinkedList<>();
     }
 
     public String getAttackName() {
@@ -131,8 +138,16 @@ public class AttackComponent implements Component {
         return criticalHitChance;
     }
 
-    public void setCriticalHitChance(double criticalHitChance) {
+    public void setCriticalHitChance(Double criticalHitChance) {
         this.criticalHitChance = criticalHitChance;
+    }
+
+    public double getCriticalBonusModifier() {
+        return criticalBonusModifier;
+    }
+
+    public void setCriticalBonusModifier(double criticalBonusModifier) {
+        this.criticalBonusModifier = criticalBonusModifier;
     }
 
     public double getStunDuration() {
@@ -141,6 +156,14 @@ public class AttackComponent implements Component {
 
     public void setStunDuration(Double stunDuration) {
         this.stunDuration = stunDuration;
+    }
+
+    public List<BulletModifier> getBulletModifierList() {
+        return bulletModifierList;
+    }
+
+    public void addBulletModifierToList(BulletModifier bulletModifier) {
+        this.bulletModifierList.add(bulletModifier);
     }
 
     @Override

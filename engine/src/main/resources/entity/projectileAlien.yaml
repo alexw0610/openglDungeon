@@ -1,13 +1,13 @@
-templateName: "bomb"
+templateName: "projectileAlien"
 components:
   - type: "base.TransformationComponent"
   - type: "base.RenderComponent"
     arguments:
       meshKey: "QUAD"
-      textureKey: "bomb"
+      textureKey: "alien_glub"
       shaderType: "shader"
       scale: 1.0
-      layer: 4
+      layer: 5
     modifiers:
       alwaysVisible: false
       shadeless: true
@@ -16,13 +16,11 @@ components:
       animationSpeed: 100.0
       animationContinuous: true
       animationLength: 2
-  - type: "BombComponent"
+  - type: "ProjectileComponent"
     modifiers:
-      fuseTime: 3.0
-      attackComponentTemplate: "bombExplosion"
-  - type: "base.PhysicsComponent"
+        onCollisionAttack: "projectileAttackAlien"
   - type: "base.CollisionComponent"
     arguments:
       hitBoxType: "CIRCLE"
-      hitBoxSize: 0.33
+      hitBoxSize: 0.25
       obstructsMovement: false

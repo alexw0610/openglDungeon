@@ -1,11 +1,10 @@
-templateName: "hitAttackBullet"
+templateName: "projectileAttack"
 type: "AttackComponent"
 arguments:
-  name: "hitAttackBullet"
+  name: "projectileAttack"
 modifiers:
   aoE: false
   singleTarget: true
-  damage: 4.0
   range: 1.0
   knockback: 100.0
   texture: "explosion"

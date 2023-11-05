@@ -4,8 +4,9 @@ modifiers:
   upgradeTitle: "Stat Upgrade: Primary Attack Damage"
   upgradeIcon: "upgrade_rare"
   upgradeRarity: "Rare"
-  toolTip: "Increases your primary base bullet damage by 5%."
+  toolTip: "Increases your primary base bullet damage by 20%."
   upgradeType: "attackDamage"
-  upgradeSlot: "primary"
+  upgradeSlot: "Primary"
   upgradeCategory: "gunStatModifier"
-  modifierValue: 1.05
+  modifierValue: 0.20
+  minSpawnLevel: 0

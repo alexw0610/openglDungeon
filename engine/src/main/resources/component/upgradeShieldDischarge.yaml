@@ -1,0 +1,11 @@
+templateName: "upgradeShieldDischarge"
+type: "UpgradeComponent"
+modifiers:
+  upgradeTitle: "Bullet Upgrade: Shield Discharge"
+  upgradeIcon: "upgrade_legendary"
+  upgradeRarity: "Legendary"
+  toolTip: "Shield power is used up to charge the next shot dealing damage based on consumed power. 0.5 dmg per SP"
+  upgradeType: "shield_discharge"
+  upgradeSlot: "Secondary"
+  upgradeCategory: "bulletModifier"
+  minSpawnLevel: 15

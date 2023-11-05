@@ -2,10 +2,12 @@ package engine.service;
 
 import engine.component.*;
 import engine.component.base.CollisionComponent;
+import engine.component.base.RenderComponent;
 import engine.component.base.TransformationComponent;
 import engine.component.tag.ItemTag;
 import engine.component.tag.PlayerTag;
 import engine.entity.Entity;
+import engine.enums.Slot;
 import engine.enums.UIGroupKey;
 import engine.handler.EntityHandler;
 import engine.handler.MouseHandler;
@@ -39,6 +41,9 @@ public class UIService {
     private static final String MOD_SLOT_AVAILABLE_TEXTURE = "modifier_slot_available";
     private static final String MOD_SLOT_BLOCKED_TEXTURE = "modifier_slot_blocked";
     private static final String UI_BACKGROUND_TEXTURE = "uibg";
+    private static final double X_MARGIN = 0.01;
+    private static final double Y_MARGIN = 0.01;
+    private static final double ROW_SPACING_TEXT = 0.06;
     private static UIService INSTANCE;
     private UIElement healthBar;
     private UIElement shieldBar;
@@ -63,6 +68,7 @@ public class UIService {
         initStatUpgradeUI();
         initGunUpgradeUI();
         initCloseDialog();
+        initGameOverDialog();
     }
 
     public void updateUI() {
@@ -135,13 +141,13 @@ public class UIService {
     }
 
     private void initStatUI() {
-        UIElement statSummaryPrimary = new UIElement(-DEFAULT_BAR_WIDTH - 0.65, 0.65, 0.5, 0.29, 1, UI_BACKGROUND_TEXTURE);
+        UIElement statSummaryPrimary = new UIElement(-1.35, 0.45, 0.525, 0.5, 1, UI_BACKGROUND_TEXTURE);
         statSummaryPrimary.setUiGroupKey(UIGroupKey.STATS);
         UIHandler.getInstance().addObject(statSummaryPrimary);
     }
 
     private void initStatUpgradeUI() {
-        UIElement statUpgradeBackground = new UIElement(-DEFAULT_BAR_WIDTH - 0.65, 0.28, 0.5, 0.35, 1, UI_BACKGROUND_TEXTURE);
+        UIElement statUpgradeBackground = new UIElement(-1.35, 0.15, 0.525, 0.275, 1, UI_BACKGROUND_TEXTURE);
         statUpgradeBackground.setUiGroupKey(UIGroupKey.STATS);
         UIHandler.getInstance().addObject(statUpgradeBackground);
     }
@@ -151,7 +157,7 @@ public class UIService {
         gunBackground.setUiGroupKey(UIGroupKey.INVENTORY);
         UIHandler.getInstance().addObject(gunBackground);
 
-        UIElement gunStatBackground = new UIElement(0.625, -0.2, 0.55, 0.8, 1, UI_BACKGROUND_TEXTURE);
+        UIElement gunStatBackground = new UIElement(0.625, -0.2, 0.525, 0.8, 1, UI_BACKGROUND_TEXTURE);
         gunStatBackground.setUiGroupKey(UIGroupKey.INVENTORY);
         UIHandler.getInstance().addObject(gunStatBackground);
 
@@ -159,7 +165,7 @@ public class UIService {
         bulletModifierBackground.setUiGroupKey(UIGroupKey.INVENTORY);
         UIHandler.getInstance().addObject("BULLET_MOD_INVENTORY", bulletModifierBackground);
 
-        UIElement gunStatUpgradeBackground = new UIElement(0.625, -0.5, 0.55, 0.275, 1, UI_BACKGROUND_TEXTURE);
+        UIElement gunStatUpgradeBackground = new UIElement(0.625, -0.5, 0.525, 0.275, 1, UI_BACKGROUND_TEXTURE);
         gunStatUpgradeBackground.setUiGroupKey(UIGroupKey.INVENTORY);
         UIHandler.getInstance().addObject(gunStatUpgradeBackground);
     }
@@ -186,78 +192,33 @@ public class UIService {
         UIHandler.getInstance().addObject(closeDialogOptions);
     }
 
+    private void initGameOverDialog() {
+        UIText gOverDialogPrompt = new UIText("GAME OVER!", -0.225, 0.1, 0.4, 0.4, 1.2);
+        gOverDialogPrompt.setUiGroupKey(UIGroupKey.GAME_OVER_DIALOG);
+        gOverDialogPrompt.setLayer(2);
+        gOverDialogPrompt.setColor(TEXT_COLOR_YELLOW);
+        UIHandler.getInstance().addObject(gOverDialogPrompt);
+
+        UIText gOverDialogOptions = new UIText("Retry[ENTER]   Close[ESC]", -0.285, -0.1, 0.4, 0.4, 0.8);
+        gOverDialogOptions.setColor(TEXT_COLOR_YELLOW);
+        gOverDialogOptions.setUiGroupKey(UIGroupKey.GAME_OVER_DIALOG);
+        gOverDialogOptions.setLayer(2);
+        UIHandler.getInstance().addObject(gOverDialogOptions);
+    }
+
     private void updateStatUI() {
         UIHandler.getInstance().removeAllObjectsWithPrefix("STATS_");
-        double rowDistance = 0.06;
         StatComponent statComponent = EntityHandler.getInstance()
                 .getEntityWithComponent(PlayerTag.class)
                 .getComponentOfType(StatComponent.class);
-        instantiateUIText("Stats:", 0.8, -DEFAULT_BAR_WIDTH - 0.63, 0.91, TEXT_COLOR_YELLOW, UIGroupKey.STATS, "STATS_");
-        instantiateUITextTitleValuePair("Health:", 0.7, -DEFAULT_BAR_WIDTH - 0.63, 0.91 - rowDistance, TEXT_COLOR_WHITE, String.valueOf(statComponent.getMaxHealthPoints()), -DEFAULT_BAR_WIDTH - 0.25, TEXT_COLOR_WHITE, UIGroupKey.STATS, "STATS_");
-        instantiateUITextTitleValuePair("Shield:", 0.7, -DEFAULT_BAR_WIDTH - 0.63, 0.91 - rowDistance * 2, TEXT_COLOR_WHITE, String.valueOf(statComponent.getMaxShield()), -DEFAULT_BAR_WIDTH - 0.25, TEXT_COLOR_WHITE, UIGroupKey.STATS, "STATS_");
-        instantiateUITextTitleValuePair("Movement Speed:", 0.7, -DEFAULT_BAR_WIDTH - 0.63, 0.91 - rowDistance * 3, TEXT_COLOR_WHITE, String.valueOf(statComponent.getMovementSpeed()), -DEFAULT_BAR_WIDTH - 0.25, TEXT_COLOR_WHITE, UIGroupKey.STATS, "STATS_");
-    }
-
-    private void updateUIComponentElementSelection(UIElement uiElement) {
-        if (CollisionUtil.checkInside(
-                MouseHandler.getInstance().getMousePositionClipSpace(),
-                uiElement.getX(),
-                uiElement.getY(),
-                uiElement.getX() + uiElement.getWidth(),
-                uiElement.getY() + uiElement.getHeight())) {
-            StatComponent statComponent = EntityHandler.getInstance()
-                    .getEntityWithComponent(PlayerTag.class)
-                    .getComponentOfType(StatComponent.class);
-            if (uiElement instanceof UIComponentElement
-                    && !uiElement.getElementKey().contains("GUN_INVENTORY_MOD_SLOT_")
-                    && ((UIComponentElement) uiElement).getComponent() != null
-                    && ((UIComponentElement) uiElement).getComponentClass().equals(UpgradeComponent.class)
-                    && ((UpgradeComponent) ((UIComponentElement) uiElement).getComponent()).getUpgradeCategory().equals("bulletModifier")
-                    && this.selectedUpgradeComponent == null
-                    && MouseHandler.getInstance().isKeyForActionPressed("mouseButtonPrimary", true)) {
-                this.selectedUpgradeComponent = (UpgradeComponent) ((UIComponentElement) uiElement).getComponent();
-                statComponent.removeUpgrade(this.selectedUpgradeComponent);
-            }
-            if (uiElement instanceof UIComponentElement
-                    && !uiElement.getElementKey().contains("GUN_INVENTORY_MOD_SLOT_")
-                    && ((UIComponentElement) uiElement).getComponent() != null
-                    && ((UIComponentElement) uiElement).getComponentClass().equals(GunComponent.class)
-                    && this.selectedUpgradeComponent == null
-                    && MouseHandler.getInstance().isKeyForActionPressed("mouseButtonPrimary", true)) {
-                statComponent.uneqiupGunUpgrades();
-                statComponent.setEquippedGun(((GunComponent) ((UIComponentElement) uiElement).getComponent()));
-            }
-            if (uiElement.getElementKey().contains("BULLET_MOD_INVENTORY")
-                    && this.selectedUpgradeComponent != null
-                    && MouseHandler.getInstance().isKeyForActionPressed("mouseButtonPrimary", true)) {
-                statComponent.addUpgrade(this.selectedUpgradeComponent);
-                this.selectedUpgradeComponent = null;
-            }
-            if (uiElement.getElementKey().contains("GUN_INVENTORY_MOD_SLOT_")
-                    && MouseHandler.getInstance().isKeyForActionPressed("mouseButtonPrimary", true)) {
-                if (uiElement.getElementKey().contains("_PRIM_A_")) {
-                    UpgradeComponent currentlyEquipped = statComponent.getEquippedGun().getPrimaryModifierSlotA();
-                    statComponent.getEquippedGun().setPrimaryModifierSlotA(this.selectedUpgradeComponent);
-                    this.selectedUpgradeComponent = currentlyEquipped;
-                    createSoundEntity("upgrade");
-                } else if (uiElement.getElementKey().contains("_PRIM_B_")) {
-                    UpgradeComponent currentlyEquipped = statComponent.getEquippedGun().getPrimaryModifierSlotB();
-                    statComponent.getEquippedGun().setPrimaryModifierSlotB(this.selectedUpgradeComponent);
-                    this.selectedUpgradeComponent = currentlyEquipped;
-                    createSoundEntity("upgrade");
-                } else if (uiElement.getElementKey().contains("_SEC_A_")) {
-                    UpgradeComponent currentlyEquipped = statComponent.getEquippedGun().getSecondaryModifierSlotA();
-                    statComponent.getEquippedGun().setSecondaryModifierSlotA(this.selectedUpgradeComponent);
-                    this.selectedUpgradeComponent = currentlyEquipped;
-                    createSoundEntity("upgrade");
-                } else if (uiElement.getElementKey().contains("_SEC_B_")) {
-                    UpgradeComponent currentlyEquipped = statComponent.getEquippedGun().getSecondaryModifierSlotB();
-                    statComponent.getEquippedGun().setSecondaryModifierSlotB(this.selectedUpgradeComponent);
-                    this.selectedUpgradeComponent = currentlyEquipped;
-                    createSoundEntity("upgrade");
-                }
-            }
-        }
+        instantiateUIText("Player Stats:", 0.8, -1.35 + X_MARGIN, 0.95 - Y_MARGIN, TEXT_COLOR_YELLOW, UIGroupKey.STATS, "STATS_");
+        instantiateUITextTitleValuePair("Health:", 0.7, -1.35 + X_MARGIN, 0.95 - Y_MARGIN - ROW_SPACING_TEXT, TEXT_COLOR_WHITE, statComponent.getMaxHealthPoints(), 0.375, TEXT_COLOR_YELLOW, UIGroupKey.STATS, "STATS_");
+        instantiateUITextTitleValuePair("Shield:", 0.7, -1.35 + X_MARGIN, 0.95 - Y_MARGIN - ROW_SPACING_TEXT * 2, TEXT_COLOR_WHITE, statComponent.getMaxShield(), 0.375, TEXT_COLOR_YELLOW, UIGroupKey.STATS, "STATS_");
+        instantiateUITextTitleValuePair("Movement Speed:", 0.7, -1.35 + X_MARGIN, 0.95 - Y_MARGIN - ROW_SPACING_TEXT * 3, TEXT_COLOR_WHITE, statComponent.getMovementSpeed(), 0.375, TEXT_COLOR_YELLOW, UIGroupKey.STATS, "STATS_");
+        instantiateUITextTitleValuePair("Dash Cooldown:", 0.7, -1.35 + X_MARGIN, 0.95 - Y_MARGIN - ROW_SPACING_TEXT * 4, TEXT_COLOR_WHITE, statComponent.getDashCooldownSpeed(), 0.375, TEXT_COLOR_YELLOW, UIGroupKey.STATS, "STATS_");
+        instantiateUITextTitleValuePair("Dash Stun:", 0.7, -1.35 + X_MARGIN, 0.95 - Y_MARGIN - ROW_SPACING_TEXT * 5, TEXT_COLOR_WHITE, statComponent.getDashStunDuration(), 0.375, TEXT_COLOR_YELLOW, UIGroupKey.STATS, "STATS_");
+        instantiateUITextTitleValuePair("Crit. Chance:", 0.7, -1.35 + X_MARGIN, 0.95 - Y_MARGIN - ROW_SPACING_TEXT * 6, TEXT_COLOR_WHITE, statComponent.getCritChance() * 100.0, 0.375, TEXT_COLOR_YELLOW, UIGroupKey.STATS, "STATS_");
+        instantiateUITextTitleValuePair("Crit. Damage:", 0.7, -1.35 + X_MARGIN, 0.95 - Y_MARGIN - ROW_SPACING_TEXT * 7, TEXT_COLOR_WHITE, statComponent.getCritBonusDamage(), 0.375, TEXT_COLOR_YELLOW, UIGroupKey.STATS, "STATS_");
     }
 
     private void updateStatUpgradeUI() {
@@ -265,96 +226,7 @@ public class UIService {
         StatComponent statComponent = EntityHandler.getInstance()
                 .getEntityWithComponent(PlayerTag.class)
                 .getComponentOfType(StatComponent.class);
-        List<UpgradeComponent> upgrades = statComponent.getUpgrades();
-        updatePlayerStatModifierInventory(upgrades);
-    }
-
-    private static void updatePlayerStatModifierInventory(List<UpgradeComponent> upgrades) {
-        List<UpgradeComponent> upgradesDistinct = upgrades
-                .stream()
-                .filter(upgrade -> upgrade.getUpgradeCategory().equals("playerStatModifier"))
-                .distinct()
-                .sorted(UpgradeComponent::compareTo)
-                .collect(Collectors.toList());
-        double offsetX = 0.095;
-        double offsetY = 0.1;
-        for (int i = 0; i < upgradesDistinct.size(); i++) {
-            UpgradeComponent upgradeComponent = upgradesDistinct.get(i);
-            UIComponentElement upgradeIcon = new UIComponentElement((-DEFAULT_BAR_WIDTH - 0.64) + (offsetX * (i % 5)),
-                    0.51 - (offsetY * (Math.floorDiv(i, 5))),
-                    0.1,
-                    0.1,
-                    3,
-                    upgradeComponent.getUpgradeIcon());
-            UIElement upgradeIconBackdrop = new UIElement((-DEFAULT_BAR_WIDTH - 0.64) + (offsetX * (i % 5)),
-                    0.51 - (offsetY * (Math.floorDiv(i, 5))),
-                    0.1,
-                    0.1,
-                    2,
-                    "unusable_backdrop");
-            upgradeIcon.setUiGroupKey(UIGroupKey.STATS);
-            upgradeIconBackdrop.setUiGroupKey(UIGroupKey.STATS);
-            upgradeIcon.setComponent(upgradeComponent);
-            upgradeIcon.setComponentClass(UpgradeComponent.class);
-            UIHandler.getInstance().addObject("STAT_UPGRADE_" + RandomStringUtils.randomAlphanumeric(6), upgradeIcon);
-            UIHandler.getInstance().addObject("STAT_UPGRADE_BACKDROP_" + RandomStringUtils.randomAlphanumeric(6), upgradeIconBackdrop);
-            long upgradeCount = upgrades.stream().filter(upgrade -> upgrade.equals(upgradeComponent)).count();
-            if (upgradeCount > 1) {
-                UIText upgradeCountText = new UIText("x" + upgradeCount, (-DEFAULT_BAR_WIDTH - 0.59) + (offsetX * (i % 5)),
-                        0.55 - (offsetY * (Math.floorDiv(i, 5))),
-                        0.1,
-                        0.1,
-                        0.75);
-                upgradeCountText.setColor(TEXT_COLOR_YELLOW);
-                upgradeCountText.setLayer(4);
-                upgradeCountText.setUiGroupKey(UIGroupKey.STATS);
-                UIHandler.getInstance().addObject("STAT_UPGRADE_" + RandomStringUtils.randomAlphanumeric(6), upgradeCountText);
-            }
-        }
-    }
-
-    private static void updateGunStatModifierInventory(List<UpgradeComponent> upgrades) {
-        List<UpgradeComponent> upgradesDistinct = upgrades
-                .stream()
-                .filter(upgrade -> upgrade.getUpgradeCategory().equals("gunStatModifier"))
-                .distinct()
-                .sorted(UpgradeComponent::compareTo)
-                .collect(Collectors.toList());
-        double offsetX = 0.095;
-        double offsetY = 0.1;
-        for (int i = 0; i < upgradesDistinct.size(); i++) {
-            UpgradeComponent upgradeComponent = upgradesDistinct.get(i);
-            UIComponentElement upgradeIcon = new UIComponentElement((0.625) + (offsetX * (i % 5)),
-                    -0.35 - (offsetY * (Math.floorDiv(i, 5))),
-                    0.1,
-                    0.1,
-                    3,
-                    upgradeComponent.getUpgradeIcon());
-            UIElement upgradeIconBackdrop = new UIElement((0.625) + (offsetX * (i % 5)),
-                    -0.35 - (offsetY * (Math.floorDiv(i, 5))),
-                    0.1,
-                    0.1,
-                    2,
-                    "unusable_backdrop");
-            upgradeIcon.setUiGroupKey(UIGroupKey.STATS);
-            upgradeIconBackdrop.setUiGroupKey(UIGroupKey.STATS);
-            upgradeIcon.setComponent(upgradeComponent);
-            upgradeIcon.setComponentClass(UpgradeComponent.class);
-            UIHandler.getInstance().addObject("STAT_UPGRADE_" + RandomStringUtils.randomAlphanumeric(6), upgradeIcon);
-            UIHandler.getInstance().addObject("STAT_UPGRADE_BACKDROP_" + RandomStringUtils.randomAlphanumeric(6), upgradeIconBackdrop);
-            long upgradeCount = upgrades.stream().filter(upgrade -> upgrade.equals(upgradeComponent)).count();
-            if (upgradeCount > 1) {
-                UIText upgradeCountText = new UIText("x" + upgradeCount, (0.625 + 0.05) + (offsetX * (i % 5)),
-                        -0.31 - (offsetY * (Math.floorDiv(i, 5))),
-                        0.1,
-                        0.1,
-                        0.75);
-                upgradeCountText.setColor(TEXT_COLOR_YELLOW);
-                upgradeCountText.setLayer(3);
-                upgradeCountText.setUiGroupKey(UIGroupKey.STATS);
-                UIHandler.getInstance().addObject("STAT_UPGRADE_" + RandomStringUtils.randomAlphanumeric(6), upgradeCountText);
-            }
-        }
+        displayUpgradeIcons(statComponent, -1.35 + X_MARGIN, 0.325 - Y_MARGIN, 0.11, 0.11, "STAT_UPGRADE_", "playerStatModifier", "unusable_backdrop", 4, true);
     }
 
     private void updateGunUpgradeUI() {
@@ -362,29 +234,28 @@ public class UIService {
                 .getEntityWithComponent(PlayerTag.class)
                 .getComponentOfType(StatComponent.class);
         updateGunDisplayInventory(statComponent);
-        updateBulletModifierInventory(statComponent);
+        displayUpgradeIcons(statComponent, -0.6 + X_MARGIN, -0.325 - Y_MARGIN, 0.11, 0.11, "GUN_UPGRADE_", "bulletModifier", "usable_backdrop", 8, false);
+        displayUpgradeIcons(statComponent, 0.625 + X_MARGIN, -0.325 - Y_MARGIN, 0.11, 0.11, "GUN_STAT_UPGRADE_", "gunStatModifier", "unusable_backdrop", 4, true);
         updateGunStatsUI(statComponent);
-        updateGunStatModifierInventory(statComponent.getUpgrades());
     }
 
     private static void updateGunStatsUI(StatComponent statComponent) {
         UIHandler.getInstance().removeAllObjectsWithPrefix("GUN_STATS_");
         GunComponent equippedGun = statComponent.getEquippedGun();
         if (equippedGun != null) {
-            instantiateUIText("Stats:", 1, 0.65, 0.58, TEXT_COLOR_YELLOW, UIGroupKey.INVENTORY, "GUN_STATS_");
-            double yOffset = 0.085;
-            instantiateUIText("Primary:", 0.9, 0.65, 0.58 - yOffset * 1, TEXT_COLOR_WHITE, UIGroupKey.INVENTORY, "GUN_STATS_");
-            instantiateUITextTitleValuePair("Attack Damage:", 0.7, 0.65, 0.58 - yOffset * 2, TEXT_COLOR_WHITE, String.valueOf(equippedGun.getPrimaryBaseDamage() * statComponent.getBaseBulletDamagePrimary()), 1.0, TEXT_COLOR_YELLOW, UIGroupKey.INVENTORY, "GUN_STATS_");
-            instantiateUITextTitleValuePair("Attack Speed:", 0.7, 0.65, 0.58 - yOffset * 3, TEXT_COLOR_WHITE, String.valueOf(equippedGun.getPrimaryBaseAttackSpeed()), 1.0, TEXT_COLOR_YELLOW, UIGroupKey.INVENTORY, "GUN_STATS_");
-            instantiateUITextTitleValuePair("Bullet Speed:", 0.7, 0.65, 0.58 - yOffset * 4, TEXT_COLOR_WHITE, String.valueOf(equippedGun.getPrimaryBaseBulletSpeed()), 1.0, TEXT_COLOR_YELLOW, UIGroupKey.INVENTORY, "GUN_STATS_");
+            instantiateUIText("Gun Stats:", 0.8, 0.625 + X_MARGIN, 0.6 - Y_MARGIN, TEXT_COLOR_YELLOW, UIGroupKey.INVENTORY, "GUN_STATS_");
+            instantiateUIText("Primary:", 0.8, 0.625 + X_MARGIN, 0.6 - Y_MARGIN - ROW_SPACING_TEXT * 1, TEXT_COLOR_WHITE, UIGroupKey.INVENTORY, "GUN_STATS_");
+            instantiateUITextTitleValuePair("Attack Damage:", 0.7, 0.625 + X_MARGIN, 0.6 - Y_MARGIN - ROW_SPACING_TEXT * 2, TEXT_COLOR_WHITE, equippedGun.getPrimaryBaseDamage() * statComponent.getBaseDamagePrimary(), 0.35, TEXT_COLOR_YELLOW, UIGroupKey.INVENTORY, "GUN_STATS_");
+            instantiateUITextTitleValuePair("Attack Speed:", 0.7, 0.625 + X_MARGIN, 0.6 - Y_MARGIN - ROW_SPACING_TEXT * 3, TEXT_COLOR_WHITE, equippedGun.getPrimaryBaseAttackSpeed(), 0.35, TEXT_COLOR_YELLOW, UIGroupKey.INVENTORY, "GUN_STATS_");
+            instantiateUITextTitleValuePair("Bullet Speed:", 0.7, 0.625 + X_MARGIN, 0.6 - Y_MARGIN - ROW_SPACING_TEXT * 4, TEXT_COLOR_WHITE, equippedGun.getPrimaryBaseBulletSpeed(), 0.35, TEXT_COLOR_YELLOW, UIGroupKey.INVENTORY, "GUN_STATS_");
             Vector3d secondaryStatColor = TEXT_COLOR_YELLOW;
             if (!equippedGun.isSecondaryAttack()) {
                 secondaryStatColor = TEXT_COLOR_GRAY;
             }
-            instantiateUIText("Secondary:", 0.9, 0.65, 0.58 - yOffset * 5, TEXT_COLOR_WHITE, UIGroupKey.INVENTORY, "GUN_STATS_");
-            instantiateUITextTitleValuePair("Attack Damage:", 0.7, 0.65, 0.58 - yOffset * 6, TEXT_COLOR_WHITE, String.valueOf(equippedGun.getSecondaryBaseDamage()), 1.0, secondaryStatColor, UIGroupKey.INVENTORY, "GUN_STATS_");
-            instantiateUITextTitleValuePair("Attack Speed:", 0.7, 0.65, 0.58 - yOffset * 7, TEXT_COLOR_WHITE, String.valueOf(equippedGun.getSecondaryBaseAttackSpeed()), 1.0, secondaryStatColor, UIGroupKey.INVENTORY, "GUN_STATS_");
-            instantiateUITextTitleValuePair("Bullet Speed:", 0.7, 0.65, 0.58 - yOffset * 8, TEXT_COLOR_WHITE, String.valueOf(equippedGun.getSecondaryBaseBulletSpeed()), 1.0, secondaryStatColor, UIGroupKey.INVENTORY, "GUN_STATS_");
+            instantiateUIText("Secondary:", 0.8, 0.625 + X_MARGIN, 0.6 - Y_MARGIN - ROW_SPACING_TEXT * 5, TEXT_COLOR_WHITE, UIGroupKey.INVENTORY, "GUN_STATS_");
+            instantiateUITextTitleValuePair("Attack Damage:", 0.7, 0.625 + X_MARGIN, 0.6 - Y_MARGIN - ROW_SPACING_TEXT * 6, TEXT_COLOR_WHITE, equippedGun.getSecondaryBaseDamage(), 0.35, secondaryStatColor, UIGroupKey.INVENTORY, "GUN_STATS_");
+            instantiateUITextTitleValuePair("Attack Speed:", 0.7, 0.625 + X_MARGIN, 0.6 - Y_MARGIN - ROW_SPACING_TEXT * 7, TEXT_COLOR_WHITE, equippedGun.getSecondaryBaseAttackSpeed(), 0.35, secondaryStatColor, UIGroupKey.INVENTORY, "GUN_STATS_");
+            instantiateUITextTitleValuePair("Bullet Speed:", 0.7, 0.625 + X_MARGIN, 0.6 - Y_MARGIN - ROW_SPACING_TEXT * 8, TEXT_COLOR_WHITE, equippedGun.getSecondaryBaseBulletSpeed(), 0.35, secondaryStatColor, UIGroupKey.INVENTORY, "GUN_STATS_");
         }
     }
 
@@ -399,7 +270,7 @@ public class UIService {
             List<GunComponent> altGuns = statComponent.getGuns().stream().filter(gun -> !gun.equals(equippedGun)).collect(Collectors.toList());
             for (int i = 0; i < altGuns.size(); i++) {
                 GunComponent gunComponent = altGuns.get(i);
-                UIComponentElement gunIconSprite = new UIComponentElement(-0.58,
+                UIComponentElement gunIconSprite = new UIComponentElement(-0.6 + X_MARGIN,
                         0.35 - (0.15 * i),
                         0.125,
                         0.125,
@@ -407,7 +278,7 @@ public class UIService {
                         gunComponent.getGunSprite());
                 gunIconSprite.setComponent(gunComponent);
                 gunIconSprite.setComponentClass(GunComponent.class);
-                UIElement gunIconBackdrop = new UIElement(-0.58,
+                UIElement gunIconBackdrop = new UIElement(-0.6 + X_MARGIN,
                         0.35 - (0.15 * i),
                         0.125,
                         0.125,
@@ -501,8 +372,8 @@ public class UIService {
 
     private static void displayEquipedGun(GunComponent equippedGun) {
         UIText gunTitle = new UIText(equippedGun.getGunName(),
-                -0.58,
-                0.58,
+                -0.6 + X_MARGIN,
+                0.6 - Y_MARGIN,
                 1,
                 1,
                 1);
@@ -521,36 +392,54 @@ public class UIService {
         UIHandler.getInstance().addObject("GUN_INVENTORY_" + RandomStringUtils.randomAlphanumeric(6), gunSprite);
     }
 
-    private static void updateBulletModifierInventory(StatComponent statComponent) {
-        UIHandler.getInstance().removeAllObjectsWithPrefix("GUN_UPGRADE_");
-        List<UpgradeComponent> upgrades = statComponent.getUpgrades()
+    private static void displayUpgradeIcons(StatComponent statComponent, double startX, double startY, double offsetY, double offsetX, String uiElementKeyPrefix, String targetUpgradeCategory, String backdropTextureKey, int itemsPerRow, boolean displayDistinct) {
+        UIHandler.getInstance().removeAllObjectsWithPrefix(uiElementKeyPrefix);
+        List<UpgradeComponent> upgrades;
+        List<UpgradeComponent> upgradesOriginal = statComponent.getUpgrades()
                 .stream()
-                .filter(upgrade -> upgrade.getUpgradeCategory().equals("bulletModifier"))
+                .filter(upgrade -> upgrade.getUpgradeCategory().equals(targetUpgradeCategory))
                 .sorted(UpgradeComponent::compareTo)
                 .collect(Collectors.toList());
-        double offsetX = 0.1;
-        double offsetY = 0.1;
+        if (displayDistinct) {
+            upgrades = upgradesOriginal.stream().distinct().collect(Collectors.toList());
+        } else {
+            upgrades = upgradesOriginal;
+        }
         for (int i = 0; i < upgrades.size(); i++) {
             UpgradeComponent upgradeComponent = upgrades.get(i);
-            int itemsPerRow = 8;
-            UIComponentElement upgradeIcon = new UIComponentElement((-0.58) + (offsetX * (i % itemsPerRow)),
-                    -0.35 - (offsetY * (Math.floorDiv(i, itemsPerRow))),
+            double x = startX + (offsetX * (i % itemsPerRow));
+            double y = startY - (offsetY * (Math.floorDiv(i, itemsPerRow)));
+            UIComponentElement upgradeIcon = new UIComponentElement(x,
+                    y,
                     0.1,
                     0.1,
                     3,
                     upgradeComponent.getUpgradeIcon());
-            UIElement upgradeIconBackdrop = new UIElement((-0.58) + (offsetX * (i % itemsPerRow)),
-                    -0.35 - (offsetY * (Math.floorDiv(i, itemsPerRow))),
+            UIElement upgradeIconBackdrop = new UIElement(x,
+                    y,
                     0.1,
                     0.1,
                     2,
-                    "usable_backdrop");
+                    backdropTextureKey);
             upgradeIcon.setUiGroupKey(UIGroupKey.INVENTORY);
             upgradeIconBackdrop.setUiGroupKey(UIGroupKey.INVENTORY);
             upgradeIcon.setComponent(upgradeComponent);
             upgradeIcon.setComponentClass(UpgradeComponent.class);
-            UIHandler.getInstance().addObject("GUN_UPGRADE_" + RandomStringUtils.randomAlphanumeric(6), upgradeIcon);
-            UIHandler.getInstance().addObject("GUN_UPGRADE_BACKDROP_" + RandomStringUtils.randomAlphanumeric(6), upgradeIconBackdrop);
+            UIHandler.getInstance().addObject(uiElementKeyPrefix + RandomStringUtils.randomAlphanumeric(6), upgradeIcon);
+            UIHandler.getInstance().addObject(uiElementKeyPrefix + "BACKDROP_" + RandomStringUtils.randomAlphanumeric(6), upgradeIconBackdrop);
+            long upgradeCount = upgradesOriginal.stream().filter(upgrade -> upgrade.equals(upgradeComponent)).count();
+            if (upgradeCount > 1 && displayDistinct) {
+                UIText upgradeCountText = new UIText("x" + upgradeCount,
+                        x + 0.05,
+                        y + 0.05,
+                        0.1,
+                        0.1,
+                        0.75);
+                upgradeCountText.setColor(TEXT_COLOR_YELLOW);
+                upgradeCountText.setLayer(3);
+                upgradeCountText.setUiGroupKey(UIGroupKey.STATS);
+                UIHandler.getInstance().addObject(uiElementKeyPrefix + "_COUNT_" + RandomStringUtils.randomAlphanumeric(6), upgradeCountText);
+            }
         }
     }
 
@@ -562,12 +451,13 @@ public class UIService {
         if (player != null && player.getComponentOfType(StatComponent.class) != null) {
 
             StatComponent statComponent = player.getComponentOfType(StatComponent.class);
+            GunComponent equipedGunComponent = player.getComponentOfType(StatComponent.class).getEquippedGun();
             this.levelIndicator.setText("Lvl. " + statComponent.getLevel());
 
             double healthPercent = statComponent.getHealthPercentage();
             this.healthBar.setWidth(DEFAULT_BAR_WIDTH * healthPercent);
 
-            double armorPercent = statComponent.getArmorPercentage();
+            double armorPercent = statComponent.getShieldPercentage();
             this.shieldBar.setWidth(DEFAULT_BAR_WIDTH * armorPercent);
 
             double xpPercent = statComponent.getXPPercentage();
@@ -575,16 +465,16 @@ public class UIService {
 
             if (statComponent.getEquippedGun() != null) {
                 if (statComponent.getEquippedGun().isPrimaryAttack()) {
-                    double attackSpeedCooldown = Math.max(Math.min((System.nanoTime() - statComponent.getLastShotPrimary())
-                            / (statComponent.getAttackSpeedPrimary() * SECONDS_TO_NANOSECONDS_FACTOR), 1.0), 0);
+                    double attackSpeedCooldown = Math.max(Math.min((System.nanoTime() - statComponent.getLastAttackPrimary())
+                            / ((equipedGunComponent.getPrimaryBaseAttackSpeed() * statComponent.getAttackSpeedPrimary()) * SECONDS_TO_NANOSECONDS_FACTOR), 1.0), 0);
                     this.primaryAttackCooldownBar.setWidth(DEFAULT_BAR_WIDTH * attackSpeedCooldown);
                     this.primaryAttackCooldownBar.setTextureKey("attack_speed_bar");
                 } else {
                     this.primaryAttackCooldownBar.setTextureKey("attack_speed_bar_locked");
                 }
                 if (statComponent.getEquippedGun().isSecondaryAttack()) {
-                    double attackSpeedCooldown = Math.max(Math.min((System.nanoTime() - statComponent.getLastShotSecondary())
-                            / (statComponent.getAttackSpeedSecondary() * SECONDS_TO_NANOSECONDS_FACTOR), 1.0), 0);
+                    double attackSpeedCooldown = Math.max(Math.min((System.nanoTime() - statComponent.getLastAttackSecondary())
+                            / ((equipedGunComponent.getSecondaryBaseAttackSpeed() * statComponent.getAttackSpeedSecondary()) * SECONDS_TO_NANOSECONDS_FACTOR), 1.0), 0);
                     this.secondaryAttackCooldownBar.setWidth(DEFAULT_BAR_WIDTH * attackSpeedCooldown);
                     this.secondaryAttackCooldownBar.setTextureKey("attack_speed_bar");
                 } else {
@@ -613,9 +503,9 @@ public class UIService {
 
     private void updateMouseOver() {
         UIHandler.getInstance().removeAllObjectsWithPrefix("TOOLTIP_");
-        for (Entity tooltipEntity : EntityHandler.getInstance().getAllEntitiesWithComponents(TooltipComponent.class)) {
-            updateTooltipPopup(tooltipEntity);
-        }
+        //for (Entity tooltipEntity : EntityHandler.getInstance().getAllEntitiesWithComponents(TooltipComponent.class)) {
+        //    updateTooltipPopup(tooltipEntity);
+        //}
         for (Entity item : EntityHandler.getInstance().getAllEntitiesWithComponents(ItemTag.class)) {
             updateItemPopup(item);
         }
@@ -625,6 +515,101 @@ public class UIService {
                 .collect(Collectors.toList())) {
             updateUIElementPopup(uiElement);
             updateUIComponentElementSelection(uiElement);
+        }
+    }
+
+    private void updateUIComponentElementSelection(UIElement uiElement) {
+        if (CollisionUtil.checkInside(
+                MouseHandler.getInstance().getMousePositionClipSpace(),
+                uiElement.getX(),
+                uiElement.getY(),
+                uiElement.getX() + uiElement.getWidth(),
+                uiElement.getY() + uiElement.getHeight())) {
+            StatComponent statComponent = EntityHandler.getInstance()
+                    .getEntityWithComponent(PlayerTag.class)
+                    .getComponentOfType(StatComponent.class);
+            if (uiElement instanceof UIComponentElement
+                    && !uiElement.getElementKey().contains("GUN_INVENTORY_MOD_SLOT_")
+                    && ((UIComponentElement) uiElement).getComponent() != null
+                    && ((UIComponentElement) uiElement).getComponentClass().equals(UpgradeComponent.class)
+                    && ((UpgradeComponent) ((UIComponentElement) uiElement).getComponent()).getUpgradeCategory().equals("bulletModifier")
+                    && this.selectedUpgradeComponent == null
+                    && MouseHandler.getInstance().isKeyForActionPressed("mouseButtonPrimary", true)) {
+                this.selectedUpgradeComponent = (UpgradeComponent) ((UIComponentElement) uiElement).getComponent();
+                statComponent.removeUpgrade(this.selectedUpgradeComponent);
+            }
+            if (uiElement instanceof UIComponentElement
+                    && !uiElement.getElementKey().contains("GUN_INVENTORY_MOD_SLOT_")
+                    && ((UIComponentElement) uiElement).getComponent() != null
+                    && ((UIComponentElement) uiElement).getComponentClass().equals(GunComponent.class)
+                    && this.selectedUpgradeComponent == null
+                    && MouseHandler.getInstance().isKeyForActionPressed("mouseButtonPrimary", true)) {
+                statComponent.unequipGunUpgrades();
+                statComponent.setEquippedGun(((GunComponent) ((UIComponentElement) uiElement).getComponent()));
+                EntityHandler.getInstance()
+                        .getEntityWithId("GUN")
+                        .getComponentOfType(RenderComponent.class)
+                        .setTextureKey(statComponent.getEquippedGun().getGunSprite());
+            }
+            if (uiElement.getElementKey().contains("BULLET_MOD_INVENTORY")
+                    && this.selectedUpgradeComponent != null
+                    && MouseHandler.getInstance().isKeyForActionPressed("mouseButtonPrimary", true)) {
+                statComponent.addUpgrade(this.selectedUpgradeComponent);
+                this.selectedUpgradeComponent = null;
+            }
+            if (this.selectedUpgradeComponent != null
+                    && MouseHandler.getInstance().isKeyForActionPressed("mouseButtonSecondary", true)) {
+                statComponent.addUpgrade(this.selectedUpgradeComponent);
+                this.selectedUpgradeComponent = null;
+            }
+            if (uiElement.getElementKey().contains("GUN_INVENTORY_MOD_SLOT_")
+                    && MouseHandler.getInstance().isKeyForActionPressed("mouseButtonSecondary", true)) {
+                if (uiElement.getElementKey().contains("_PRIM_A_")) {
+                    UpgradeComponent currentlyEquipped = statComponent.getEquippedGun().getPrimaryModifierSlotA();
+                    statComponent.getEquippedGun().setPrimaryModifierSlotA(null);
+                    statComponent.addUpgrade(currentlyEquipped);
+                } else if (uiElement.getElementKey().contains("_PRIM_B_")) {
+                    UpgradeComponent currentlyEquipped = statComponent.getEquippedGun().getPrimaryModifierSlotB();
+                    statComponent.getEquippedGun().setPrimaryModifierSlotB(null);
+                    statComponent.addUpgrade(currentlyEquipped);
+                } else if (uiElement.getElementKey().contains("_SEC_A_")) {
+                    UpgradeComponent currentlyEquipped = statComponent.getEquippedGun().getSecondaryModifierSlotA();
+                    statComponent.getEquippedGun().setSecondaryModifierSlotA(null);
+                    statComponent.addUpgrade(currentlyEquipped);
+                } else if (uiElement.getElementKey().contains("_SEC_B_")) {
+                    UpgradeComponent currentlyEquipped = statComponent.getEquippedGun().getSecondaryModifierSlotB();
+                    statComponent.getEquippedGun().setSecondaryModifierSlotB(null);
+                    statComponent.addUpgrade(currentlyEquipped);
+                }
+            }
+            if (uiElement.getElementKey().contains("GUN_INVENTORY_MOD_SLOT_")
+                    && MouseHandler.getInstance().isKeyForActionPressed("mouseButtonPrimary", true)) {
+                if (uiElement.getElementKey().contains("_PRIM_A_")
+                        && (this.selectedUpgradeComponent == null
+                        || !Slot.SECONDARY.getKey().equals(this.selectedUpgradeComponent.getUpgradeSlot()))) {
+                    UpgradeComponent currentlyEquipped = statComponent.getEquippedGun().getPrimaryModifierSlotA();
+                    statComponent.getEquippedGun().setPrimaryModifierSlotA(this.selectedUpgradeComponent);
+                    this.selectedUpgradeComponent = currentlyEquipped;
+                    createSoundEntity("upgrade");
+                } else if (uiElement.getElementKey().contains("_PRIM_B_")
+                        && (this.selectedUpgradeComponent == null
+                        || !Slot.SECONDARY.getKey().equals(this.selectedUpgradeComponent.getUpgradeSlot()))) {
+                    UpgradeComponent currentlyEquipped = statComponent.getEquippedGun().getPrimaryModifierSlotB();
+                    statComponent.getEquippedGun().setPrimaryModifierSlotB(this.selectedUpgradeComponent);
+                    this.selectedUpgradeComponent = currentlyEquipped;
+                    createSoundEntity("upgrade");
+                } else if (uiElement.getElementKey().contains("_SEC_A_")) {
+                    UpgradeComponent currentlyEquipped = statComponent.getEquippedGun().getSecondaryModifierSlotA();
+                    statComponent.getEquippedGun().setSecondaryModifierSlotA(this.selectedUpgradeComponent);
+                    this.selectedUpgradeComponent = currentlyEquipped;
+                    createSoundEntity("upgrade");
+                } else if (uiElement.getElementKey().contains("_SEC_B_")) {
+                    UpgradeComponent currentlyEquipped = statComponent.getEquippedGun().getSecondaryModifierSlotB();
+                    statComponent.getEquippedGun().setSecondaryModifierSlotB(this.selectedUpgradeComponent);
+                    this.selectedUpgradeComponent = currentlyEquipped;
+                    createSoundEntity("upgrade");
+                }
+            }
         }
     }
 
@@ -657,7 +642,8 @@ public class UIService {
         TransformationComponent transformationComponent = item.getComponentOfType(TransformationComponent.class);
         if (CollisionUtil.checkInside(MouseHandler.getInstance().getMousePositionWorldSpace(),
                 item.getComponentOfType(CollisionComponent.class).getHitBox(),
-                transformationComponent.getPosition())) {
+                transformationComponent.getPosition())
+                && !UISceneService.getInstance().isInventoryVisible()) {
             UIGroup tooltipUIGroup = null;
             if (item.hasComponentOfType(UpgradeComponent.class)) {
                 UpgradeComponent upgradeComponent = item.getComponentOfType(UpgradeComponent.class);

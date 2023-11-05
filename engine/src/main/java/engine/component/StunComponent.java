@@ -10,9 +10,12 @@ public class StunComponent implements Component {
     private final double stunStartTime;
     private double stunDurationSeconds;
 
-    public StunComponent(double stunDurationSeconds) {
+    private String stunTextureKey;
+
+    public StunComponent(double stunDurationSeconds, String stunTextureKey) {
         this.stunStartTime = System.nanoTime();
         this.stunDurationSeconds = stunDurationSeconds;
+        this.stunTextureKey = stunTextureKey;
     }
 
     public double getStunStartTime() {
@@ -33,6 +36,14 @@ public class StunComponent implements Component {
 
     public void setStunSpriteEntity(Entity stunSpriteEntity) {
         this.stunSpriteEntity = stunSpriteEntity;
+    }
+
+    public String getStunTextureKey() {
+        return stunTextureKey;
+    }
+
+    public void setStunTextureKey(String stunTextureKey) {
+        this.stunTextureKey = stunTextureKey;
     }
 
     @Override

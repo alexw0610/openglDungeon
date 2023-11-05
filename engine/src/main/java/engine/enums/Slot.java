@@ -2,9 +2,10 @@ package engine.enums;
 
 public enum Slot {
 
-    PRIMARY("primary"),
-    SECONDARY("secondary");
+    PRIMARY("Primary"),
+    SECONDARY("Secondary");
     private final String key;
+
     Slot(String key) {
         this.key = key;
     }

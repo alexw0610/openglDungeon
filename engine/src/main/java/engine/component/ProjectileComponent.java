@@ -1,15 +1,19 @@
 package engine.component;
 
+import engine.entity.Entity;
 import org.joml.Vector2d;
 
-public class ProjectileComponent implements Component {
+public class
+ProjectileComponent implements Component {
 
     private static final long serialVersionUID = 2474583548251974620L;
     private Vector2d direction;
     private double speed;
     private String onCollisionAttack;
+    private AttackComponent attackComponent;
+    private Entity targetEntity;
 
-    private double damageOverwrite;
+    private double lastTargetCheck;
 
     public Vector2d getDirection() {
         return direction;
@@ -35,12 +39,28 @@ public class ProjectileComponent implements Component {
         this.onCollisionAttack = onCollisionAttack;
     }
 
-    public double getDamageOverwrite() {
-        return damageOverwrite;
+    public AttackComponent getAttackComponent() {
+        return attackComponent;
     }
 
-    public void setDamageOverwrite(double damageOverwrite) {
-        this.damageOverwrite = damageOverwrite;
+    public void setAttackComponent(AttackComponent attackComponent) {
+        this.attackComponent = attackComponent;
+    }
+
+    public Entity getTargetEntity() {
+        return targetEntity;
+    }
+
+    public void setTargetEntity(Entity targetEntity) {
+        this.targetEntity = targetEntity;
+    }
+
+    public double getLastTargetCheck() {
+        return lastTargetCheck;
+    }
+
+    public void setLastTargetCheck(double lastTargetCheck) {
+        this.lastTargetCheck = lastTargetCheck;
     }
 
     @Override

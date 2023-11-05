@@ -8,6 +8,8 @@ public enum UpgradeType {
     MOVEMENT_SPEED("movementSpeed"),
     MAX_SHIELD("maxShield"),
     BULLET_VELOCITY("bulletVelocity"),
+    CRITICAL_STRIKE_CHANCE("criticalStrikeChance"),
+    CRITICAL_STRIKE_DAMAGE("criticalStrikeDamage"),
     DASH_COOLDOWN("dashCooldown"),
     DASH_STUN("dashStun");
 

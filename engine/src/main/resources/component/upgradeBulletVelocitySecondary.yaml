@@ -6,6 +6,7 @@ modifiers:
   upgradeRarity: "Rare"
   toolTip: "Increases your secondary bullet velocity by 10 percent."
   upgradeType: "bulletVelocity"
-  upgradeSlot: "primary"
+  upgradeSlot: "Secondary"
   upgradeCategory: "gunStatModifier"
   modifierValue: 1.10
+  minSpawnLevel: 5

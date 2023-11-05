@@ -6,6 +6,7 @@ import engine.entity.Entity;
 import engine.handler.UIHandler;
 import engine.object.ui.UIText;
 import engine.service.util.CoordinateConverter;
+import engine.service.util.UIUtil;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.joml.Math;
 import org.joml.Vector2d;
@@ -34,7 +35,7 @@ public class DamageTextSystem {
         Vector2d position = transformationComponent.getPosition();
         position.y = Math.lerp(position.y, position.y + 2.5, getYOffset(damageTextComponent));
         Vector2d uiPosition = CoordinateConverter.transformWorldSpaceToClipSpace(position);
-        UIText damageText = new UIText(String.valueOf(damageTextComponent.getDamage()),
+        UIText damageText = new UIText(UIUtil.NUMBER_FORMAT.format(damageTextComponent.getDamage()),
                 uiPosition.x(),
                 uiPosition.y(),
                 0.5,

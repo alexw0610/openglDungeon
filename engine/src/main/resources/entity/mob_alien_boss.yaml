@@ -1,0 +1,44 @@
+templateName: "mob_alien_boss"
+components:
+  - type: "base.TransformationComponent"
+  - type: "base.RenderComponent"
+    arguments:
+      meshKey: "QUAD"
+      textureKey: "alien_boss"
+      shaderType: "shader"
+      scale: 4.0
+      layer: 4
+    modifiers:
+      alwaysVisible: false
+      shadeless: true
+      spriteSize: 24.0
+  - type: "base.AnimationComponent"
+    arguments:
+      animationSpeed: 166.0
+      animationContinuous: true
+      animationLength: 11
+    modifiers:
+      movementDriven: false
+  - type: "StatComponent"
+    modifiers:
+      baseDamagePrimary: 10.0
+      attackSpeedPrimary: 0.8
+      bulletSpeedPrimary: 3.0
+      baseDamageSecondary: 20.0
+      attackSpeedSecondary: 2.5
+      bulletSpeedSecondary: 3.5
+      movementSpeed: 0.0
+      maxHealthPoints: 350.0
+      dropsXP:  false
+  - type: "base.CollisionComponent"
+    arguments:
+      hitBoxType: "AABB"
+      hitBoxSize: 0.99
+  - type: "BossComponent"
+  - type: "base.LightSourceComponent"
+    arguments:
+      lightColorR: 0.6
+      lightColorG: 0.8
+      lightColorB: 0.65
+      lightStrength: 1.1
+      lightFallOff: 0.015

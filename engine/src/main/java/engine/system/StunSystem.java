@@ -23,7 +23,7 @@ public class StunSystem {
             Entity stunSpriteEntity = EntityBuilder.builder()
                     .withComponent(transformationComponent)
                     .withComponent(new AnimationComponent(120.0, true, 6))
-                    .withComponent(new RenderComponent(PrimitiveMeshShape.QUAD.value(), "stun", ShaderType.DEFAULT.value(), 1.1, 7))
+                    .withComponent(new RenderComponent(PrimitiveMeshShape.QUAD.value(), stunComponent.getStunTextureKey(), ShaderType.DEFAULT.value(), 1.1, 7))
                     .buildAndInstantiate(EntityKeyConstants.STUN_ENTITY_PREFIX + RandomStringUtils.randomAlphanumeric(6));
             stunComponent.setStunSpriteEntity(stunSpriteEntity);
         }

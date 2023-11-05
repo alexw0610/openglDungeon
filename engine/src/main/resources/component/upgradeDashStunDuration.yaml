@@ -8,3 +8,4 @@ modifiers:
   upgradeType: "dashStun"
   upgradeCategory: "playerStatModifier"
   modifierValue: 1.5
+  minSpawnLevel: 0

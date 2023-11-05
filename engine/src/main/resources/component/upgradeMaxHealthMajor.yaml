@@ -8,3 +8,4 @@ modifiers:
   upgradeType: "maxHealth"
   upgradeCategory: "playerStatModifier"
   modifierValue: 40.0
+  minSpawnLevel: 5

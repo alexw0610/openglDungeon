@@ -1,0 +1,10 @@
+templateName: "upgradeFreezingBullet"
+type: "UpgradeComponent"
+modifiers:
+  upgradeTitle: "Bullet Upgrade: Freezing"
+  upgradeIcon: "upgrade_epic"
+  upgradeRarity: "Epic"
+  toolTip: "Bullet impact freezes the target, slowing its movement speed by 50%"
+  upgradeType: "freezing"
+  upgradeCategory: "bulletModifier"
+  minSpawnLevel: 0

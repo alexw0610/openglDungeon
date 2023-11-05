@@ -145,4 +145,9 @@ public class CollisionUtil {
     private static Vector2d convertVectorToWorldSpace(Vector2d vector, Vector2d position) {
         return new Vector2d(vector.x() + position.x(), vector.y() + position.y());
     }
+
+    public static boolean distanceLessThan(Entity entityA, Entity entityB, double maximumDistance) {
+        return entityA.getComponentOfType(TransformationComponent.class).getPosition()
+                .distance(entityB.getComponentOfType(TransformationComponent.class).getPosition()) < maximumDistance;
+    }
 }

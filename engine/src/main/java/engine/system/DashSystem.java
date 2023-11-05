@@ -3,6 +3,7 @@ package engine.system;
 import engine.Engine;
 import engine.component.AttackComponent;
 import engine.component.DashComponent;
+import engine.component.StatComponent;
 import engine.component.base.PhysicsComponent;
 import engine.component.base.TransformationComponent;
 import engine.component.internal.CreatedByComponent;
@@ -35,7 +36,9 @@ public class DashSystem {
 
     private static void handleDashCollision(Entity entity) {
         TransformationComponent transformationComponent = entity.getComponentOfType(TransformationComponent.class);
-        AttackComponent attack = (AttackComponent) ComponentBuilder.fromTemplate("dashHit");
+        AttackComponent attack = (AttackComponent) ComponentBuilder.fromTemplate("dashAttack");
+        double dashStunDuration = entity.getComponentOfType(StatComponent.class).getDashStunDuration();
+        attack.setStunDuration(dashStunDuration);
         EntityBuilder.builder()
                 .withComponent(attack)
                 .at(transformationComponent.getPosition().x(), transformationComponent.getPosition().y())

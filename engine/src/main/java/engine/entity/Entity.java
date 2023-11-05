@@ -15,6 +15,7 @@ public class Entity implements Serializable {
     private final Map<Class<? extends Component>, Component> components = new HashMap<>();
 
     public void addComponent(Component component) {
+        removeComponent(component.getClass());
         components.put(component.getClass(), component);
     }
 
@@ -45,7 +46,7 @@ public class Entity implements Serializable {
         this.entityId = entityId;
     }
 
-    public void onRemove(){
+    public void onRemove() {
         this.components.values().forEach(Component::onRemove);
         this.components.clear();
     }

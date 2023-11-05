@@ -8,3 +8,4 @@ modifiers:
   upgradeType: "dashCooldown"
   upgradeCategory: "playerStatModifier"
   modifierValue: 0.10
+  minSpawnLevel: 0

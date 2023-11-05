@@ -15,6 +15,11 @@ public class UpgradeComponent implements Component {
     private String upgradeCategory;
     private String upgradeSlot;
     private double modifierValue;
+    private int minSpawnLevel;
+
+    public UpgradeComponent() {
+        this.upgradeSlot = "Primary & Secondary";
+    }
 
     public String getToolTip() {
         return toolTip;
@@ -78,6 +83,14 @@ public class UpgradeComponent implements Component {
 
     public void setUpgradeSlot(String upgradeSlot) {
         this.upgradeSlot = upgradeSlot;
+    }
+
+    public int getMinSpawnLevel() {
+        return minSpawnLevel;
+    }
+
+    public void setMinSpawnLevel(Integer minSpawnLevel) {
+        this.minSpawnLevel = minSpawnLevel;
     }
 
     @Override

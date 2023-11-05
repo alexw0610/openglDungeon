@@ -1,15 +1,19 @@
 package engine.service;
 
 import engine.EntityKeyConstants;
+import engine.component.GunComponent;
+import engine.component.StatComponent;
 import engine.component.UpgradeComponent;
 import engine.component.base.RenderComponent;
 import engine.component.tag.LootChoiceTag;
+import engine.component.tag.PlayerTag;
 import engine.entity.ComponentBuilder;
 import engine.entity.Entity;
 import engine.entity.EntityBuilder;
 import engine.handler.EntityHandler;
 import engine.handler.template.ComponentTemplateHandler;
 import engine.loader.template.ComponentTemplate;
+import org.apache.commons.lang3.RandomStringUtils;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -17,21 +21,58 @@ import java.util.stream.Collectors;
 public class LootSpawner {
 
     public static void spawnSafeZoneLoot() {
-        spawnLootOptions(10.0, 1.5, 3, 3, 0.85, 0.65);
+        spawnLootOptions(10.0, 1.5, 3, 3, 0.95,0.75, 0.50);
     }
+
     public static void spawnBossLoot() {
-        spawnLootOptions(8, 6, 2, 3, 0.50, 0.25);
+        int playerLevel = EntityHandler.getInstance()
+                .getEntityWithComponent(PlayerTag.class)
+                .getComponentOfType(StatComponent.class)
+                .getLevel();
+        String gunKey;
+        switch (playerLevel) {
+            case 5:
+                gunKey = "gunAdvancedScoutBlaster";
+                break;
+            case 10:
+                gunKey = "gunHeavyMarineBlaster";
+                break;
+            case 15:
+                gunKey = "gunPreciseReconBlaster";
+                break;
+            default:
+                spawnLootOptions(16, 14.5, 2, 3, 0.85, 0.50, 0.25);
+                return;
+        }
+        Entity gunItem = getGunItemWithKey(gunKey);
+        EntityHandler.getInstance()
+                .addObject(EntityKeyConstants.ITEM_ENTITY_PREFIX + RandomStringUtils.randomAlphanumeric(6), gunItem);
     }
 
-    public static void spawnGunOption() {
+    private static Entity getGunItemWithKey(String gunKey) {
+        Entity gunItem = EntityBuilder.builder()
+                .fromTemplate("item")
+                .at(16.5, 14)
+                .build();
+        gunItem.addComponent(ComponentBuilder.fromTemplate(gunKey));
+        gunItem.getComponentOfType(RenderComponent.class)
+                .setTextureKey(gunItem
+                        .getComponentOfType(GunComponent.class)
+                        .getGunSprite());
+        return gunItem;
     }
 
-    private static void spawnLootOptions(double positionY, double positionX, int spacingX, int lootChoices, double epicChance, double rareChance) {
+    private static void spawnLootOptions(double positionY, double positionX, int spacingX, int lootChoices, double legendaryChance, double epicChance, double rareChance) {
+        int level = EntityHandler.getInstance()
+                .getEntityWithComponent(PlayerTag.class)
+                .getComponentOfType(StatComponent.class)
+                .getLevel();
         List<ComponentTemplate> availableUpgrades =
                 ComponentTemplateHandler.getInstance()
                         .getAllObjects()
                         .stream()
-                        .filter(template -> template.getType().equals("UpgradeComponent"))
+                        .filter(template -> template.getType().equals("UpgradeComponent")
+                                && ((Integer) template.getModifiers().get("minSpawnLevel")).compareTo(level) <= 0)
                         .collect(Collectors.toList());
         List<ComponentTemplate> commonUpgrades = availableUpgrades
                 .stream()
@@ -45,14 +86,21 @@ public class LootSpawner {
                 .stream()
                 .filter(template -> template.getModifiers().get("upgradeRarity").equals("Epic"))
                 .collect(Collectors.toList());
+        List<ComponentTemplate> legendaryUpgrades = availableUpgrades
+                .stream()
+                .filter(template -> template.getModifiers().get("upgradeRarity").equals("Legendary"))
+                .collect(Collectors.toList());
         for (int i = 0; i < lootChoices; i++) {
             Entity item = EntityBuilder.builder()
                     .fromTemplate("item")
                     .at(positionX + (i * spacingX), positionY)
                     .build();
-            if (Math.random() > epicChance && epicUpgrades.size() > 0) {
+            double rarityChance = Math.random();
+            if (rarityChance > legendaryChance && legendaryUpgrades.size() > 0) {
+                addUpgradeComponent(item, legendaryUpgrades);
+            } else if (rarityChance > epicChance && epicUpgrades.size() > 0) {
                 addUpgradeComponent(item, epicUpgrades);
-            } else if (Math.random() > rareChance && rareUpgrades.size() > 0) {
+            } else if (rarityChance > rareChance && rareUpgrades.size() > 0) {
                 addUpgradeComponent(item, rareUpgrades);
             } else if (commonUpgrades.size() > 0) {
                 addUpgradeComponent(item, commonUpgrades);
@@ -62,10 +110,10 @@ public class LootSpawner {
         }
     }
 
-    public static void spawnPortal() {
+    public static void spawnPortal(double x, double y) {
         Entity portal = EntityBuilder.builder()
                 .fromTemplate("portal")
-                .at(4.5, 13)
+                .at(x, y)
                 .build();
         EntityHandler.getInstance().addObject(EntityKeyConstants.PORTAL_KEY, portal);
     }

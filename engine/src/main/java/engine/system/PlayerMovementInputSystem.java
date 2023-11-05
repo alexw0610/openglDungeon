@@ -24,22 +24,22 @@ public class PlayerMovementInputSystem {
         if (!entity.hasComponentOfType(DashComponent.class)) {
             if (KeyHandler.getInstance().isKeyForActionPressed("movePlayerUp")) {
                 double y = physicsComponent.getMomentumY();
-                y += (statComponent.getMovementSpeed()) * (Engine.stepTimeDelta * STEP_TIME_FACTOR);
+                y += (statComponent.getMovementSpeed() * statComponent.getMovementSpeedModifier()) * (Engine.stepTimeDelta * STEP_TIME_FACTOR);
                 physicsComponent.setMomentumY(y);
             }
             if (KeyHandler.getInstance().isKeyForActionPressed("movePlayerDown")) {
                 double y = physicsComponent.getMomentumY();
-                y -= (statComponent.getMovementSpeed()) * (Engine.stepTimeDelta * STEP_TIME_FACTOR);
+                y -= (statComponent.getMovementSpeed() * statComponent.getMovementSpeedModifier()) * (Engine.stepTimeDelta * STEP_TIME_FACTOR);
                 physicsComponent.setMomentumY(y);
             }
             if (KeyHandler.getInstance().isKeyForActionPressed("movePlayerRight")) {
                 double x = physicsComponent.getMomentumX();
-                x += (statComponent.getMovementSpeed()) * (Engine.stepTimeDelta * STEP_TIME_FACTOR);
+                x += (statComponent.getMovementSpeed() * statComponent.getMovementSpeedModifier()) * (Engine.stepTimeDelta * STEP_TIME_FACTOR);
                 physicsComponent.setMomentumX(x);
             }
             if (KeyHandler.getInstance().isKeyForActionPressed("movePlayerLeft")) {
                 double x = physicsComponent.getMomentumX();
-                x -= (statComponent.getMovementSpeed()) * (Engine.stepTimeDelta * STEP_TIME_FACTOR);
+                x -= (statComponent.getMovementSpeed() * statComponent.getMovementSpeedModifier()) * (Engine.stepTimeDelta * STEP_TIME_FACTOR);
                 physicsComponent.setMomentumX(x);
             }
         }

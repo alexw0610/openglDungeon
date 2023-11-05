@@ -24,8 +24,10 @@ components:
   - type: "StatComponent"
     modifiers:
       attackSpeedPrimary: 0.8
-      attackSpeedSecondary: 3.0
-      movementSpeed: 2.8
+      baseDamagePrimary: 10.0
+      attackSpeedSecondary: 0.0
+      baseDamageSecondary: 0.0
+      movementSpeed: 2.0
       maxHealthPoints: 30.0
   - type: "base.CollisionComponent"
     arguments:

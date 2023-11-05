@@ -1,9 +1,0 @@
-templateName: "upgradeCorrosiveBullet"
-type: "UpgradeComponent"
-modifiers:
-  upgradeTitle: "Bullet Upgrade: Corrosive"
-  upgradeIcon: "upgrade_epic"
-  upgradeRarity: "Epic"
-  toolTip: "Bullet impacts leave behind a corrosive puddle, slowing and damaging enemies over time."
-  upgradeType: "corrosiveBullet"
-  upgradeCategory: "bulletModifier"

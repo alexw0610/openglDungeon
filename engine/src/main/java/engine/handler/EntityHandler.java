@@ -35,9 +35,8 @@ public class EntityHandler implements Handler<Entity> {
 
     @Override
     public List<Entity> getAllObjects() {
-        synchronized (this.objects) {
-            return new ArrayList<>(this.objects.values());
-        }
+        return new ArrayList<>(this.objects.values());
+
     }
 
     public Entity getEntityWithId(String entityId) {
@@ -51,13 +50,23 @@ public class EntityHandler implements Handler<Entity> {
     }
 
     public List<Entity> getAllEntitiesWithComponents(Class... components) {
-        synchronized (this.objects) {
-            List<Entity> entities = getAllObjects();
-            for (Class component : components) {
-                entities = entities.parallelStream().unordered().filter(entity -> entity.hasComponentOfType(component)).collect(Collectors.toList());
-            }
-            return entities;
+        List<Entity> entities = getAllObjects();
+        for (Class component : components) {
+            entities = entities.stream().filter(entity -> entity.hasComponentOfType(component)).collect(Collectors.toList());
         }
+        return entities;
+    }
+
+    public List<Entity> getAllEntitiesWithAnyOfComponents(Class... components) {
+        List<Entity> entities = new LinkedList<>();
+        for (Class component : components) {
+            entities.addAll(getAllObjects()
+                    .stream()
+                    .filter(entity -> !entities.contains(entity))
+                    .filter(entity -> entity.hasComponentOfType(component))
+                    .collect(Collectors.toList()));
+        }
+        return entities;
     }
 
     @Override
@@ -123,8 +132,12 @@ public class EntityHandler implements Handler<Entity> {
         this.world = world;
     }
 
-    public void cleanup(){
-        this.objects.values().forEach(Entity::onRemove);
+    public void cleanup() {
+        Iterator<Entity> iterator = this.objects.values().iterator();
+        while (iterator.hasNext()) {
+            Entity entity = iterator.next();
+            entity.onRemove();
+        }
         this.objects.clear();
     }
 }

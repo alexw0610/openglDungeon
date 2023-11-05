@@ -10,13 +10,15 @@ import engine.component.tag.AiTargetTag;
 import engine.component.tag.MobTag;
 import engine.component.tag.PlayerTag;
 import engine.component.tag.RangedMobTag;
-import engine.entity.ComponentBuilder;
 import engine.entity.Entity;
 import engine.entity.EntityBuilder;
+import engine.enums.Slot;
 import engine.handler.EntityHandler;
 import engine.object.generation.World;
 import engine.service.util.CollisionUtil;
 import engine.service.util.Pathfinding;
+import engine.system.util.AttackUtil;
+import engine.system.util.ProjectileUtil;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.joml.Vector2d;
 import org.joml.Vector2dc;
@@ -37,7 +39,7 @@ public class AISystem {
         TransformationComponent transformationComponent = entity.getComponentOfType(TransformationComponent.class);
         PhysicsComponent physicsComponent = entity.getComponentOfType(PhysicsComponent.class);
         if (aiComponent.isHostile()) {
-            checkAggro(entity, aiComponent, transformationComponent);
+            //checkAggro(entity, aiComponent, transformationComponent);
         }
         switch (aiComponent.getCurrentState()) {
             case IDLE:
@@ -93,10 +95,10 @@ public class AISystem {
     private static void attack(Entity entity, AIComponent aiComponent, TransformationComponent transformationComponent) {
         if (CollisionUtil.hasLineOfSight(entity.getComponentOfType(TransformationComponent.class).getPosition(),
                 aiComponent.getCurrentTarget().getComponentOfType(TransformationComponent.class).getPosition(), 10)) {
-            AttackComponent attack = (AttackComponent) ComponentBuilder.fromTemplate("slashAttackAlien");
-            attack.setTargetComponentConstraint(PlayerTag.class);
+            AttackComponent attackComponent = AttackUtil.getAdjustedAttackComponent(Slot.PRIMARY, entity.getComponentOfType(StatComponent.class), "meleeAttack");
+            attackComponent.setTargetComponentConstraint(PlayerTag.class);
             EntityBuilder.builder()
-                    .withComponent(attack)
+                    .withComponent(attackComponent)
                     .at(transformationComponent.getPosition().x(), transformationComponent.getPosition().y())
                     .buildAndInstantiate(EntityKeyConstants.ATTACK_PREFIX + RandomStringUtils.randomAlphanumeric(6));
         } else if (!aiComponent.getPathToTarget()
@@ -111,14 +113,23 @@ public class AISystem {
         if (CollisionUtil.hasLineOfSight(entity.getComponentOfType(TransformationComponent.class).getPosition(),
                 aiComponent.getCurrentTarget().getComponentOfType(TransformationComponent.class).getPosition(), 10)) {
             Vector2d direction = aiComponent.getCurrentTarget().getComponentOfType(TransformationComponent.class).getPosition().sub(transformationComponent.getPosition()).normalize();
-            Entity alienGlub = EntityBuilder.builder()
-                    .fromTemplate("projectile_alien")
+            StatComponent statComponent = entity.getComponentOfType(StatComponent.class);
+            Entity projectileEntity = EntityBuilder.builder()
+                    .fromTemplate("projectileAlien")
                     .at(transformationComponent.getPosition().x(), transformationComponent.getPosition().y())
                     .buildAndInstantiate(EntityKeyConstants.PROJECTILE_PREFIX + RandomStringUtils.randomAlphanumeric(6));
-            alienGlub.addComponent(new CreatedByComponent(entity));
-            alienGlub.getComponentOfType(ProjectileComponent.class)
+            ProjectileComponent projectileComponent = projectileEntity.getComponentOfType(ProjectileComponent.class);
+            AttackComponent attackComponent = AttackUtil.getAdjustedAttackComponent(Slot.PRIMARY,
+                    statComponent,
+                    projectileComponent.getOnCollisionAttack());
+            projectileComponent.setAttackComponent(attackComponent);
+            ProjectileUtil.adjustProjectileWithStats(Slot.PRIMARY,
+                    projectileComponent,
+                    statComponent);
+            projectileEntity.addComponent(new CreatedByComponent(entity));
+            projectileEntity.getComponentOfType(ProjectileComponent.class)
                     .setDirection(direction);
-            alienGlub.getComponentOfType(RenderComponent.class).setTextureRotation(new Vector2d(1.0, 0.0).angle(direction) * 180 / 3.14159265359);
+            projectileEntity.getComponentOfType(RenderComponent.class).setTextureRotation(new Vector2d(1.0, 0.0).angle(direction) * 180 / 3.14159265359);
         } else if (aiComponent.getPathToTarget() != null
                 && !aiComponent.getPathToTarget().isEmpty()) {
             aiComponent.setCurrentState(PATHING);
@@ -149,7 +160,7 @@ public class AISystem {
         List<Entity> targets = getAliveTargets();
         Vector2d currentPosition = transformationComponent.getPosition();
         //Optional<Entity> nearestTarget = getNearestTarget(targets, currentPosition);
-        Optional<Entity> player = Optional.of(EntityHandler.getInstance().getEntityWithComponent(PlayerTag.class));
+        Optional<Entity> player = Optional.ofNullable(EntityHandler.getInstance().getEntityWithComponent(PlayerTag.class));
         if (player.isPresent() && !player.get().getComponentOfType(StatComponent.class).isDead()) {
             Vector2d targetPosition = player.get().getComponentOfType(TransformationComponent.class).getPosition();
             //if (CollisionUtil.hasLineOfSight(currentPosition, targetPosition, 10)) {

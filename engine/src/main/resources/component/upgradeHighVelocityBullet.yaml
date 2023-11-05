@@ -2,8 +2,9 @@ templateName: "upgradeHighVelocityBullet"
 type: "UpgradeComponent"
 modifiers:
   upgradeTitle: "Bullet Upgrade: High Velocity"
-  upgradeIcon: "upgrade_epic"
-  upgradeRarity: "Epic"
-  toolTip: "Bullet damage increases based on bullet speed. (5dmg/1bs)"
-  upgradeType: "highVelocityBullet"
+  upgradeIcon: "upgrade_rare"
+  upgradeRarity: "Rare"
+  toolTip: "Bullet damage increases based on bullet speed. (2 dmg per 1 speed)"
+  upgradeType: "high_velocity"
   upgradeCategory: "bulletModifier"
+  minSpawnLevel: 0

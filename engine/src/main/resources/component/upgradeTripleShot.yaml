@@ -1,0 +1,10 @@
+templateName: "upgradeTripleShot"
+type: "UpgradeComponent"
+modifiers:
+  upgradeTitle: "Bullet Upgrade: Triple Shot"
+  upgradeIcon: "upgrade_legendary"
+  upgradeRarity: "Legendary"
+  toolTip: "Shoots three bullets out in fan formation from the barrel."
+  upgradeType: "triple_shot"
+  upgradeCategory: "bulletModifier"
+  minSpawnLevel: 10

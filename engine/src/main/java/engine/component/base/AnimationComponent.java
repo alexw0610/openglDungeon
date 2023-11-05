@@ -38,6 +38,19 @@ public class AnimationComponent implements Component {
         this.deleteAfterPlay = false;
     }
 
+    public AnimationComponent(Double animationSpeed, Boolean animationContinuous, Integer animationLength, boolean randomStart) {
+        this.animationSpeed = animationSpeed;
+        this.animationContinuous = animationContinuous;
+        this.animationFinished = false;
+        this.animationRow = 1;
+        if (randomStart) {
+            this.animationFrame = (int) (1 + Math.random() * animationLength);
+        }
+        this.animationLength = animationLength;
+        this.isMovementDriven = false;
+        this.deleteAfterPlay = false;
+    }
+
     public double getAnimationSpeed() {
         return animationSpeed;
     }

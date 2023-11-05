@@ -1,0 +1,10 @@
+templateName: "upgradeHeatSeekingBullet"
+type: "UpgradeComponent"
+modifiers:
+  upgradeTitle: "Bullet Upgrade: Heat Seeking"
+  upgradeIcon: "upgrade_legendary"
+  upgradeRarity: "Legendary"
+  toolTip: "Bullets home in on the nearest enemy."
+  upgradeType: "heat_seeking"
+  upgradeCategory: "bulletModifier"
+  minSpawnLevel: 15

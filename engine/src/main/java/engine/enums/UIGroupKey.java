@@ -5,6 +5,7 @@ public enum UIGroupKey {
     HUD("HUD"),
     INVENTORY("INVENTORY"),
     CLOSE_DIALOG("CLOSE_DIALOG"),
+    GAME_OVER_DIALOG("GAME_OVER_DIALOG"),
     GENERAL("GENERAL");
 
     final String key;
