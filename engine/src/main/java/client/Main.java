@@ -30,7 +30,7 @@ public class Main {
                 .buildAndInstantiate(EntityKeyConstants.CAMERA_ENTITY_KEY);
 
         GameStateService.initPlayer();
-        GameStateService.initTestMode();
+        //GameStateService.initTestMode();
         UIHandler.setInstance(engine.getUIHandler());
         engine.setPaused(false);
     }

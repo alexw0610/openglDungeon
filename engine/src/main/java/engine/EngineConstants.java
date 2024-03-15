@@ -8,7 +8,7 @@ public class EngineConstants {
     public static final double ITEM_HOVER_SPEED = 2.8;
     public static double WINDOW_WIDTH = 1280;
     public static double WINDOW_HEIGHT = 720;
-    public static final boolean FULLSCREEN = true;
+    public static final boolean FULLSCREEN = false;
     public static final int FPS = 256;
     public static final double STEP_TIME_FACTOR = 0.0000000015;
     public static final double RENDER_DISTANCE = 15;

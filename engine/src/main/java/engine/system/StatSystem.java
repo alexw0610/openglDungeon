@@ -35,10 +35,11 @@ public class StatSystem {
             }
             if (statComponent.getCurrentShield() > 0.0 && !entity.hasComponentOfType(ShieldComponent.class)) {
                 entity.addComponent(new ShieldComponent(transformationComponent));
-            } else if (statComponent.getCurrentShield() == 0.0 && entity.hasComponentOfType(ShieldComponent.class)) {
+            } else if (statComponent.getCurrentShield() == 0.0
+                    && entity.hasComponentOfType(ShieldComponent.class)) {
                 entity.removeComponent(ShieldComponent.class);
             }
-            if (statComponent.getCurrentHealthPoints() <= 0) {
+            if (statComponent.getCurrentHealthPoints() <= 0.0) {
                 handleEntityDeath(entity, statComponent, transformationComponent);
             }
             if (entity.hasComponentOfType(PlayerTag.class)
@@ -75,7 +76,7 @@ public class StatSystem {
                 handlePlayerDeath(entity);
             }
             if (statComponent.isDropsItems()) {
-                handleItemDrops(entity,transformationComponent);
+                handleItemDrops(entity, transformationComponent);
             }
             if (statComponent.isDropsXP()) {
                 handleXPDrops(transformationComponent);
@@ -129,15 +130,20 @@ public class StatSystem {
     }
 
     private static void handleItemDrops(Entity entity, TransformationComponent transformationComponent) {
+        int level = EntityHandler.getInstance()
+                .getEntityWithComponent(PlayerTag.class)
+                .getComponentOfType(StatComponent.class)
+                .getLevel();
         String lootDropRarity = (entity.hasComponentOfType(MobTag.class) || entity.hasComponentOfType(RangedMobTag.class)) ?
-                "Common":
+                "Common" :
                 "Rare";
         List<ComponentTemplate> availableUpgrades =
                 ComponentTemplateHandler.getInstance()
                         .getAllObjects()
                         .stream()
                         .filter(template -> template.getType().equals("UpgradeComponent")
-                                && template.getModifiers().get("upgradeRarity").equals(lootDropRarity))
+                                && template.getModifiers().get("upgradeRarity").equals(lootDropRarity)
+                                && ((Integer) template.getModifiers().get("minSpawnLevel")).compareTo(level) <= 0)
                         .collect(Collectors.toList());
         if (Math.random() > 0.85) {
             Entity item = EntityBuilder.builder()
@@ -145,10 +151,10 @@ public class StatSystem {
                     .at(transformationComponent.getPositionX(), transformationComponent.getPositionY())
                     .build();
             double lootChoice = Math.random();
-            if(lootChoice > 0.8){
+            if (lootChoice > 0.8) {
                 item.getComponentOfType(RenderComponent.class).setTextureKey("medkit");
                 item.addComponent(new MedKitTag());
-            }else{
+            } else {
                 int upgradeId = (int) Math.floor(Math.random() * availableUpgrades.size());
                 UpgradeComponent upgradeComponent = (UpgradeComponent) ComponentBuilder.fromTemplate(availableUpgrades.get(upgradeId).getTemplateName());
                 item.addComponent(upgradeComponent);

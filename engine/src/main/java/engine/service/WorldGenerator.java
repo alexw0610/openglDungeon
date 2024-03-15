@@ -11,14 +11,18 @@ import engine.component.tag.ViewBlockingTag;
 import engine.entity.Entity;
 import engine.entity.EntityBuilder;
 import engine.enums.WorldTileType;
+import engine.enums.ZoneType;
 import engine.handler.EntityHandler;
 import engine.object.generation.World;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.joml.Vector2d;
 import org.joml.Vector2i;
 import org.joml.Vector3d;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static engine.EntityKeyConstants.CLUTTER_ENTITY_PREFIX;
 import static engine.service.util.WorldGenerationUtil.getTextureOffsetForOrientation;
@@ -30,14 +34,10 @@ public class WorldGenerator {
     private static final int UPPER_DEATH_LIMIT = 8;
     private static final int LOWER_DEATH_LIMIT = 2;
     private static final int COME_ALIVE_VALUE = 5;
-    private static final int maxClutterNodes = 12;
-    private static final int maxClutterSize = 4;
-    private static final double clutterNodeFillChance = 0.5;
-    private static final int maxZones = 2;
+    private static final int maxZones = 3;
     private static final int maxZoneSize = 6;
-    private static final double zoneFillChance = 0.6;
 
-    public static World generateLevel() {
+    public static World generateLevel(int level) {
         int[][] generationMap = new int[48][48];
         initializeMap(generationMap);
         for (int i = 0; i < GENERATION_STEPS; i++) {
@@ -46,37 +46,76 @@ public class WorldGenerator {
         World world = new World(48, 48);
         generateTiles(world, generationMap);
         generateTileEntities(world, "floor", "rock");
-        generateEnvironmentClutter(world);
-        generateZone(world);
+        generateZones(world, level);
         EntityHandler.getInstance().setWorld(world);
         return world;
     }
 
-    private static void generateZone(World world) {
+    private static void generateZones(World world, int level) {
         int zones = 0;
+        List<ZoneType> zoneTypes = Arrays.stream(ZoneType.values())
+                .filter(zoneType -> zoneType.value() <= level)
+                .collect(Collectors.toList());
         while (zones < maxZones) {
             int xNodePosition = (int) (Math.random() * world.worldSizeX);
             int yNodePosition = (int) (Math.random() * world.worldSizeY);
-            if (world.isWalkable(xNodePosition, yNodePosition) && nextToWall(world, xNodePosition, yNodePosition)
+            int zoneIndex = (int) Math.abs(Math.random() * zoneTypes.size());
+            ZoneType targetZoneType = zoneTypes.get(zoneIndex);
+            if (world.isWalkable(xNodePosition, yNodePosition)
+                    && nextToWall(world, xNodePosition, yNodePosition)
                     && getCaveSize(xNodePosition, yNodePosition, world) > 20) {
                 for (int x = xNodePosition - maxZoneSize / 2; x < xNodePosition + maxZoneSize / 2; x++) {
                     for (int y = yNodePosition - maxZoneSize / 2; y < yNodePosition + maxZoneSize / 2; y++) {
-                        if (Math.random() < zoneFillChance) {
-                            if (world.getTileType(x, y).equals(WorldTileType.GROUND)) {
-                                world.getTile(x, y).getEntity().getComponentOfType(RenderComponent.class).setTextureKey("floor_alien");
-                            }
+                        if (targetZoneType.equals(ZoneType.RUBBLE_ZONE)) {
+                            spawnEntity(world, x, y, "rubble", 0.5, false);
                         }
-                        if (world.getTileType(x, y).equals(WorldTileType.ROCK)) {
-                            world.getTile(x, y).getEntity().getComponentOfType(RenderComponent.class).setTextureKey("rock_alien");
+                        if (targetZoneType.equals(ZoneType.HIVE_ZONE)) {
+                            spawnLightSource(xNodePosition, x, yNodePosition, y, 77.0, 169.0, 62.0);
+                            spawnEntity(world, x, y, "alien_egg", 0.1, false);
+                            changeTexture(world, WorldTileType.GROUND, x, y, 0.6, "floor_alien");
+                            changeTexture(world, WorldTileType.ROCK, x, y, 1.0, "rock_alien");
                         }
-                        if (Math.random() < 0.1 && world.isWalkable(x, y)) {
-                            EntityBuilder.builder().fromTemplate("alien_egg").at(x, y)
-                                    .buildAndInstantiate(CLUTTER_ENTITY_PREFIX + RandomStringUtils.randomAlphanumeric(8));
+                        if (targetZoneType.equals(ZoneType.STRANGLE_ZONE)) {
+                            spawnLightSource(xNodePosition, x, yNodePosition, y, 58.0, 123.0, 118.0);
+                            spawnEntity(world, x, y, "strangle_vine", 0.1, false);
+                            spawnEntity(world, x, y, "cave_plant", 0.6, true);
+                        }
+                        if (targetZoneType.equals(ZoneType.FIRE_ZONE)) {
+                            spawnLightSource(xNodePosition, x, yNodePosition, y, 159.0, 97.0, 82.0);
+                            spawnEntity(world, x, y, "fire_grass", 0.6, true);
                         }
                     }
                 }
                 zones++;
             }
+        }
+
+    }
+
+    private static void spawnLightSource(int xNodePosition, int x, int yNodePosition, int y, double r, double g, double b) {
+        if (xNodePosition == x && yNodePosition == y) {
+            Entity lightSource = EntityBuilder.builder().fromTemplate("light").at(xNodePosition, yNodePosition).build();
+            lightSource.getComponentOfType(LightSourceComponent.class)
+                    .setLightColor(new Vector3d(r / 255.0, g / 255.0, b / 255.0));
+            EntityHandler.getInstance().addObject(CLUTTER_ENTITY_PREFIX + RandomStringUtils.randomAlphanumeric(8), lightSource);
+        }
+    }
+
+    private static void spawnEntity(World world, int x, int y, String entityTemplateKey, double chance, boolean offsetPosition) {
+        if (Math.random() <= chance && world.isWalkable(x, y)) {
+            Entity entity = EntityBuilder.builder().fromTemplate(entityTemplateKey).at(x, y)
+                    .buildAndInstantiate(CLUTTER_ENTITY_PREFIX + RandomStringUtils.randomAlphanumeric(8));
+            if (offsetPosition) {
+                Vector2d position = entity.getComponentOfType(TransformationComponent.class).getPosition();
+                entity.getComponentOfType(TransformationComponent.class).setPositionX(position.x() + (Math.random() - 0.5));
+                entity.getComponentOfType(TransformationComponent.class).setPositionY(position.y() + (Math.random() - 0.5));
+            }
+        }
+    }
+
+    private static void changeTexture(World world, WorldTileType targetWorldTileType, int x, int y, double changeChance, String textureKey) {
+        if (Math.random() <= changeChance && world.getTileType(x, y).equals(targetWorldTileType)) {
+            world.getTile(x, y).getEntity().getComponentOfType(RenderComponent.class).setTextureKey(textureKey);
         }
     }
 
@@ -109,55 +148,7 @@ public class WorldGenerator {
         World world = new World(32, 32);
         generateTiles(world, generationMap);
         generateTileEntities(world, "floor", "rock");
-        generateEnvironmentClutter(world);
         return world;
-    }
-
-    private static void generateEnvironmentClutter(World world) {
-        int clutterNodes = 0;
-        while (clutterNodes < maxClutterNodes) {
-            int xNodePosition = (int) (Math.random() * world.worldSizeX);
-            int yNodePosition = (int) (Math.random() * world.worldSizeY);
-            if (world.isWalkable(xNodePosition, yNodePosition)
-                    && getCaveSize(xNodePosition, yNodePosition, world) > 20) {
-                generateClutterNode(world, xNodePosition, yNodePosition);
-                clutterNodes++;
-            }
-        }
-
-    }
-
-    private static void generateClutterNode(World world, int xNodePosition, int yNodePosition) {
-        String clutterTexture = pickRandomClutterType();
-        if (clutterTexture.equals("fire_grass")) {
-            Entity lightSource = EntityBuilder.builder().fromTemplate("light").at(xNodePosition, yNodePosition).build();
-            lightSource.getComponentOfType(LightSourceComponent.class)
-                    .setLightColor(new Vector3d(159.0 / 255.0, 97.0 / 255.0, 82.0 / 255.0));
-            EntityHandler.getInstance().addObject(CLUTTER_ENTITY_PREFIX + RandomStringUtils.randomAlphanumeric(8), lightSource);
-        }
-        if (clutterTexture.equals("cave_plant")) {
-            Entity lightSource = EntityBuilder.builder().fromTemplate("light").at(xNodePosition, yNodePosition).build();
-            lightSource.getComponentOfType(LightSourceComponent.class)
-                    .setLightColor(new Vector3d(58.0 / 255.0, 123.0 / 255.0, 118.0 / 255.0));
-            EntityHandler.getInstance().addObject(CLUTTER_ENTITY_PREFIX + RandomStringUtils.randomAlphanumeric(8), lightSource);
-        }
-        for (int x = xNodePosition - maxClutterSize / 2; x < xNodePosition + maxClutterSize / 2; x++) {
-            for (int y = yNodePosition - maxClutterSize / 2; y < yNodePosition + maxClutterSize / 2; y++) {
-                if (Math.random() < clutterNodeFillChance && world.isWalkable(x, y)) {
-                    Entity clutter = EntityBuilder.builder().fromTemplate("clutter")
-                            .at(x + ((Math.random() - 0.5) * 0.5), y + ((Math.random() - 0.5) * 0.5))
-                            .build();
-                    clutter.getComponentOfType(RenderComponent.class).setTextureKey(clutterTexture);
-                    EntityHandler.getInstance()
-                            .addObject(CLUTTER_ENTITY_PREFIX + RandomStringUtils.randomAlphanumeric(8), clutter);
-                }
-            }
-        }
-    }
-
-    private static String pickRandomClutterType() {
-        double random = Math.random();
-        return random < 0.33 ? "rubble" : random < 0.66 ? "cave_plant" : "fire_grass";
     }
 
     private static void clearCenter(int[][] generationMap) {

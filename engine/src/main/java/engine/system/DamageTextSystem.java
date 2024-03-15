@@ -41,6 +41,9 @@ public class DamageTextSystem {
                 0.5,
                 0.5,
                 damageTextComponent.isCriticalHit() ? 1.5 : 1.0);
+        if (damageTextComponent.getDamage() <= 0.0) {
+            damageText.setVisible(false);
+        }
         if (damageTextComponent.isPlayer()) {
             damageText.setColor(DAMAGE_TEXT_PLAYER_COLOR);
         } else if (damageTextComponent.isCriticalHit()) {

@@ -40,7 +40,7 @@ public class CollisionComponent implements Component {
         return obstructsMovement;
     }
 
-    public void setObstructsMovement(boolean obstructsMovement) {
+    public void setObstructsMovement(Boolean obstructsMovement) {
         this.obstructsMovement = obstructsMovement;
     }
 

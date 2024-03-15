@@ -138,6 +138,10 @@ public class UIService {
         this.bossHealthBar.setUiGroupKey(UIGroupKey.HUD);
         UIHandler.getInstance().addObject(bossHealthBar);
 
+        UIText inventoryButton = new UIText("[I]nventory", -DEFAULT_BAR_WIDTH / 2.0 - 0.13, 0.65, 1, 1, 0.75);
+        inventoryButton.setUiGroupKey(UIGroupKey.HUD);
+        UIHandler.getInstance().addObject(inventoryButton);
+
     }
 
     private void initStatUI() {

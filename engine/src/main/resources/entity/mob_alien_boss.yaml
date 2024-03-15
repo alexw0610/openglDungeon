@@ -21,14 +21,14 @@ components:
       movementDriven: false
   - type: "StatComponent"
     modifiers:
-      baseDamagePrimary: 10.0
-      attackSpeedPrimary: 0.8
+      baseDamagePrimary: 23.0
+      attackSpeedPrimary: 1.2
       bulletSpeedPrimary: 3.0
-      baseDamageSecondary: 20.0
-      attackSpeedSecondary: 2.5
-      bulletSpeedSecondary: 3.5
+      baseDamageSecondary: 12.0
+      attackSpeedSecondary: 2.3
+      bulletSpeedSecondary: 3.2
       movementSpeed: 0.0
-      maxHealthPoints: 350.0
+      maxHealthPoints: 300.0
       dropsXP:  false
   - type: "base.CollisionComponent"
     arguments:

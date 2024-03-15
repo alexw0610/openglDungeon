@@ -1,10 +1,10 @@
-templateName: "clutter"
+templateName: "rubble"
 components:
   - type: "base.TransformationComponent"
   - type: "base.RenderComponent"
     arguments:
       meshKey: "QUAD"
-      textureKey: ""
+      textureKey: "cave_plant"
       shaderType: "shader"
       scale: 1.0
       layer: 2

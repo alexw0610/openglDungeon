@@ -1,0 +1,9 @@
+templateName: "strangle_dot"
+type: "DoTComponent"
+arguments:
+  dotDurationSeconds: 1.5
+  dotDamagePerTick:  0.0
+  spread: false
+  slow: true
+  slowModifierValue: 0.0
+  dotSpriteTextureKey: "strangle_vine_root"

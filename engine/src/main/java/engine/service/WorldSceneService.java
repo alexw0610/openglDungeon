@@ -1,6 +1,7 @@
 package engine.service;
 
 import engine.EntityKeyConstants;
+import engine.component.StatComponent;
 import engine.component.base.TransformationComponent;
 import engine.entity.Entity;
 import engine.handler.EntityHandler;
@@ -26,11 +27,12 @@ public class WorldSceneService {
     }
 
     public static void loadLevel() {
+        Entity player = EntityHandler.getInstance().getEntityWithId(PLAYER_ENTITY_KEY);
+        int level = player.getComponentOfType(StatComponent.class).getLevel();
         clearWorld();
-        World world = WorldGenerator.generateLevel();
+        World world = WorldGenerator.generateLevel(level);
         EntityHandler.getInstance().setWorld(world);
 
-        Entity player = EntityHandler.getInstance().getEntityWithId(PLAYER_ENTITY_KEY);
         WorldGenerator.setPlayerSpawnPosition(player, world);
 
         MobSpawner.toggleBossFight(false);

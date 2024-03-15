@@ -1,0 +1,17 @@
+templateName: "rubble"
+components:
+  - type: "base.TransformationComponent"
+  - type: "base.RenderComponent"
+    arguments:
+      meshKey: "QUAD"
+      textureKey: "rubble"
+      shaderType: "shader"
+      scale: 1.0
+      layer: 2
+    modifiers:
+      alwaysVisible: false
+      shadeless: false
+      randomizeTextureOffset: true
+  - type: "TrapComponent"
+    arguments:
+      targetDotComponentTemplateName: "rubble_dot"

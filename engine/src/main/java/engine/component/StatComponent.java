@@ -139,7 +139,7 @@ public class StatComponent implements Component {
     }
 
     public double getXPPercentage() {
-        return Math.min(this.xp / (100 * (Math.log(level + 1))), 1.0);
+        return Math.min(this.xp / (150 * (Math.log(level + 1))), 1.0);
     }
 
     public double getShieldPercentage() {
@@ -178,7 +178,7 @@ public class StatComponent implements Component {
         return level;
     }
 
-    public void setLevel(int level) {
+    public void setLevel(Integer level) {
         this.level = level;
     }
 

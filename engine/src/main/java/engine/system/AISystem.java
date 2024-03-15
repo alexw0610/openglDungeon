@@ -39,7 +39,7 @@ public class AISystem {
         TransformationComponent transformationComponent = entity.getComponentOfType(TransformationComponent.class);
         PhysicsComponent physicsComponent = entity.getComponentOfType(PhysicsComponent.class);
         if (aiComponent.isHostile()) {
-            //checkAggro(entity, aiComponent, transformationComponent);
+            checkAggro(entity, aiComponent, transformationComponent);
         }
         switch (aiComponent.getCurrentState()) {
             case IDLE:

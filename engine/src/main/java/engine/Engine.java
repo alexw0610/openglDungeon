@@ -70,6 +70,8 @@ public class Engine {
         });
         window.setSize((int) WINDOW_WIDTH, (int) WINDOW_HEIGHT);
         window.setFullscreen(FULLSCREEN);
+        window.setUndecorated(true);
+        window.setMaximized(true,true);
         InputListener inputListener = new InputListener();
         window.addGLEventListener(new Display(this, inputListener));
         window.addKeyListener(inputListener);
@@ -186,6 +188,9 @@ public class Engine {
             }
             if (HealthBarSystem.isResponsibleFor(entity)) {
                 HealthBarSystem.processEntity(entity);
+            }
+            if (TrapSystem.isResponsibleFor(entity)) {
+                TrapSystem.processEntity(entity);
             }
         }
     }

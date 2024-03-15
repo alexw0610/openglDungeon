@@ -1,0 +1,40 @@
+templateName: "strangle_vine"
+components:
+  - type: "base.TransformationComponent"
+  - type: "base.RenderComponent"
+    arguments:
+      meshKey: "QUAD"
+      textureKey: "strangle_vine"
+      shaderType: "shader"
+      scale: 1.0
+      layer: 4
+    modifiers:
+      alwaysVisible: false
+      shadeless: false
+  - type: "base.AnimationComponent"
+    arguments:
+      animationSpeed: 166.0
+      animationContinuous: true
+      animationLength: 6
+  - type: "base.PhysicsComponent"
+  - type: "base.CollisionComponent"
+    arguments:
+      hitBoxType: "AABB"
+      hitBoxSize: 0.33
+    modifiers:
+      obstructsMovement: false
+  - type: "StatComponent"
+    modifiers:
+      baseDamagePrimary: 0.0
+      attackSpeedPrimary: 0.0
+      bulletSpeedPrimary: 0.0
+      baseDamageSecondary: 0.0
+      attackSpeedSecondary: 0.0
+      bulletSpeedSecondary: 0.0
+      movementSpeed: 0.0
+      maxHealthPoints: 1.0
+      dropsXP: false
+      dropsItems: false
+  - type: "TrapComponent"
+    arguments:
+      targetDotComponentTemplateName: "strangle_dot"

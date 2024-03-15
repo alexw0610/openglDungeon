@@ -10,6 +10,7 @@ import engine.component.base.TransformationComponent;
 import engine.component.tag.MobTag;
 import engine.component.tag.RangedMobTag;
 import engine.entity.Entity;
+import engine.enums.BulletModifier;
 import engine.handler.EntityHandler;
 import org.joml.Vector2d;
 
@@ -20,7 +21,9 @@ public class ProjectileSystem {
     public static void processEntity(Entity entity) {
         ProjectileComponent projectileComponent = entity.getComponentOfType(ProjectileComponent.class);
         TransformationComponent transformationComponent = entity.getComponentOfType(TransformationComponent.class);
-        handleTargetDirection(projectileComponent, transformationComponent);
+        if (projectileComponent.getAttackComponent().getBulletModifierList().contains(BulletModifier.HEAT_SEEKING)) {
+            handleTargetDirection(projectileComponent, transformationComponent);
+        }
         setSpriteRotation(entity, projectileComponent);
         updatePosition(projectileComponent, transformationComponent);
     }

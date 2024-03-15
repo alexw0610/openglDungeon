@@ -1,0 +1,9 @@
+templateName: "rubble_dot"
+type: "DoTComponent"
+arguments:
+  dotDurationSeconds: 0.5
+  dotDamagePerTick:  0.0
+  spread: false
+  slow: true
+  slowModifierValue: 0.55
+  dotSpriteTextureKey: "rubble"

@@ -23,12 +23,12 @@ components:
   - type: "AIComponent"
   - type: "StatComponent"
     modifiers:
-      attackSpeedPrimary: 0.8
-      baseDamagePrimary: 10.0
+      attackSpeedPrimary: 0.9
+      baseDamagePrimary: 8.0
       attackSpeedSecondary: 0.0
       baseDamageSecondary: 0.0
       movementSpeed: 2.0
-      maxHealthPoints: 30.0
+      maxHealthPoints: 25.0
   - type: "base.CollisionComponent"
     arguments:
       hitBoxType: "AABB"
